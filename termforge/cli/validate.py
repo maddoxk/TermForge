@@ -14,6 +14,7 @@ def main() -> None:
     import argparse
     parser = argparse.ArgumentParser(description="TermForge Declarative Configuration Validator (Linter)")
     parser.add_argument("path", help="Path to layout or theme config file (yaml/json/toml)")
+    parser.add_argument("--check-cyclic", action="store_true", help="Audit the configuration for circular component references")
     args = parser.parse_args()
     
     if not os.path.exists(args.path):
@@ -41,7 +42,7 @@ def main() -> None:
         print(f"Error parsing configuration file: {e}")
         sys.exit(1)
         
-    errors = validate_config(data)
+    errors = validate_config(data, check_cyclic=args.check_cyclic)
     fatal_errors = [e for e in errors if "Error:" in e]
     warnings = [e for e in errors if "Warning:" in e]
     
