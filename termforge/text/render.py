@@ -118,17 +118,17 @@ def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDe
         if len(plain) <= width:
             lines = [run]
         else:
-            chars = []
+            marquee_chars = []
             for span in run.spans:
                 for c in span.text:
-                    chars.append((c, span.style))
+                    marquee_chars.append((c, span.style))
             
             last_style = run.spans[-1].style if run.spans else None
             for _ in range(3):
-                chars.append((" ", last_style))
+                marquee_chars.append((" ", last_style))
                 
-            cycle_len = len(chars)
-            repeated_chars = chars * 3
+            cycle_len = len(marquee_chars)
+            repeated_chars = marquee_chars * 3
             start_idx = frame_number % cycle_len
             sliced_chars = repeated_chars[start_idx : start_idx + width]
             

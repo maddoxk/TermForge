@@ -57,7 +57,7 @@ def render_fade(
     from_padded = from_tuples + [(" ", None)] * (max_len - len(from_tuples))
     to_padded = to_tuples + [(" ", None)] * (max_len - len(to_tuples))
     
-    result = []
+    result: list[tuple[str, StyleSpec | None]] = []
     for i in range(max_len):
         c_from, style_from = from_padded[i]
         c_to, style_to = to_padded[i]

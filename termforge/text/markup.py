@@ -1,5 +1,6 @@
 from __future__ import annotations
 import re
+from typing import Any
 from termforge.core.types import StyleSpec, ColorValue
 from termforge.text.types import TextSpan, TextRun
 
@@ -33,7 +34,7 @@ def parse_markup(text: str) -> TextRun:
     # Track style state stack
     # Each entry in stack is a dict representing changes, or we can resolve the full style
     # Let's start with a base style (all False / None)
-    current_style = {
+    current_style: dict[str, Any] = {
         "fg": None, "bg": None,
         "bold": False, "dim": False, "italic": False,
         "underline": False, "strikethrough": False

@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from termforge.core.types import ColorDepth, StyleSpec
 from termforge.core.theme import ThemeTokens
+from typing import Any
 from termforge.text.render import style_to_ansi
 
 @dataclass
@@ -13,7 +14,7 @@ class Canvas:
 
 def create_canvas(width: int, height: int, fill: str = " ") -> Canvas:
     cells = [[fill] * width for _ in range(height)]
-    colors = [[None] * width for _ in range(height)]
+    colors: list[list[StyleSpec | None]] = [[None] * width for _ in range(height)]
     return Canvas(width=width, height=height, cells=cells, colors=colors)
 
 def set_cell(canvas: Canvas, x: int, y: int, char: str, style: StyleSpec | None = None) -> None:
@@ -79,7 +80,7 @@ class BrailleCanvas:
 
 def create_braille_canvas(width: int, height: int) -> BrailleCanvas:
     pixels = [[False] * (2 * width) for _ in range(4 * height)]
-    styles = [[None] * (2 * width) for _ in range(4 * height)]
+    styles: list[list[StyleSpec | None]] = [[None] * (2 * width) for _ in range(4 * height)]
     return BrailleCanvas(width=width, height=height, pixels=pixels, styles=styles)
 
 def set_braille_pixel(canvas: BrailleCanvas, x: int, y: int, active: bool = True, style: StyleSpec | None = None) -> None:
@@ -128,32 +129,33 @@ def braille_canvas_to_lines(canvas: BrailleCanvas, theme: ThemeTokens | None, de
             cell_style = None
             
             # Count pixels and find most common style in this block
-            block_styles = []
+            block_styles: list[StyleSpec] = []
             for dy in range(4):
                 py = 4 * r + dy
                 for dx in range(2):
                     px = 2 * c + dx
                     if canvas.pixels[py][px]:
                         pixel_val |= dot_map[(dx, dy)]
-                        if canvas.styles[py][px]:
-                            block_styles.append(canvas.styles[py][px])
+                        st = canvas.styles[py][px]
+                        if st is not None:
+                            block_styles.append(st)
             
             # Most common style
             if block_styles:
                 # Map StyleSpec to a hashable tuple representation
-                def style_key(s):
+                def style_key(s: StyleSpec) -> tuple[Any, ...]:
                     fg_val = (s.fg.r, s.fg.g, s.fg.b, s.fg.name) if s.fg else None
                     bg_val = (s.bg.r, s.bg.g, s.bg.b, s.bg.name) if s.bg else None
                     return (fg_val, bg_val, s.bold, s.dim, s.italic, s.underline, s.strikethrough)
                 
-                counts = {}
-                key_to_style = {}
+                counts: dict[tuple[Any, ...], int] = {}
+                key_to_style: dict[tuple[Any, ...], StyleSpec] = {}
                 for style in block_styles:
                     key = style_key(style)
                     counts[key] = counts.get(key, 0) + 1
                     key_to_style[key] = style
                 
-                best_key = max(counts, key=counts.get)
+                best_key = max(counts, key=lambda k: counts[k])
                 cell_style = key_to_style[best_key]
                 
             char = chr(0x2800 + pixel_val)

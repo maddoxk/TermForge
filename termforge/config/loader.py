@@ -1,13 +1,13 @@
 from __future__ import annotations
 import json
-import yaml
+import yaml  # type: ignore
 from typing import Any
 from termforge.core.types import RenderableSpec
 from termforge.config.types import LayoutConfig, ComponentConfig
 
 # Try importing tomllib (Python 3.11+)
 try:
-    import tomllib
+    import tomllib  # type: ignore
 except ImportError:
     # simple fallback mapping if tomllib not present
     tomllib = None
@@ -54,12 +54,12 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     }
     
     spec_type = config.spec_type.lower()
-    cls = spec_classes.get(spec_type)
+    cls: Any = spec_classes.get(spec_type)
     if not cls:
         raise ValueError(f"Unknown component type: {spec_type}")
         
     # Reconstruct from properties dictionary
-    spec = cls.from_dict(config.properties)
+    spec: Any = cls.from_dict(config.properties)
     
     # Process children recursively
     if spec_type in ("window", "border", "modal"):
@@ -68,7 +68,8 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     elif spec_type == "pane":
         spec.children = [map_component(c) for c in config.children]
         
-    return spec
+    from typing import cast
+    return cast(RenderableSpec, spec)
 
 def config_to_specs(config: LayoutConfig) -> list[RenderableSpec]:
     return [map_component(c) for c in config.components]

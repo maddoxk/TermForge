@@ -86,9 +86,9 @@ def render_line_chart(spec: ChartSpec, canvas: Canvas | BrailleCanvas) -> None:
         for i in range(len(points) - 1):
             x1, y1 = points[i]
             x2, y2 = points[i+1]
-            if is_braille:
+            if isinstance(canvas, BrailleCanvas):
                 draw_braille_line(canvas, x1, y1, x2, y2, style)
-            else:
+            elif isinstance(canvas, Canvas):
                 draw_line(canvas, x1, y1, x2, y2, "*", style)
 
 def render_bar_chart(spec: ChartSpec, canvas: Canvas) -> None:
@@ -133,11 +133,11 @@ def render_scatter_chart(spec: ChartSpec, canvas: Canvas | BrailleCanvas) -> Non
     for s in spec.series:
         style = get_style_for_token(s.color_token)
         for idx, val in enumerate(s.data):
-            if is_braille:
+            if isinstance(canvas, BrailleCanvas):
                 cx = scale_value(idx, x_min, x_max, 2 * canvas.width)
                 cy = scale_value(val, y_min, y_max, 4 * canvas.height)
                 set_braille_pixel(canvas, cx, cy, True, style)
-            else:
+            elif isinstance(canvas, Canvas):
                 cx = scale_value(idx, x_min, x_max, canvas.width)
                 cy = scale_value(val, y_min, y_max, canvas.height)
                 set_cell(canvas, cx, cy, "o", style)
