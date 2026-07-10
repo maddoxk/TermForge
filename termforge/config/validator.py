@@ -216,6 +216,26 @@ def validate_config(data: dict[str, Any], check_cyclic: bool = False, check_boun
                 for comp in components:
                     if isinstance(comp, dict):
                         errors.extend(check_layout_bounds(comp))
+                        
+    keybindings = data.get("keybindings")
+    if keybindings is not None:
+        if not isinstance(keybindings, list):
+            errors.append(f"[Line {line}] Error: 'keybindings' must be a list.")
+        else:
+            for idx, kb in enumerate(keybindings):
+                if not isinstance(kb, dict):
+                    errors.append(f"[Line {line}] Error: Keybinding entry at index {idx} must be a dictionary.")
+                else:
+                    kb_line = kb.get("__line__", line)
+                    if "key" not in kb:
+                        errors.append(f"[Line {kb_line}] Error: Keybinding entry is missing 'key' property.")
+                    elif not isinstance(kb["key"], str) or not kb["key"].strip():
+                        errors.append(f"[Line {kb_line}] Error: Keybinding 'key' property must be a non-empty string.")
+                        
+                    if "action" not in kb:
+                        errors.append(f"[Line {kb_line}] Error: Keybinding entry is missing 'action' property.")
+                    elif not isinstance(kb["action"], str) or not kb["action"].strip():
+                        errors.append(f"[Line {kb_line}] Error: Keybinding 'action' property must be a non-empty string.")
                     
     theme_name = data.get("theme")
     if theme_name:
