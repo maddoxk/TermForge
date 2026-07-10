@@ -50,3 +50,9 @@
 - **Completed:** 2026-07-10T08:05:00-06:00
 - **Goal:** Implement Retro Gruvbox/Nord theme palettes, component color configurations, marquee animations, pseudo-3D window shadows, figlet text banners, logo reveals, and resolve codebase typing debt.
 - **Result:** DONE — 2 new themes, custom banner and marquee support, drop shadows, logo reveal intros, resolved all mypy type validation errors, rebuilt static docs site, v1.3.0 compiled.
+
+### Iteration 5 — Developer Utility, Constraint solver & Input Routing ✅
+- **Started:** 2026-07-10T08:15:00-06:00
+- **Completed:** 2026-07-10T13:00:00-06:00
+- **Goal:** Implement CLI declarative config validator, core layout constraint solver checks, layout collapse logger diagnostics, and declarative keybinding input routing.
+- **Result:** DONE — 4 major developer features implemented, validator subcommand, layout constraint error handler, debug logging framework, and input router, v1.5.0 compiled.

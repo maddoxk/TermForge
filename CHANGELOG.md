@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.0
+- **Feature**: Added declarative input keybinding parser and matching router (`InputRouter`, `InputBindingSpec`).
+- **Feature**: Added declarative configuration validation/linter CLI subcommand (`termforge-validate`).
+- **Feature**: Added core layout constraint checking and exception resolver diagnostics (`LayoutConstraintError`).
+- **Feature**: Added diagnostic logging framework and collapse audits (`TERMFORGE_LOG_FILE`).
+
 ## v1.4.0
 - **Feature**: Added status tags rendering in window borders.
 - **Feature**: Added peak high/low highlighting options to sparkline charts.
