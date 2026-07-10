@@ -45,3 +45,30 @@ def test_render_logo():
     # Check that it contains ANSI color escapes and RESET
     assert "\033[" in lines[0]
     assert "\033[0m" in lines[0]
+
+def test_banner_spec_serialization():
+    from termforge.core.types import StyleSpec, ColorValue
+    from termforge.logos.types import BannerSpec
+    style = StyleSpec(bold=True, fg=ColorValue(255, 0, 0))
+    spec = BannerSpec(text="TERMFORGE", font="slant", style=style)
+    spec_dict = spec.to_dict()
+    assert spec_dict["spec_type"] == "banner"
+    assert spec_dict["text"] == "TERMFORGE"
+    assert spec_dict["font"] == "slant"
+    assert spec_dict["style"]["bold"] is True
+
+    spec_back = BannerSpec.from_dict(spec_dict)
+    assert spec_back.text == "TERMFORGE"
+    assert spec_back.font == "slant"
+    assert spec_back.style is not None
+    assert spec_back.style.bold is True
+
+def test_render_banner():
+    from termforge.core.types import StyleSpec
+    from termforge.logos.types import BannerSpec
+    from termforge.logos.banner import render_banner
+    style = StyleSpec(bold=True)
+    spec = BannerSpec(text="TF", font="small", style=style)
+    lines = render_banner(spec, depth=ColorDepth.TRUECOLOR)
+    assert len(lines) == 3
+    assert "\033[1m" in lines[0]
