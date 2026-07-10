@@ -130,7 +130,7 @@ def main() -> None:
     docs_dir = os.path.join(base_dir, "docs-site")
     os.makedirs(docs_dir, exist_ok=True)
     
-    # 1. Gather all golden files
+    # 1. Gather all golden files and code files
     goldens = {}
     for root, _, files in os.walk(stories_dir):
         for file in files:
@@ -144,9 +144,18 @@ def main() -> None:
                     with open(path, "r", encoding="utf-8") as f:
                         content = f.read()
                     
+                    py_path = os.path.join(root, name + ".py")
+                    py_code = ""
+                    if os.path.exists(py_path):
+                        with open(py_path, "r", encoding="utf-8") as f:
+                            py_code = f.read()
+                            
                     if module not in goldens:
                         goldens[module] = {}
-                    goldens[module][name] = ansi_to_html(content)
+                    goldens[module][name] = {
+                        "render": ansi_to_html(content),
+                        "code": py_code
+                    }
                     
     # 2. Write HTML template
     html_template = """<!DOCTYPE html>
@@ -154,20 +163,46 @@ def main() -> None:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TermForge Documentation Site</title>
+    <title>TermForge Showcase Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Theme variables mapping */
-            --bg-color: #0f111a;
-            --text-color: #e6edf3;
-            --sidebar-bg: rgba(20, 24, 38, 0.6);
-            --card-bg: rgba(30, 35, 54, 0.4);
-            --border-glow: #7f00ff;
-            --accent-glow: #00f0ff;
+            /* Catppuccin Mocha Theme (Default) */
+            --bg-color: #1e1e2e;
+            --text-color: #cdd6f4;
+            --sidebar-bg: rgba(30, 30, 46, 0.75);
+            --card-bg: rgba(49, 50, 68, 0.45);
+            --border-glow: #b4befe;
+            --accent-glow: #89b4fa;
             
-            /* ANSI Palette fallback mapping */
-            --ansi-black: #151820;
+            --ansi-black: #1e1e2e;
+            --ansi-red: #f38ba8;
+            --ansi-green: #a6e3a1;
+            --ansi-yellow: #f9e2af;
+            --ansi-blue: #89b4fa;
+            --ansi-magenta: #f5c2e7;
+            --ansi-cyan: #94e2d5;
+            --ansi-white: #cdd6f4;
+            
+            --ansi-bright_black: #585b70;
+            --ansi-bright_red: #f38ba8;
+            --ansi-bright_green: #a6e3a1;
+            --ansi-bright_yellow: #f9e2af;
+            --ansi-bright_blue: #89b4fa;
+            --ansi-bright_magenta: #f5c2e7;
+            --ansi-bright_cyan: #94e2d5;
+            --ansi-bright_white: #a6adc8;
+        }
+        
+        .theme-dracula {
+            --bg-color: #282a36;
+            --text-color: #f8f8f2;
+            --sidebar-bg: rgba(40, 42, 54, 0.8);
+            --card-bg: rgba(68, 71, 90, 0.5);
+            --border-glow: #bd93f9;
+            --accent-glow: #8be9fd;
+            
+            --ansi-black: #21222c;
             --ansi-red: #ff5555;
             --ansi-green: #50fa7b;
             --ansi-yellow: #f1fa8c;
@@ -185,38 +220,34 @@ def main() -> None:
             --ansi-bright_cyan: #a4ffff;
             --ansi-bright_white: #ffffff;
         }
-        
-        /* Dracula theme skin override */
-        .theme-dracula {
-            --bg-color: #282a36;
-            --text-color: #f8f8f2;
-            --sidebar-bg: rgba(40, 42, 54, 0.7);
-            --card-bg: rgba(68, 71, 90, 0.4);
-            --border-glow: #bd93f9;
-            --accent-glow: #8be9fd;
-        }
 
-        /* Tokyo Night theme skin override */
         .theme-tokyo {
             --bg-color: #1a1b26;
             --text-color: #a9b1d6;
-            --sidebar-bg: rgba(26, 27, 38, 0.7);
-            --card-bg: rgba(36, 40, 59, 0.4);
+            --sidebar-bg: rgba(26, 27, 38, 0.8);
+            --card-bg: rgba(36, 40, 59, 0.5);
             --border-glow: #bb9af7;
             --accent-glow: #7aa2f7;
+            
+            --ansi-black: #15161e;
+            --ansi-red: #f7768e;
+            --ansi-green: #9ece6a;
+            --ansi-yellow: #e0af68;
+            --ansi-blue: #7aa2f7;
+            --ansi-magenta: #bb9af7;
+            --ansi-cyan: #7dcfff;
+            --ansi-white: #a9b1d6;
+            
+            --ansi-bright_black: #414868;
+            --ansi-bright_red: #ff7a93;
+            --ansi-bright_green: #b9f27c;
+            --ansi-bright_yellow: #ff9e64;
+            --ansi-bright_blue: #7da6ff;
+            --ansi-bright_magenta: #bb9af7;
+            --ansi-bright_cyan: #0db9d7;
+            --ansi-bright_white: #c0caf5;
         }
 
-        /* Catppuccin Mocha theme skin override */
-        .theme-catppuccin {
-            --bg-color: #1e1e2e;
-            --text-color: #cdd6f4;
-            --sidebar-bg: rgba(30, 30, 46, 0.7);
-            --card-bg: rgba(49, 50, 68, 0.4);
-            --border-glow: #b4befe;
-            --accent-glow: #89b4fa;
-        }
-
-        /* High Contrast theme skin override */
         .theme-contrast {
             --bg-color: #000000;
             --text-color: #ffffff;
@@ -224,6 +255,24 @@ def main() -> None:
             --card-bg: #222222;
             --border-glow: #ffffff;
             --accent-glow: #00ffff;
+            
+            --ansi-black: #000000;
+            --ansi-red: #ffffff;
+            --ansi-green: #ffffff;
+            --ansi-yellow: #ffffff;
+            --ansi-blue: #ffffff;
+            --ansi-magenta: #ffffff;
+            --ansi-cyan: #ffffff;
+            --ansi-white: #ffffff;
+            
+            --ansi-bright_black: #555555;
+            --ansi-bright_red: #ffffff;
+            --ansi-bright_green: #ffffff;
+            --ansi-bright_yellow: #ffffff;
+            --ansi-bright_blue: #ffffff;
+            --ansi-bright_magenta: #ffffff;
+            --ansi-bright_cyan: #ffffff;
+            --ansi-bright_white: #ffffff;
         }
 
         * {
@@ -242,13 +291,12 @@ def main() -> None:
             transition: all 0.3s ease;
         }
         
-        /* Neon Blur Background Highlights */
         .glow-sphere {
             position: absolute;
             border-radius: 50%;
             filter: blur(120px);
             z-index: -1;
-            opacity: 0.35;
+            opacity: 0.25;
         }
         .sphere-1 {
             width: 400px;
@@ -265,7 +313,6 @@ def main() -> None:
             left: -50px;
         }
         
-        /* Layout */
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -332,7 +379,6 @@ def main() -> None:
             padding-left: 12px;
         }
         
-        /* Main Panel */
         .main-content {
             flex-grow: 1;
             padding: 50px 60px;
@@ -342,7 +388,6 @@ def main() -> None:
             gap: 40px;
         }
         
-        /* Header switcher card */
         .controls-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -376,7 +421,6 @@ def main() -> None:
             cursor: pointer;
         }
         
-        /* Terminal Showcase Emulator */
         .terminal-container {
             background: rgba(10, 11, 16, 0.95);
             border: 1.5px solid rgba(255, 255, 255, 0.08);
@@ -417,6 +461,32 @@ def main() -> None:
             opacity: 0.5;
         }
         
+        .tab-bar {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            color: #ffffff;
+            border-bottom: 2px solid var(--border-glow);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
         .terminal-body {
             padding: 24px;
             font-family: 'Fira Code', monospace;
@@ -425,13 +495,13 @@ def main() -> None:
             white-space: pre;
             overflow-x: auto;
             color: var(--ansi-white);
+            min-height: 380px;
         }
         
-        /* Floating animations */
         @keyframes pulse-glow {
-            0% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(127, 0, 255, 0.1); }
-            50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(0, 240, 255, 0.2); }
-            100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(127, 0, 255, 0.1); }
+            0% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(127, 0, 255, 0.15); }
+            50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(0, 240, 255, 0.25); }
+            100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(127, 0, 255, 0.15); }
         }
         
         .terminal-container {
@@ -445,12 +515,12 @@ def main() -> None:
     
     <div class="sidebar">
         <div class="logo-container">
-            <h1>TermForge v1.0</h1>
-            <p style="font-size: 12px; opacity: 0.5; margin-top: 5px;">TUI Design System</p>
+            <h1>TermForge</h1>
+            <p style="font-size: 12px; opacity: 0.5; margin-top: 5px;">Universal CLI Showcase</p>
         </div>
         
         <div>
-            <div class="menu-title">Modules</div>
+            <div class="menu-title">Stories</div>
             <ul class="menu-list" id="component-menu">
                 <!-- Javascript populated -->
             </ul>
@@ -460,11 +530,11 @@ def main() -> None:
     <div class="main-content">
         <div class="controls-card">
             <div class="controls-title">
-                <h2 id="active-title">Component Showcase</h2>
-                <p style="font-size: 13px; opacity: 0.6; margin-top: 5px;">Interactive golden file visualization</p>
+                <h2 id="active-title">Story Showcase</h2>
+                <p style="font-size: 13px; opacity: 0.6; margin-top: 5px;">Interactive TermForge rendering gallery</p>
             </div>
             <div class="theme-selector">
-                <label for="theme-skin" style="font-size: 14px; font-weight: 600;">Theme Skin:</label>
+                <label for="theme-skin" style="font-size: 14px; font-weight: 600;">Theme skin:</label>
                 <select id="theme-skin" onchange="changeThemeSkin(this.value)">
                     <option value="catppuccin">Catppuccin Mocha</option>
                     <option value="dracula">Dracula</option>
@@ -481,10 +551,19 @@ def main() -> None:
                     <div class="dot dot-yellow"></div>
                     <div class="dot dot-green"></div>
                 </div>
-                <div class="terminal-title" id="term-filename">component.py</div>
+                <div class="terminal-title" id="term-filename">story.py</div>
                 <div></div>
             </div>
-            <div class="terminal-body" id="terminal-screen">
+            
+            <div class="tab-bar">
+                <button id="tab-preview" class="tab-button active" onclick="showTab('preview')">Terminal Preview</button>
+                <button id="tab-code" class="tab-button" onclick="showTab('code')">Python Source Code</button>
+            </div>
+            
+            <div class="terminal-body" id="terminal-screen-preview" style="display: block;">
+                <!-- Javascript populated -->
+            </div>
+            <div class="terminal-body" id="terminal-screen-code" style="display: none; background: #111217; color: #a9b1d6;">
                 <!-- Javascript populated -->
             </div>
         </div>
@@ -492,6 +571,9 @@ def main() -> None:
     
     <script>
         const storiesData = %STORIES_DATA%;
+        let currentMod = "";
+        let currentComp = "";
+        let currentTab = "preview";
         
         function populateMenu() {
             const menu = document.getElementById("component-menu");
@@ -524,19 +606,44 @@ def main() -> None:
         }
         
         function selectStory(mod, comp) {
-            // Remove active classes
+            currentMod = mod;
+            currentComp = comp;
+            
             document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
             
-            // Set active class
             const item = document.getElementById("item-" + mod + "-" + comp);
             if (item) item.classList.add("active");
             
-            // Update title & screen
             document.getElementById("active-title").textContent = mod.toUpperCase() + " : " + comp.toUpperCase();
             document.getElementById("term-filename").textContent = comp + ".py";
             
-            const screen = document.getElementById("terminal-screen");
-            screen.innerHTML = storiesData[mod][comp];
+            const data = storiesData[mod][comp];
+            
+            // Render view
+            document.getElementById("terminal-screen-preview").innerHTML = data.render;
+            
+            // Code view
+            const codeEscaped = data.code
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+            document.getElementById("terminal-screen-code").innerHTML = codeEscaped;
+        }
+        
+        function showTab(tab) {
+            currentTab = tab;
+            document.getElementById("tab-preview").classList.remove("active");
+            document.getElementById("tab-code").classList.remove("active");
+            
+            if (tab === 'preview') {
+                document.getElementById("tab-preview").classList.add("active");
+                document.getElementById("terminal-screen-preview").style.display = "block";
+                document.getElementById("terminal-screen-code").style.display = "none";
+            } else {
+                document.getElementById("tab-code").classList.add("active");
+                document.getElementById("terminal-screen-preview").style.display = "none";
+                document.getElementById("terminal-screen-code").style.display = "block";
+            }
         }
         
         function changeThemeSkin(theme) {
