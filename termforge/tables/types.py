@@ -10,13 +10,17 @@ class ColumnSpec:
     width: int | None = None
     align: TextAlign = TextAlign.LEFT
     style: StyleSpec | None = None
+    padding_left: int = 0
+    padding_right: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "title": self.title,
             "width": self.width,
             "align": self.align.value,
-            "style": self.style.to_dict() if self.style else None
+            "style": self.style.to_dict() if self.style else None,
+            "padding_left": self.padding_left,
+            "padding_right": self.padding_right
         }
 
     @classmethod
@@ -25,7 +29,9 @@ class ColumnSpec:
             title=d["title"],
             width=d.get("width"),
             align=TextAlign(d.get("align", "left")),
-            style=StyleSpec.from_dict(d["style"]) if d.get("style") else None
+            style=StyleSpec.from_dict(d["style"]) if d.get("style") else None,
+            padding_left=d.get("padding_left", 0),
+            padding_right=d.get("padding_right", 0)
         )
 
 @dataclass
