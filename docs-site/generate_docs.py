@@ -3,127 +3,6 @@ import os
 import re
 import json
 
-def ansi_to_html(ansi_str: str) -> str:
-    pattern = re.compile(r'\033\[([0-9;]*)m')
-    parts = pattern.split(ansi_str)
-    
-    html = []
-    active_span = False
-    
-    fg = None
-    bg = None
-    bold = False
-    dim = False
-    italic = False
-    underline = False
-    strikethrough = False
-    
-    def get_style_str() -> str:
-        styles = []
-        if fg:
-            styles.append(f"color: {fg}")
-        if bg:
-            styles.append(f"background-color: {bg}")
-        if bold:
-            styles.append("font-weight: bold")
-        if dim:
-            styles.append("opacity: 0.6")
-        if italic:
-            styles.append("font-style: italic")
-        if underline or strikethrough:
-            dec = []
-            if underline: dec.append("underline")
-            if strikethrough: dec.append("line-through")
-            styles.append(f"text-decoration: {' '.join(dec)}")
-        return "; ".join(styles)
-
-    for i, part in enumerate(parts):
-        if i % 2 == 0:
-            if part:
-                escaped = part.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                if active_span:
-                    html.append(f"</span>")
-                style_str = get_style_str()
-                if style_str:
-                    html.append(f'<span style="{style_str}">{escaped}')
-                    active_span = True
-                else:
-                    html.append(escaped)
-                    active_span = False
-        else:
-            codes = []
-            if part:
-                try:
-                    codes = [int(c) for c in part.split(";") if c]
-                except ValueError:
-                    pass
-            if not codes:
-                fg, bg = None, None
-                bold, dim, italic, underline, strikethrough = False, False, False, False, False
-                continue
-                
-            idx = 0
-            while idx < len(codes):
-                code = codes[idx]
-                if code == 0:
-                    fg, bg = None, None
-                    bold, dim, italic, underline, strikethrough = False, False, False, False, False
-                elif code == 1:
-                    bold = True
-                elif code == 2:
-                    dim = True
-                elif code == 3:
-                    italic = True
-                elif code == 4:
-                    underline = True
-                elif code == 9:
-                    strikethrough = True
-                elif code == 22:
-                    bold, dim = False, False
-                elif code == 23:
-                    italic = False
-                elif code == 24:
-                    underline = False
-                elif code == 29:
-                    strikethrough = False
-                elif 30 <= code <= 37:
-                    colors = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-                    fg = f"var(--ansi-{colors[code - 30]})"
-                elif 90 <= code <= 97:
-                    colors = ["bright_black", "bright_red", "bright_green", "bright_yellow", "bright_blue", "bright_magenta", "bright_cyan", "bright_white"]
-                    fg = f"var(--ansi-{colors[code - 90]})"
-                elif code == 38:
-                    if idx + 1 < len(codes):
-                        mode = codes[idx+1]
-                        if mode == 5:
-                            idx += 2
-                        elif mode == 2:
-                            if idx + 4 < len(codes):
-                                r, g, b = codes[idx+2], codes[idx+3], codes[idx+4]
-                                fg = f"rgb({r},{g},{b})"
-                                idx += 4
-                elif 40 <= code <= 47:
-                    colors = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-                    bg = f"var(--ansi-{colors[code - 40]})"
-                elif 100 <= code <= 107:
-                    colors = ["bright_black", "bright_red", "bright_green", "bright_yellow", "bright_blue", "bright_magenta", "bright_cyan", "bright_white"]
-                    bg = f"var(--ansi-{colors[code - 100]})"
-                elif code == 48:
-                    if idx + 1 < len(codes):
-                        mode = codes[idx+1]
-                        if mode == 5:
-                            idx += 2
-                        elif mode == 2:
-                            if idx + 4 < len(codes):
-                                r, g, b = codes[idx+2], codes[idx+3], codes[idx+4]
-                                bg = f"rgb({r},{g},{b})"
-                                idx += 4
-                idx += 1
-                
-    if active_span:
-        html.append("</span>")
-    return "".join(html)
-
 def main() -> None:
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     stories_dir = os.path.join(base_dir, "stories")
@@ -153,7 +32,7 @@ def main() -> None:
                     if module not in goldens:
                         goldens[module] = {}
                     goldens[module][name] = {
-                        "render": ansi_to_html(content),
+                        "raw_ansi": content,
                         "code": py_code
                     }
                     
@@ -163,8 +42,10 @@ def main() -> None:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TermForge Showcase Documentation</title>
+    <title>TermForge Interactive Showcase Documentation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
     <style>
         :root {
             /* Catppuccin Mocha Theme (Default) */
@@ -174,24 +55,6 @@ def main() -> None:
             --card-bg: rgba(49, 50, 68, 0.45);
             --border-glow: #b4befe;
             --accent-glow: #89b4fa;
-            
-            --ansi-black: #1e1e2e;
-            --ansi-red: #f38ba8;
-            --ansi-green: #a6e3a1;
-            --ansi-yellow: #f9e2af;
-            --ansi-blue: #89b4fa;
-            --ansi-magenta: #f5c2e7;
-            --ansi-cyan: #94e2d5;
-            --ansi-white: #cdd6f4;
-            
-            --ansi-bright_black: #585b70;
-            --ansi-bright_red: #f38ba8;
-            --ansi-bright_green: #a6e3a1;
-            --ansi-bright_yellow: #f9e2af;
-            --ansi-bright_blue: #89b4fa;
-            --ansi-bright_magenta: #f5c2e7;
-            --ansi-bright_cyan: #94e2d5;
-            --ansi-bright_white: #a6adc8;
         }
         
         .theme-dracula {
@@ -201,24 +64,6 @@ def main() -> None:
             --card-bg: rgba(68, 71, 90, 0.5);
             --border-glow: #bd93f9;
             --accent-glow: #8be9fd;
-            
-            --ansi-black: #21222c;
-            --ansi-red: #ff5555;
-            --ansi-green: #50fa7b;
-            --ansi-yellow: #f1fa8c;
-            --ansi-blue: #bd93f9;
-            --ansi-magenta: #ff79c6;
-            --ansi-cyan: #8be9fd;
-            --ansi-white: #f8f8f2;
-            
-            --ansi-bright_black: #6272a4;
-            --ansi-bright_red: #ff6e6e;
-            --ansi-bright_green: #69ff94;
-            --ansi-bright_yellow: #ffffa5;
-            --ansi-bright_blue: #d6acff;
-            --ansi-bright_magenta: #ff92df;
-            --ansi-bright_cyan: #a4ffff;
-            --ansi-bright_white: #ffffff;
         }
 
         .theme-tokyo {
@@ -228,24 +73,6 @@ def main() -> None:
             --card-bg: rgba(36, 40, 59, 0.5);
             --border-glow: #bb9af7;
             --accent-glow: #7aa2f7;
-            
-            --ansi-black: #15161e;
-            --ansi-red: #f7768e;
-            --ansi-green: #9ece6a;
-            --ansi-yellow: #e0af68;
-            --ansi-blue: #7aa2f7;
-            --ansi-magenta: #bb9af7;
-            --ansi-cyan: #7dcfff;
-            --ansi-white: #a9b1d6;
-            
-            --ansi-bright_black: #414868;
-            --ansi-bright_red: #ff7a93;
-            --ansi-bright_green: #b9f27c;
-            --ansi-bright_yellow: #ff9e64;
-            --ansi-bright_blue: #7da6ff;
-            --ansi-bright_magenta: #bb9af7;
-            --ansi-bright_cyan: #0db9d7;
-            --ansi-bright_white: #c0caf5;
         }
 
         .theme-contrast {
@@ -255,24 +82,6 @@ def main() -> None:
             --card-bg: #222222;
             --border-glow: #ffffff;
             --accent-glow: #00ffff;
-            
-            --ansi-black: #000000;
-            --ansi-red: #ffffff;
-            --ansi-green: #ffffff;
-            --ansi-yellow: #ffffff;
-            --ansi-blue: #ffffff;
-            --ansi-magenta: #ffffff;
-            --ansi-cyan: #ffffff;
-            --ansi-white: #ffffff;
-            
-            --ansi-bright_black: #555555;
-            --ansi-bright_red: #ffffff;
-            --ansi-bright_green: #ffffff;
-            --ansi-bright_yellow: #ffffff;
-            --ansi-bright_blue: #ffffff;
-            --ansi-bright_magenta: #ffffff;
-            --ansi-bright_cyan: #ffffff;
-            --ansi-bright_white: #ffffff;
         }
 
         * {
@@ -314,7 +123,7 @@ def main() -> None:
         }
         
         .sidebar {
-            width: 280px;
+            width: 300px;
             background: var(--sidebar-bg);
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -343,14 +152,77 @@ def main() -> None:
             text-transform: uppercase;
             letter-spacing: 1.5px;
             opacity: 0.4;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
-        .menu-list {
-            list-style: none;
+        .sidebar-scroller {
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
+            padding-right: 5px;
+        }
+
+        .sidebar-scroller::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-scroller::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-scroller::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .sidebar-scroller::-webkit-scrollbar-thumb:hover {
+            background: var(--border-glow);
+        }
+
+        .module-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .module-header {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .module-header:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .module-header.expanded .chevron {
+            transform: rotate(180deg);
+        }
+        
+        .chevron {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+            opacity: 0.5;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding-left: 10px;
+            margin-top: 5px;
         }
         
         .menu-item button {
@@ -359,24 +231,26 @@ def main() -> None:
             border: none;
             color: var(--text-color);
             text-align: left;
-            padding: 10px 15px;
-            font-size: 14px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 500;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
+            opacity: 0.7;
         }
         
         .menu-item button:hover, .menu-item.active button {
             background: rgba(255, 255, 255, 0.05);
             box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.02);
             color: #ffffff;
+            opacity: 1;
         }
         
         .menu-item.active button {
-            border-left: 3px solid var(--border-glow);
-            border-radius: 0 8px 8px 0;
-            padding-left: 12px;
+            border-left: 2px solid var(--border-glow);
+            border-radius: 0 6px 6px 0;
+            padding-left: 10px;
         }
         
         .main-content {
@@ -488,14 +362,31 @@ def main() -> None:
         }
         
         .terminal-body {
+            padding: 16px;
+            min-height: 420px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #terminal-screen-code {
             padding: 24px;
             font-family: 'Fira Code', monospace;
             font-size: 15px;
             line-height: 1.45;
             white-space: pre;
             overflow-x: auto;
-            color: var(--ansi-white);
-            min-height: 380px;
+            color: #a9b1d6;
+            background: #111217;
+            min-height: 420px;
+        }
+
+        /* Customize xterm scrollbar */
+        .xterm-viewport::-webkit-scrollbar {
+            width: 8px;
+        }
+        .xterm-viewport::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
         }
         
         @keyframes pulse-glow {
@@ -519,11 +410,11 @@ def main() -> None:
             <p style="font-size: 12px; opacity: 0.5; margin-top: 5px;">Universal CLI Showcase</p>
         </div>
         
-        <div>
+        <div style="display: flex; flex-direction: column; height: 100%;">
             <div class="menu-title">Stories</div>
-            <ul class="menu-list" id="component-menu">
-                <!-- Javascript populated -->
-            </ul>
+            <div class="sidebar-scroller" id="sidebar-scroller">
+                <!-- Javascript populated grouped modules -->
+            </div>
         </div>
     </div>
     
@@ -561,10 +452,10 @@ def main() -> None:
             </div>
             
             <div class="terminal-body" id="terminal-screen-preview" style="display: block;">
-                <!-- Javascript populated -->
+                <!-- xterm.js mounts here -->
             </div>
             <div class="terminal-body" id="terminal-screen-code" style="display: none; background: #111217; color: #a9b1d6;">
-                <!-- Javascript populated -->
+                <!-- code text loaded here -->
             </div>
         </div>
     </div>
@@ -575,13 +466,251 @@ def main() -> None:
         let currentComp = "";
         let currentTab = "preview";
         
+        let term;
+        let currentLine = "";
+        let inRepl = false;
+        
+        const xtermThemes = {
+            catppuccin: {
+                background: '#1e1e2e',
+                foreground: '#cdd6f4',
+                cursor: '#b4befe',
+                black: '#11111b',
+                red: '#f38ba8',
+                green: '#a6e3a1',
+                yellow: '#f9e2af',
+                blue: '#89b4fa',
+                magenta: '#f5c2e7',
+                cyan: '#94e2d5',
+                white: '#cdd6f4',
+                brightBlack: '#585b70',
+                brightRed: '#f38ba8',
+                brightGreen: '#a6e3a1',
+                brightYellow: '#f9e2af',
+                brightBlue: '#89b4fa',
+                brightMagenta: '#f5c2e7',
+                brightCyan: '#94e2d5',
+                brightWhite: '#a6adc8'
+            },
+            dracula: {
+                background: '#282a36',
+                foreground: '#f8f8f2',
+                cursor: '#bd93f9',
+                black: '#21222c',
+                red: '#ff5555',
+                green: '#50fa7b',
+                yellow: '#f1fa8c',
+                blue: '#bd93f9',
+                magenta: '#ff79c6',
+                cyan: '#8be9fd',
+                white: '#f8f8f2',
+                brightBlack: '#6272a4',
+                brightRed: '#ff6e6e',
+                brightGreen: '#69ff94',
+                brightYellow: '#ffffa5',
+                brightBlue: '#d6acff',
+                brightMagenta: '#ff92df',
+                brightCyan: '#a4ffff',
+                brightWhite: '#ffffff'
+            },
+            tokyo: {
+                background: '#1a1b26',
+                foreground: '#a9b1d6',
+                cursor: '#bb9af7',
+                black: '#15161e',
+                red: '#f7768e',
+                green: '#9ece6a',
+                yellow: '#e0af68',
+                blue: '#7aa2f7',
+                magenta: '#bb9af7',
+                cyan: '#7dcfff',
+                white: '#a9b1d6',
+                brightBlack: '#414868',
+                brightRed: '#ff7a93',
+                brightGreen: '#b9f27c',
+                brightYellow: '#ff9e64',
+                brightBlue: '#7da6ff',
+                brightMagenta: '#bb9af7',
+                brightCyan: '#0db9d7',
+                brightWhite: '#c0caf5'
+            },
+            contrast: {
+                background: '#000000',
+                foreground: '#ffffff',
+                cursor: '#ffffff',
+                black: '#000000',
+                red: '#ffffff',
+                green: '#ffffff',
+                yellow: '#ffffff',
+                blue: '#ffffff',
+                magenta: '#ffffff',
+                cyan: '#ffffff',
+                white: '#ffffff',
+                brightBlack: '#555555',
+                brightRed: '#ffffff',
+                brightGreen: '#ffffff',
+                brightYellow: '#ffffff',
+                brightBlue: '#ffffff',
+                brightMagenta: '#ffffff',
+                brightCyan: '#ffffff',
+                brightWhite: '#ffffff'
+            }
+        };
+
+        function initTerminal() {
+            term = new Terminal({
+                fontFamily: '"Fira Code", monospace',
+                fontSize: 14,
+                lineHeight: 1.25,
+                cols: 80,
+                rows: 24,
+                theme: xtermThemes.catppuccin,
+                cursorBlink: true,
+                cursorStyle: 'block'
+            });
+            
+            term.open(document.getElementById('terminal-screen-preview'));
+            
+            term.writeln("\x1b[1;36mWelcome to TermForge Interactive Documentation Shell!\x1b[0m");
+            term.writeln("Type \x1b[33mhelp\x1b[0m to list available commands.");
+            term.writeln("");
+            prompt();
+            
+            term.onData(data => {
+                const code = data.charCodeAt(0);
+                if (code === 13) { // Enter
+                    term.write("\r\n");
+                    handleCommand(currentLine);
+                    currentLine = "";
+                } else if (code === 127) { // Backspace
+                    if (currentLine.length > 0) {
+                        currentLine = currentLine.slice(0, -1);
+                        term.write("\b \b");
+                    }
+                } else if (code < 32) {
+                    // Ignore other control codes
+                } else {
+                    currentLine += data;
+                    term.write(data);
+                }
+            });
+        }
+
+        function prompt() {
+            if (inRepl) {
+                term.write("\x1b[32m>>> \x1b[0m");
+            } else {
+                term.write("\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ ");
+            }
+        }
+
+        function handleCommand(line) {
+            const cmd = line.trim();
+            if (!cmd) {
+                prompt();
+                return;
+            }
+            
+            if (inRepl) {
+                if (cmd === "exit()" || cmd === "quit" || cmd === "exit") {
+                    inRepl = false;
+                    term.writeln("Exiting TermForge interactive REPL.");
+                    prompt();
+                    return;
+                }
+                
+                if (cmd.startsWith("from termforge")) {
+                    term.writeln("");
+                } else if (cmd.includes(".render()")) {
+                    term.writeln("\x1b[33m[Simulated Rendering Output]\x1b[0m");
+                    term.writeln("┌──────────────────────────┐");
+                    term.writeln("│   Hello from TermForge   │");
+                    term.writeln("└──────────────────────────┘");
+                } else {
+                    term.writeln("Python 3.12 (mock): executed successfully.");
+                }
+                prompt();
+                return;
+            }
+            
+            const parts = cmd.split(" ");
+            const mainCmd = parts[0];
+            
+            if (mainCmd === "help") {
+                term.writeln("Available commands:");
+                term.writeln("  \x1b[33mlist\x1b[0m                    List all available stories");
+                term.writeln("  \x1b[33mrun <story>\x1b[0m             Run a story (e.g. run text/markup_demo)");
+                term.writeln("  \x1b[33mtermforge-play\x1b[0m          Boot interactive python REPL");
+                term.writeln("  \x1b[33mtermforge-layout\x1b[0m        Run layout visualizer simulation");
+                term.writeln("  \x1b[33mclear\x1b[0m                   Clear terminal screen");
+            } else if (mainCmd === "clear") {
+                term.clear();
+                term.write("\x1b[H"); // Reset cursor home
+            } else if (mainCmd === "list") {
+                term.writeln("Stories:");
+                for (const mod in storiesData) {
+                    for (const comp in storiesData[mod]) {
+                        term.writeln(`  - ${mod}/${comp}`);
+                    }
+                }
+            } else if (mainCmd === "run") {
+                const target = parts[1];
+                if (!target) {
+                    term.writeln("Usage: run <module/component>");
+                } else {
+                    const [mod, comp] = target.split("/");
+                    if (storiesData[mod] && storiesData[mod][comp]) {
+                        selectStory(mod, comp);
+                    } else {
+                        term.writeln(`Error: Story not found: ${target}`);
+                    }
+                }
+            } else if (mainCmd === "termforge-play") {
+                inRepl = true;
+                term.writeln("TermForge Interactive Playground REPL (mock)");
+                term.writeln("Type exit() to return to shell.");
+            } else if (mainCmd === "termforge-layout") {
+                term.writeln("TermForge Layout Visualizer simulation:");
+                term.writeln("┌───────────────────────────────────┐");
+                term.writeln("│  [Window] width=60 height=10      │");
+                term.writeln("│  - Box constraints: FIXED         │");
+                term.writeln("└───────────────────────────────────┘");
+            } else {
+                term.writeln(`bash: ${mainCmd}: command not found`);
+            }
+            
+            prompt();
+        }
+
         function populateMenu() {
-            const menu = document.getElementById("component-menu");
-            menu.innerHTML = "";
+            const scroller = document.getElementById("sidebar-scroller");
+            scroller.innerHTML = "";
             
             let firstKey = null;
             
             for (const mod in storiesData) {
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "module-group";
+                
+                const header = document.createElement("button");
+                header.className = "module-header";
+                header.id = "header-" + mod;
+                header.onclick = () => toggleModule(mod);
+                
+                const titleSpan = document.createElement("span");
+                titleSpan.textContent = mod;
+                
+                const chevronSpan = document.createElement("span");
+                chevronSpan.className = "chevron";
+                chevronSpan.textContent = "▼";
+                
+                header.appendChild(titleSpan);
+                header.appendChild(chevronSpan);
+                
+                const list = document.createElement("ul");
+                list.className = "menu-list";
+                list.id = "group-" + mod;
+                
                 for (const comp in storiesData[mod]) {
                     const key = mod + "/" + comp;
                     if (!firstKey) firstKey = key;
@@ -591,36 +720,68 @@ def main() -> None:
                     li.id = "item-" + mod + "-" + comp;
                     
                     const btn = document.createElement("button");
-                    btn.textContent = mod + " : " + comp;
+                    btn.textContent = comp;
                     btn.onclick = () => selectStory(mod, comp);
                     
                     li.appendChild(btn);
-                    menu.appendChild(li);
+                    list.appendChild(li);
                 }
+                
+                groupDiv.appendChild(header);
+                groupDiv.appendChild(list);
+                scroller.appendChild(groupDiv);
             }
             
             if (firstKey) {
                 const [mod, comp] = firstKey.split("/");
+                // Open first module group automatically
+                toggleModule(mod);
                 selectStory(mod, comp);
             }
         }
         
+        function toggleModule(mod) {
+            const header = document.getElementById("header-" + mod);
+            const list = document.getElementById("group-" + mod);
+            
+            if (list.style.display === "flex") {
+                list.style.display = "none";
+                header.classList.remove("expanded");
+            } else {
+                list.style.display = "flex";
+                header.classList.add("expanded");
+            }
+        }
+
         function selectStory(mod, comp) {
             currentMod = mod;
             currentComp = comp;
             
+            // Remove active state
             document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
             
             const item = document.getElementById("item-" + mod + "-" + comp);
-            if (item) item.classList.add("active");
+            if (item) {
+                item.classList.add("active");
+                // Ensure parent list is displayed
+                const list = document.getElementById("group-" + mod);
+                if (list && list.style.display !== "flex") {
+                    toggleModule(mod);
+                }
+            }
             
             document.getElementById("active-title").textContent = mod.toUpperCase() + " : " + comp.toUpperCase();
             document.getElementById("term-filename").textContent = comp + ".py";
             
             const data = storiesData[mod][comp];
             
-            // Render view
-            document.getElementById("terminal-screen-preview").innerHTML = data.render;
+            // Clear and render raw ANSI in terminal emulator
+            term.clear();
+            term.write("\x1b[H"); // Reset cursor home
+            term.writeln(`\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ run ${mod}/${comp}`);
+            term.write(data.raw_ansi.replace(/\n/g, "\r\n"));
+            term.writeln("");
+            prompt();
             
             // Code view
             const codeEscaped = data.code
@@ -648,9 +809,15 @@ def main() -> None:
         
         function changeThemeSkin(theme) {
             document.body.className = "theme-" + theme;
+            if (term && xtermThemes[theme]) {
+                term.options.theme = xtermThemes[theme];
+            }
         }
         
-        window.onload = populateMenu;
+        window.onload = () => {
+            initTerminal();
+            populateMenu();
+        };
     </script>
 </body>
 </html>
