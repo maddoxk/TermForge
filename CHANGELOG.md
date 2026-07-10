@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.8.0
+- **Feature**: Added color depth simulation option to layout visualizer (`termforge-layout --color-depth`).
+- **Feature**: Added interactive playground REPL shell (`termforge-play`).
+- **Fix**: Resolved and processed all open backlog issues on GitHub.
+
 ## v1.7.0
 - **Feature**: Added layout template scaffolding CLI subcommand (`termforge-init`).
 - **Feature**: Added theme WCAG contrast ratio verification CLI subcommand (`termforge-contrast`).
