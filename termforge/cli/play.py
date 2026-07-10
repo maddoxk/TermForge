@@ -19,7 +19,8 @@ def main() -> None:
     }
     
     import code
-    sys.exit(code.interact(banner="--- TermForge Interactive Playground REPL ---", local=local_vars))
+    code.interact(banner="--- TermForge Interactive Playground REPL ---", local=local_vars)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()

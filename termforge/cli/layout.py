@@ -182,7 +182,7 @@ def render_once(path: str, strict: bool, color_depth: str | None = None) -> bool
                     val = getattr(s, prop_name, None)
                     if val:
                         from termforge.core.color import resolve_color
-                        from termforge.theme.contrast import resolve_token
+                        from termforge.core.theme import resolve_token
                         try:
                             token_path = f"colors.{val}" if not val.startswith("colors.") else val
                             color_val = resolve_token(theme_tokens, token_path)
