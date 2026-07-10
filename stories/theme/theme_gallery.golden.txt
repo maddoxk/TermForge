@@ -103,3 +103,55 @@ Description: High contrast accessible black-and-white theme.
 
 ==================================================
 
+=== Theme Preview: Gruvbox ===
+Author:      morhetz
+Description: Retro groove color scheme for Vim and terminal.
+
+--- Color Palette ---
+  [38;2;250;189;47m[48;2;250;189;47m    [0m  primary      #fabd2f (RGB: 250,189,47)
+  [38;2;142;192;124m[48;2;142;192;124m    [0m  secondary    #8ec07c (RGB: 142,192,124)
+  [38;2;40;40;40m[48;2;40;40;40m    [0m  surface      #282828 (RGB: 40,40,40)
+  [38;2;235;219;178m[48;2;235;219;178m    [0m  text         #ebdbb2 (RGB: 235,219,178)
+  [38;2;251;73;52m[48;2;251;73;52m    [0m  error        #fb4934 (RGB: 251,73,52)
+  [38;2;250;189;47m[48;2;250;189;47m    [0m  warning      #fabd2f (RGB: 250,189,47)
+  [38;2;184;187;38m[48;2;184;187;38m    [0m  success      #b8bb26 (RGB: 184,187,38)
+  [38;2;146;131;116m[48;2;146;131;116m    [0m  border       #928374 (RGB: 146,131,116)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 10.75 │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 8.69  │ [32mPASS[0m │ [32mPASS[0m
+  secondary    │ 7.01  │ [32mPASS[0m │ [32mPASS[0m
+  success      │ 7.14  │ [32mPASS[0m │ [32mPASS[0m
+  error        │ 4.29  │ [31mFAIL[0m │ [31mFAIL[0m
+  warning      │ 8.69  │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+
+=== Theme Preview: Nord ===
+Author:      arcticicestudio
+Description: An arctic, north-bluish clean dark theme.
+
+--- Color Palette ---
+  [38;2;136;192;208m[48;2;136;192;208m    [0m  primary      #88c0d0 (RGB: 136,192,208)
+  [38;2;94;129;172m[48;2;94;129;172m    [0m  secondary    #5e81ac (RGB: 94,129,172)
+  [38;2;46;52;64m[48;2;46;52;64m    [0m  surface      #2e3440 (RGB: 46,52,64)
+  [38;2;229;233;240m[48;2;229;233;240m    [0m  text         #e5e9f0 (RGB: 229,233,240)
+  [38;2;191;97;106m[48;2;191;97;106m    [0m  error        #bf616a (RGB: 191,97,106)
+  [38;2;235;203;139m[48;2;235;203;139m    [0m  warning      #ebcb8b (RGB: 235,203,139)
+  [38;2;163;190;140m[48;2;163;190;140m    [0m  success      #a3be8c (RGB: 163,190,140)
+  [38;2;76;86;106m[48;2;76;86;106m    [0m  border       #4c566a (RGB: 76,86,106)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 10.26 │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 6.24  │ [32mPASS[0m │ [31mFAIL[0m
+  secondary    │ 3.1   │ [31mFAIL[0m │ [31mFAIL[0m
+  success      │ 6.13  │ [32mPASS[0m │ [31mFAIL[0m
+  error        │ 3.05  │ [31mFAIL[0m │ [31mFAIL[0m
+  warning      │ 8.0   │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+

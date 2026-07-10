@@ -23,16 +23,29 @@ def render_sparkline(spec: ChartSpec, theme: ThemeTokens | None = None, depth: C
             from termforge.core.theme import resolve_token
             c_start = resolve_token(theme, f"colors.{grad[0]}")
             c_end = resolve_token(theme, f"colors.{grad[1]}")
+
+    idx_max = data.index(val_max) if (spec.highlight_max and val_min != val_max) else -1
+    idx_min = data.index(val_min) if (spec.highlight_min and val_min != val_max) else -1
             
     blocks = " ▂▃▄▅▆▇█"
     num_blocks = len(blocks)
     spark = []
-    for val in data:
+    for idx_val, val in enumerate(data):
         ratio = (val - val_min) / (val_max - val_min)
         idx = min(num_blocks - 1, max(0, int(ratio * (num_blocks - 1))))
         char = blocks[idx]
         
-        if c_start and c_end:
+        if idx_val == idx_max:
+            from termforge.text.render import style_to_ansi
+            style = StyleSpec(fg=ColorValue(0, 0, 0, name="colors.accent"))
+            start_ansi, end_ansi = style_to_ansi(style, theme, depth)
+            char = f"{start_ansi}{char}{end_ansi}"
+        elif idx_val == idx_min:
+            from termforge.text.render import style_to_ansi
+            style = StyleSpec(fg=ColorValue(0, 0, 0, name="colors.error"))
+            start_ansi, end_ansi = style_to_ansi(style, theme, depth)
+            char = f"{start_ansi}{char}{end_ansi}"
+        elif c_start and c_end:
             from termforge.core.color import interpolate_color
             from termforge.text.render import style_to_ansi
             
