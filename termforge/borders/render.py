@@ -64,27 +64,44 @@ def render_border(
             tags_text = f" {tags_str} "
         tags_w = get_string_width(tags_text)
         
-        if title_w > 0 and tags_w > 0 and (title_w + tags_w + 2) <= inner_w:
-            # Render both title (left) and tags (right)
-            filler_w = inner_w - title_w - tags_w - 2
-            top_line += glyphs.h + title_text + glyphs.h * filler_w + tags_text + glyphs.h
-        elif title_w > 0 and title_w <= inner_w:
-            # Fallback: only title fits
-            rem_space = inner_w - title_w
-            if spec.title_align == TextAlign.CENTER:
-                left_pad = rem_space // 2
-                right_pad = rem_space - left_pad
-                top_line += glyphs.h * left_pad + title_text + glyphs.h * right_pad
+        # Build default background array of dashes
+        chars = [glyphs.h] * inner_w
+        
+        if inner_w > 0:
+            # 1. Compute positions
+            # Title alignment
+            if spec.title_align == TextAlign.LEFT:
+                title_pos = 1 if inner_w > 2 and title_w > 0 else 0
             elif spec.title_align == TextAlign.RIGHT:
-                top_line += glyphs.h * (rem_space - 1) + title_text + glyphs.h
-            else: # LEFT
-                top_line += glyphs.h + title_text + glyphs.h * (rem_space - 1)
-        elif tags_w > 0 and tags_w <= inner_w:
-            # Fallback: only tags fit
-            rem_space = inner_w - tags_w
-            top_line += glyphs.h * (rem_space - 1) + tags_text + glyphs.h
-        else:
-            top_line += glyphs.h * inner_w
+                title_pos = max(0, inner_w - title_w - (1 if inner_w > 2 and title_w > 0 else 0))
+            else: # CENTER
+                title_pos = max(0, (inner_w - title_w) // 2)
+                
+            # Tag alignment
+            if spec.tag_align == TextAlign.LEFT:
+                if spec.title_align == TextAlign.LEFT and title_w > 0:
+                    tag_pos = title_pos + title_w
+                else:
+                    tag_pos = 1 if inner_w > 2 and tags_w > 0 else 0
+            elif spec.tag_align == TextAlign.RIGHT:
+                tag_pos = max(0, inner_w - tags_w - (1 if inner_w > 2 and tags_w > 0 else 0))
+                if spec.title_align == TextAlign.RIGHT and title_w > 0:
+                    tag_pos = max(0, title_pos - tags_w)
+            else: # CENTER
+                tag_pos = max(0, (inner_w - tags_w) // 2)
+                if spec.title_align == TextAlign.CENTER and title_w > 0:
+                    tag_pos = title_pos + title_w
+                    
+            # 2. Write content into array
+            # Write tags first (title has priority/overwrites tags if they overlap)
+            if tags_w > 0 and tag_pos + tags_w <= inner_w:
+                for idx in range(tags_w):
+                    chars[tag_pos + idx] = tags_text[idx]
+            if title_w > 0 and title_pos + title_w <= inner_w:
+                for idx in range(title_w):
+                    chars[title_pos + idx] = title_text[idx]
+                    
+        top_line += "".join(chars)
             
         if spec.right.visible:
             top_line += glyphs.tr
