@@ -6,27 +6,30 @@ from termforge.text.types import TextSpec, TextAlign
 from termforge.text.render import render_text
 
 def render_table(spec: TableSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
-    # 1. Calculate column widths
+    # 1. Calculate column widths and inner content widths
     col_widths = []
+    col_inner_widths = []
     for i, col in enumerate(spec.columns):
         if col.width is not None:
-            col_widths.append(col.width)
+            inner_w = col.width
         else:
-            # find max width of data or title
             w = len(col.title)
             for row in spec.rows:
                 if i < len(row):
                     w = max(w, len(str(row[i])))
-            col_widths.append(w)
+            inner_w = w
+        col_inner_widths.append(inner_w)
+        col_widths.append(inner_w + col.padding_left + col.padding_right)
             
     # 2. Render header
     lines = []
     header_parts = []
-    for col, width in zip(spec.columns, col_widths):
-        ts = TextSpec(content=col.title, align=col.align, max_width=width)
-        res = render_text(ts, theme=theme, available_width=width)
-        content = res[0] if res else " " * width
-        header_parts.append(content)
+    for col, width, inner_w in zip(spec.columns, col_widths, col_inner_widths):
+        ts = TextSpec(content=col.title, align=col.align, max_width=inner_w)
+        res = render_text(ts, theme=theme, available_width=inner_w)
+        content = res[0] if res else " " * inner_w
+        padded_content = " " * col.padding_left + content + " " * col.padding_right
+        header_parts.append(padded_content)
         
     header_line = " │ ".join(header_parts)
     lines.append(header_line)
@@ -35,12 +38,13 @@ def render_table(spec: TableSpec, max_size: Size, theme: ThemeTokens) -> list[st
     # 3. Render rows
     for r_idx, row in enumerate(spec.rows):
         row_parts = []
-        for i, (col, width) in enumerate(zip(spec.columns, col_widths)):
+        for i, (col, width, inner_w) in enumerate(zip(spec.columns, col_widths, col_inner_widths)):
             text = str(row[i]) if i < len(row) else ""
-            ts = TextSpec(content=text, align=col.align, max_width=width)
-            res = render_text(ts, theme=theme, available_width=width)
-            content = res[0] if res else " " * width
-            row_parts.append(content)
+            ts = TextSpec(content=text, align=col.align, max_width=inner_w)
+            res = render_text(ts, theme=theme, available_width=inner_w)
+            content = res[0] if res else " " * inner_w
+            padded_content = " " * col.padding_left + content + " " * col.padding_right
+            row_parts.append(padded_content)
         lines.append(" │ ".join(row_parts))
         
     return lines
