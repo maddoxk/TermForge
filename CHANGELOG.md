@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.0
+- **Feature**: Added layout template scaffolding CLI subcommand (`termforge-init`).
+- **Feature**: Added theme WCAG contrast ratio verification CLI subcommand (`termforge-contrast`).
+- **Feature**: Added responsive layout simulation and width threshold checker CLI subcommand (`termforge-responsive`).
+- **Feature**: Added layout performance profiler and benchmark CLI subcommand (`termforge-benchmark`).
+
 ## v1.6.0
 - **Feature**: Added declarative JSON Schema exporter CLI subcommand (`termforge-schema`).
 - **Feature**: Added declarative layout config auto-formatter CLI subcommand (`termforge-format`).
