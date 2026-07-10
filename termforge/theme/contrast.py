@@ -6,7 +6,7 @@ def srgb_to_linear(c: int) -> float:
     val = c / 255.0
     if val <= 0.04045:
         return val / 12.92
-    return ((val + 0.055) / 1.055) ** 2.4
+    return float(((val + 0.055) / 1.055) ** 2.4)
 
 def luminance(color: ColorValue) -> float:
     # WCAG relative luminance formula

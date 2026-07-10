@@ -1,6 +1,7 @@
 from __future__ import annotations
 import urllib.request
 import io
+from typing import Any
 from PIL import Image
 
 def resize_for_terminal(img_w: int, img_h: int, term_cols: int | None, term_rows: int | None, preserve_aspect: bool, half_block: bool = True) -> tuple[int, int]:
@@ -55,6 +56,7 @@ def resize_for_terminal(img_w: int, img_h: int, term_cols: int | None, term_rows
 
 def load_pixels(source: str, target_width: int, target_height: int) -> list[list[tuple[int, int, int]]]:
     # 1. Load image (from path or URL)
+    img: Any = None
     if source.startswith("http://") or source.startswith("https://"):
         req = urllib.request.Request(source, headers={'User-Agent': 'TermForge-Image-Loader'})
         with urllib.request.urlopen(req) as response:
@@ -70,12 +72,13 @@ def load_pixels(source: str, target_width: int, target_height: int) -> list[list
     img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
     
     # 3. Extract pixels
-    pixels = []
+    pixels: list[list[tuple[int, int, int]]] = []
     width, height = img.size
     for y in range(height):
-        row = []
+        row: list[tuple[int, int, int]] = []
         for x in range(width):
-            row.append(img.getpixel((x, y)))
+            p = img.getpixel((x, y))
+            row.append((int(p[0]), int(p[1]), int(p[2])))
         pixels.append(row)
         
     return pixels

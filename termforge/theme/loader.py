@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-import yaml
+import yaml  # type: ignore
 from termforge.theme.types import ThemePack
 
 def load_theme_yaml(path: str) -> ThemePack:

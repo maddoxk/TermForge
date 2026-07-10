@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 from termforge.core.types import ColorDepth, StyleSpec, ColorValue
 from termforge.core.theme import ThemeTokens
 from termforge.charts.types import ChartSpec, ChartType
@@ -25,6 +26,7 @@ def render_chart(spec: ChartSpec, theme: ThemeTokens | None = None, depth: Color
     
     # 1. Create Canvas
     is_braille = spec.braille and spec.chart_type in (ChartType.LINE, ChartType.SCATTER)
+    canvas: Any = None
     if is_braille:
         canvas = create_braille_canvas(plot_w, plot_h)
     else:
