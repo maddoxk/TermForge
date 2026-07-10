@@ -38,3 +38,27 @@ function map_component(config: ComponentConfig) -> RenderableSpec:
                 
     return spec
 ```
+
+---
+
+## 3. Exporter Algorithm
+
+Converts spec hierarchies back to structural ComponentConfig nodes and saves them in TOML, YAML, or JSON.
+
+#### Pseudocode:
+```
+function spec_to_component(spec: RenderableSpec) -> ComponentConfig:
+    properties = spec.to_dict()
+    spec_type = properties.pop("spec_type")
+    
+    children = []
+    if has_field(spec, "content") and spec.content is not null:
+        properties.pop("content")
+        children.append(spec_to_component(spec.content))
+    elif has_field(spec, "children"):
+        properties.pop("children")
+        for child in spec.children:
+            children.append(spec_to_component(child))
+            
+    return ComponentConfig(spec_type, properties, children)
+```

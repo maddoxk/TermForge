@@ -74,3 +74,97 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
 
 def config_to_specs(config: LayoutConfig) -> list[RenderableSpec]:
     return [map_component(c) for c in config.components]
+
+def spec_to_component(spec: RenderableSpec) -> ComponentConfig:
+    d = spec.to_dict()
+    spec_type = d.pop("spec_type", spec.spec_type)
+    
+    children_configs = []
+    # If the spec is a window, border, or modal, pop 'content' and serialize recursively
+    if hasattr(spec, "content") and isinstance(spec.content, RenderableSpec):
+        d.pop("content", None)
+        children_configs.append(spec_to_component(spec.content))
+    # If the spec is a pane, pop 'children' and serialize recursively
+    elif hasattr(spec, "children") and isinstance(spec.children, list) and all(isinstance(c, RenderableSpec) for c in spec.children):
+        d.pop("children", None)
+        for child in spec.children:
+            children_configs.append(spec_to_component(child))
+            
+    return ComponentConfig(
+        spec_type=spec_type,
+        properties=d,
+        children=children_configs
+    )
+
+def toml_value(v: Any) -> str:
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    elif isinstance(v, (int, float)):
+        return str(v)
+    elif isinstance(v, str):
+        escaped = v.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+        return f'"{escaped}"'
+    elif isinstance(v, list):
+        if not v:
+            return "[]"
+        items = [toml_value(x) for x in v]
+        return "[" + ", ".join(items) + "]"
+    elif isinstance(v, dict):
+        parts = []
+        for k, val in v.items():
+            if val is not None:
+                parts.append(f"{k} = {toml_value(val)}")
+        return "{ " + ", ".join(parts) + " }"
+    return f'"{v}"'
+
+def serialize_toml(data: dict[str, Any], parent_key: str = "") -> str:
+    lines = []
+    
+    # 1. Primitives (including inline tables/lists)
+    for k, v in data.items():
+        if v is None:
+            continue
+        if not isinstance(v, list):
+            lines.append(f"{k} = {toml_value(v)}")
+        elif v and not isinstance(v[0], dict):
+            lines.append(f"{k} = {toml_value(v)}")
+            
+    # 2. Array of tables (lists of dicts)
+    for k, v in data.items():
+        if isinstance(v, list) and v and isinstance(v[0], dict):
+            current_key = f"{parent_key}.{k}" if parent_key else k
+            for item in v:
+                lines.append(f"\n[[{current_key}]]")
+                lines.append(serialize_toml(item, parent_key=current_key))
+                
+    return "\n".join(lines)
+
+def save_config_to_file(
+    spec: RenderableSpec | list[RenderableSpec],
+    path: str,
+    format: str = "yaml",
+    theme: str | None = None,
+    title: str | None = None
+) -> None:
+    specs = spec if isinstance(spec, list) else [spec]
+    components = [spec_to_component(s) for s in specs]
+    layout_config = LayoutConfig(
+        components=components,
+        theme=theme,
+        title=title
+    )
+    
+    data = layout_config.to_dict()
+    format_lower = format.lower()
+    
+    if format_lower == "yaml":
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+    elif format_lower == "json":
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+    elif format_lower == "toml":
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(serialize_toml(data))
+    else:
+        raise ValueError(f"Unsupported format: {format}")
