@@ -48,18 +48,44 @@ def scale_value(value: float, min_val: float, max_val: float, target_size: int) 
     idx = int(ratio * (target_size - 1))
     return min(target_size - 1, max(0, idx))
 
+def _apply_format(val: float, format_str: str) -> str:
+    """Apply a format string to a float value.
+    
+    Supports:
+    - Standard Python format strings like "{:.2f}" or "{:,.0f}"
+    - Shorthand patterns like "$,.2f" (prefix $ then format ,.2f)
+    - Suffix patterns like "{:.1f}K" are handled natively by Python's format
+    """
+    # If it's a plain Python format string with braces, use directly
+    if "{" in format_str:
+        try:
+            return format_str.format(val)
+        except Exception:
+            return f"{val:.1f}"
+    # Shorthand: prefix chars + Python format spec (no braces)
+    # e.g. "$,.2f" -> prefix="$", spec=",.2f"
+    # Detect by trying to find a valid format spec after any non-format prefix chars
+    # Heuristic: scan from start for non-digit, non-comma, non-dot, non-f/e/d/g chars as prefix
+    prefix = ""
+    spec = format_str
+    for i, ch in enumerate(format_str):
+        if ch in ",.0123456789feEdgGsb%" or (i > 0 and ch == "-"):
+            prefix = format_str[:i]
+            spec = format_str[i:]
+            break
+    try:
+        return prefix + format(val, spec)
+    except Exception:
+        return f"{val:.1f}"
+
 def generate_ticks(min_val: float, max_val: float, count: int, format_str: str = "{:.1f}") -> list[tuple[float, str]]:
     if count <= 1:
-        return [(min_val, format_str.format(min_val))]
+        return [(min_val, _apply_format(min_val, format_str))]
         
     ticks = []
     step = (max_val - min_val) / (count - 1)
     for i in range(count):
         val = min_val + step * i
-        # Format the label nicely
-        try:
-            label = format_str.format(val)
-        except Exception:
-            label = f"{val:.1f}"
+        label = _apply_format(val, format_str)
         ticks.append((val, label))
     return ticks

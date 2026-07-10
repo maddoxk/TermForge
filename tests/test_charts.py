@@ -101,3 +101,45 @@ def test_sparkline_peak_highlighting():
     )
     res = render_sparkline(spec)
     assert "\033[" in res
+
+def test_axis_label_format_str():
+    """Test that Axis.format_str customizes tick label output."""
+    from termforge.charts.scale import generate_ticks, _apply_format
+    
+    # Standard Python format string
+    ticks = generate_ticks(0.0, 1000.0, 3, "{:.2f}")
+    assert ticks[0][1] == "0.00"
+    assert ticks[1][1] == "500.00"
+    assert ticks[2][1] == "1000.00"
+    
+    # Currency prefix shorthand: "$,.2f"
+    result = _apply_format(1234.5, "$,.2f")
+    assert result.startswith("$")
+    assert "1,234.50" in result or "1234.50" in result
+
+def test_axis_format_str_serialization():
+    """Test that Axis.format_str round-trips through to_dict/from_dict."""
+    axis = Axis(format_str="$,.2f", tick_count=4)
+    d = axis.to_dict()
+    assert d["format_str"] == "$,.2f"
+    
+    axis2 = Axis.from_dict(d)
+    assert axis2.format_str == "$,.2f"
+    assert axis2.tick_count == 4
+
+def test_chart_renders_with_custom_y_axis_format():
+    """Integration test: chart renders and y-axis labels use the custom format."""
+    from termforge.core.theme import load_theme_from_dict, CATPPUCCIN_MOCHA
+    from termforge.core.types import ColorDepth
+    theme = load_theme_from_dict(CATPPUCCIN_MOCHA)
+    spec = ChartSpec(
+        chart_type=ChartType.LINE,
+        series=[Series(data=[100.0, 200.0, 150.0])],
+        y_axis=Axis(format_str="$,.0f"),
+        width=40,
+        height=12
+    )
+    lines = render_chart(spec, theme=theme, depth=ColorDepth.MONOCHROME)
+    # The rendered output should contain "$" in axis labels
+    full = "\n".join(lines)
+    assert "$" in full
