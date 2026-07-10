@@ -21,6 +21,11 @@ from termforge.core.types import (
 )
 
 
+class LayoutConstraintError(ValueError):
+    """Raised when layout constraints are invalid or unsatisfiable."""
+    pass
+
+
 class FlexDirection(Enum):
     """Main axis direction for flex layout."""
 
@@ -154,6 +159,19 @@ def compute_layout(node: LayoutNode, constraints: BoxConstraints) -> LayoutResul
 def _compute(
     node: LayoutNode, constraints: BoxConstraints, offset: Position
 ) -> LayoutResult:
+    if constraints.min_width > constraints.max_width:
+        raise LayoutConstraintError(
+            f"Unsatisfiable constraints: min_width {constraints.min_width} exceeds max_width {constraints.max_width}."
+        )
+    if constraints.min_height > constraints.max_height:
+        raise LayoutConstraintError(
+            f"Unsatisfiable constraints: min_height {constraints.min_height} exceeds max_height {constraints.max_height}."
+        )
+    if node.box.width is not None and node.box.width < 0:
+        raise LayoutConstraintError(f"Invalid negative width: {node.box.width} in component '{node.spec.spec_type}'")
+    if node.box.height is not None and node.box.height < 0:
+        raise LayoutConstraintError(f"Invalid negative height: {node.box.height} in component '{node.spec.spec_type}'")
+
     margin = node.box.margin
     padding = node.box.padding
 
@@ -214,8 +232,30 @@ def _compute(
     total_gap = gap * (n - 1) if n > 1 else 0
 
     if is_row:
+        min_needed = total_gap
+        for child in node.children:
+            cm = child.box.margin
+            w_req = child.box.width if child.box.width is not None else 0
+            min_needed += w_req + cm.horizontal
+        if min_needed > content_w and content_w > 0:
+            all_rigid = all(c.box.flex_shrink == 0 for c in node.children if c.box.width is not None)
+            if all_rigid:
+                raise LayoutConstraintError(
+                    f"Over-constrained row: Minimum required width {min_needed} exceeds available width {content_w}."
+                )
         main_available = content_w - total_gap
     else:
+        min_needed = total_gap
+        for child in node.children:
+            cm = child.box.margin
+            h_req = child.box.height if child.box.height is not None else 0
+            min_needed += h_req + cm.vertical
+        if min_needed > content_h and content_h > 0:
+            all_rigid = all(c.box.flex_shrink == 0 for c in node.children if c.box.height is not None)
+            if all_rigid:
+                raise LayoutConstraintError(
+                    f"Over-constrained column: Minimum required height {min_needed} exceeds available height {content_h}."
+                )
         main_available = content_h - total_gap
 
     if main_available < 0:
