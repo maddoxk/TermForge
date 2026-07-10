@@ -1,0 +1,5 @@
+--- Marquee Ticker Scrolling Showcase ---
+Frame 00: |TermForge marquee animati|
+Frame 05: |orge marquee animation ti|
+Frame 12: |rquee animation ticker fe|
+Frame 22: |ation ticker feature is n|

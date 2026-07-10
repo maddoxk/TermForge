@@ -2,8 +2,9 @@ from __future__ import annotations
 import sys
 import os
 from typing import Any
-from termforge.core.types import RenderableSpec, Size, Position, BoxConstraints, Spacing, LayoutResult
+from termforge.core.types import RenderableSpec, Size, Position, BoxConstraints, Spacing, LayoutResult, ColorDepth
 from termforge.core.layout import LayoutNode, BoxModel, FlexContainer, FlexDirection, compute_layout
+from termforge.core.theme import ThemeTokens
 
 def spec_to_layout_node(spec: RenderableSpec) -> LayoutNode:
     width = getattr(spec, "width", None)
@@ -57,37 +58,46 @@ def spec_to_layout_node(spec: RenderableSpec) -> LayoutNode:
         children=children
     )
 
-def draw_layout_result(result: LayoutResult, spec: RenderableSpec, grid: list[list[str]]) -> None:
+def draw_layout_result(
+    result: LayoutResult,
+    spec: RenderableSpec,
+    grid: list[list[str]],
+    theme: ThemeTokens | None = None,
+    depth: ColorDepth | None = None
+) -> None:
     x = result.position.x
     y = result.position.y
     w = result.size.width
     h = result.size.height
     
-    # Draw border outline on the grid
+    start_ansi, end_ansi = "", ""
+    if depth is not None and theme is not None:
+        from termforge.core.types import StyleSpec, ColorValue
+        from termforge.text.render import style_to_ansi
+        color_name = "colors.border" if spec.spec_type == "window" else "colors.primary"
+        style = StyleSpec(fg=ColorValue(0, 0, 0, name=color_name))
+        start_ansi, end_ansi = style_to_ansi(style, theme, depth)
+    
+    def set_cell(cy: int, cx: int, char: str) -> None:
+        if 0 <= cy < len(grid) and 0 <= cx < len(grid[0]):
+            if start_ansi or end_ansi:
+                grid[cy][cx] = f"{start_ansi}{char}{end_ansi}"
+            else:
+                grid[cy][cx] = char
+
     for i in range(x, x + w):
-        if 0 <= i < len(grid[0]):
-            if 0 <= y < len(grid):
-                grid[y][i] = "-"
-            if 0 <= y + h - 1 < len(grid):
-                grid[y + h - 1][i] = "-"
+        set_cell(y, i, "-")
+        set_cell(y + h - 1, i, "-")
                 
     for j in range(y, y + h):
-        if 0 <= j < len(grid):
-            if 0 <= x < len(grid[0]):
-                grid[j][x] = "|"
-            if 0 <= x + w - 1 < len(grid[0]):
-                grid[j][x + w - 1] = "|"
+        set_cell(j, x, "|")
+        set_cell(j, x + w - 1, "|")
                 
-    if 0 <= y < len(grid) and 0 <= x < len(grid[0]):
-        grid[y][x] = "+"
-    if 0 <= y < len(grid) and 0 <= x + w - 1 < len(grid[0]):
-        grid[y][x + w - 1] = "+"
-    if 0 <= y + h - 1 < len(grid) and 0 <= x < len(grid[0]):
-        grid[y][x] = "+"
-    if 0 <= y + h - 1 < len(grid) and 0 <= x + w - 1 < len(grid[0]):
-        grid[y][x + w - 1] = "+"
+    set_cell(y, x, "+")
+    set_cell(y, x + w - 1, "+")
+    set_cell(y + h - 1, x, "+")
+    set_cell(y + h - 1, x + w - 1, "+")
         
-    # Write coordinates & spec type inside the box
     label = f"{spec.spec_type} ({w}x{h})"
     label_x = x + 2
     label_y = y + 1
@@ -95,15 +105,14 @@ def draw_layout_result(result: LayoutResult, spec: RenderableSpec, grid: list[li
         for idx, char in enumerate(label):
             target_x = label_x + idx
             if target_x < x + w - 1 and target_x < len(grid[0]):
-                grid[label_y][target_x] = char
+                set_cell(label_y, target_x, char)
                 
-    # Draw children recursively
     if hasattr(spec, "content") and spec.content is not None and result.children:
-        draw_layout_result(result.children[0], spec.content, grid)
+        draw_layout_result(result.children[0], spec.content, grid, theme, depth)
     elif hasattr(spec, "children") and spec.children and result.children:
         for idx, child_spec in enumerate(spec.children):
             if idx < len(result.children):
-                draw_layout_result(result.children[idx], child_spec, grid)
+                draw_layout_result(result.children[idx], child_spec, grid, theme, depth)
 
 def validate_layout(result: LayoutResult, spec: RenderableSpec, errors: list[str]) -> None:
     w = result.size.width
@@ -118,8 +127,19 @@ def validate_layout(result: LayoutResult, spec: RenderableSpec, errors: list[str
             if idx < len(result.children):
                 validate_layout(result.children[idx], child_spec, errors)
 
-def render_once(path: str, strict: bool) -> bool:
+def render_once(path: str, strict: bool, color_depth: str | None = None) -> bool:
     from termforge.config.loader import load_config_yaml, load_config_json, load_config_toml, config_to_specs
+    from termforge.core.types import ColorDepth, ColorValue
+    
+    target_depth = None
+    if color_depth is not None:
+        depth_map = {
+            "truecolor": ColorDepth.TRUECOLOR,
+            "color_256": ColorDepth.COLOR_256,
+            "color_16": ColorDepth.COLOR_16,
+            "monochrome": ColorDepth.MONOCHROME
+        }
+        target_depth = depth_map.get(color_depth, ColorDepth.TRUECOLOR)
     
     ext = os.path.splitext(path)[1].lower()
     if ext in (".yaml", ".yml"):
@@ -137,6 +157,13 @@ def render_once(path: str, strict: bool) -> bool:
         print("No components found in layout config.")
         return True
         
+    theme_name = config.theme or "nord"
+    from termforge.theme.builtin import BUILTIN_THEMES
+    theme_pack = BUILTIN_THEMES.get(theme_name)
+    theme_tokens = theme_pack.tokens if theme_pack else None
+    
+    color_warnings: list[str] = []
+    
     for root_spec in specs:
         node = spec_to_layout_node(root_spec)
         
@@ -149,8 +176,31 @@ def render_once(path: str, strict: bool) -> bool:
         errors: list[str] = []
         validate_layout(result, root_spec, errors)
         
+        if theme_tokens and target_depth is not None:
+            def check_node_colors(s: RenderableSpec) -> None:
+                for prop_name in ("text_color", "border_color"):
+                    val = getattr(s, prop_name, None)
+                    if val:
+                        from termforge.core.color import resolve_color
+                        from termforge.theme.contrast import resolve_token
+                        try:
+                            token_path = f"colors.{val}" if not val.startswith("colors.") else val
+                            color_val = resolve_token(theme_tokens, token_path)
+                            if isinstance(color_val, ColorValue):
+                                rgb = resolve_color(color_val, target_depth)
+                                if rgb is None:
+                                    color_warnings.append(f"Color Warning: Token '{val}' resolves to empty/null at depth {target_depth.name}")
+                        except KeyError:
+                            pass
+                if hasattr(s, "content") and s.content is not None:
+                    check_node_colors(s.content)
+                if hasattr(s, "children") and s.children:
+                    for child in s.children:
+                        check_node_colors(child)
+            check_node_colors(root_spec)
+            
         grid = [[" " for _ in range(max_w)] for _ in range(max_h)]
-        draw_layout_result(result, root_spec, grid)
+        draw_layout_result(result, root_spec, grid, theme_tokens, target_depth)
         
         print(f"\n--- Visualizing Layout for {root_spec.spec_type.upper()} ({max_w}x{max_h}) ---")
         for row in grid:
@@ -162,6 +212,12 @@ def render_once(path: str, strict: bool) -> bool:
                 print(f"  - {err}")
             if strict:
                 sys.exit(1)
+                
+    if color_warnings:
+        print("\n⚠️  Color Depth Simulation Warnings:")
+        for warn in color_warnings:
+            print(f"  - {warn}")
+            
     return True
 
 def main() -> None:
@@ -172,6 +228,7 @@ def main() -> None:
     parser.add_argument("path", help="Path to layout config file (yaml/json/toml)")
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if layout validation fails")
     parser.add_argument("--watch", "--hot-reload", action="store_true", help="Watch file for modifications and reload layout preview")
+    parser.add_argument("--color-depth", choices=["truecolor", "color_256", "color_16", "monochrome"], default=None, help="Color depth tier to simulate (default: None)")
     args = parser.parse_args()
     
     if not os.path.exists(args.path):
@@ -179,7 +236,7 @@ def main() -> None:
         sys.exit(1)
         
     if not args.watch:
-        render_once(args.path, args.strict)
+        render_once(args.path, args.strict, args.color_depth)
         return
         
     print(f"Watching {args.path} for changes... Press Ctrl+C to stop.")
@@ -199,7 +256,7 @@ def main() -> None:
                 sys.stdout.flush()
                 print(f"Reloading layout preview for {args.path}...")
                 try:
-                    render_once(args.path, strict=False)
+                    render_once(args.path, strict=False, color_depth=args.color_depth)
                 except Exception as e:
                     print(f"\n❌ Syntax/parsing error in configuration: {e}")
                     
