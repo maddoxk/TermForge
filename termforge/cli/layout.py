@@ -118,34 +118,24 @@ def validate_layout(result: LayoutResult, spec: RenderableSpec, errors: list[str
             if idx < len(result.children):
                 validate_layout(result.children[idx], child_spec, errors)
 
-def main() -> None:
-    import argparse
+def render_once(path: str, strict: bool) -> bool:
     from termforge.config.loader import load_config_yaml, load_config_json, load_config_toml, config_to_specs
     
-    parser = argparse.ArgumentParser(description="TermForge Layout Visualizer & Validator")
-    parser.add_argument("path", help="Path to layout config file (yaml/json/toml)")
-    parser.add_argument("--strict", action="store_true", help="Exit with code 1 if layout validation fails")
-    args = parser.parse_args()
-    
-    if not os.path.exists(args.path):
-        print(f"Error: File {args.path} does not exist.")
-        sys.exit(1)
-        
-    ext = os.path.splitext(args.path)[1].lower()
+    ext = os.path.splitext(path)[1].lower()
     if ext in (".yaml", ".yml"):
-        config = load_config_yaml(args.path)
+        config = load_config_yaml(path)
     elif ext == ".json":
-        config = load_config_json(args.path)
+        config = load_config_json(path)
     elif ext == ".toml":
-        config = load_config_toml(args.path)
+        config = load_config_toml(path)
     else:
         print(f"Error: Unsupported file format {ext}")
-        sys.exit(1)
+        return False
         
     specs = config_to_specs(config)
     if not specs:
         print("No components found in layout config.")
-        sys.exit(0)
+        return True
         
     for root_spec in specs:
         node = spec_to_layout_node(root_spec)
@@ -170,8 +160,53 @@ def main() -> None:
             print("\n⚠️  Layout Validation Warnings:")
             for err in errors:
                 print(f"  - {err}")
-            if args.strict:
+            if strict:
                 sys.exit(1)
+    return True
+
+def main() -> None:
+    import argparse
+    import time
+    
+    parser = argparse.ArgumentParser(description="TermForge Layout Visualizer & Validator")
+    parser.add_argument("path", help="Path to layout config file (yaml/json/toml)")
+    parser.add_argument("--strict", action="store_true", help="Exit with code 1 if layout validation fails")
+    parser.add_argument("--watch", "--hot-reload", action="store_true", help="Watch file for modifications and reload layout preview")
+    args = parser.parse_args()
+    
+    if not os.path.exists(args.path):
+        print(f"Error: File {args.path} does not exist.")
+        sys.exit(1)
+        
+    if not args.watch:
+        render_once(args.path, args.strict)
+        return
+        
+    print(f"Watching {args.path} for changes... Press Ctrl+C to stop.")
+    last_mtime = 0.0
+    
+    try:
+        while True:
+            try:
+                mtime = os.path.getmtime(args.path)
+            except OSError:
+                time.sleep(0.2)
+                continue
+                
+            if mtime != last_mtime:
+                last_mtime = mtime
+                sys.stdout.write("\033[H\033[2J")
+                sys.stdout.flush()
+                print(f"Reloading layout preview for {args.path}...")
+                try:
+                    render_once(args.path, strict=False)
+                except Exception as e:
+                    print(f"\n❌ Syntax/parsing error in configuration: {e}")
+                    
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        print("\nStopping watcher.")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()
