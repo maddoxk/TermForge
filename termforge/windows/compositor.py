@@ -66,16 +66,32 @@ def render_window(
     # Determine window dimensions
     width = spec.width if spec.width is not None else 80
     height = spec.height if spec.height is not None else 24
-    
-    # Inner dimensions (subtracting border lines)
-    # top/bottom = 2, left/right = 2
-    inner_w = max(0, width - 2)
-    inner_h = max(0, height - 2)
-    
-    # 1. Apply Scroll to content lines
+
+    padding = max(0, spec.padding)  # inner padding (horizontal pad applied as left/right spaces)
+    margin = max(0, spec.margin)    # outer margin (blank rows/cols around the whole result)
+
+    # Inner dimensions: border takes 2 (1 per side) + padding takes 2*padding per axis
+    inner_w = max(0, width - 2 - 2 * padding)
+    inner_h = max(0, height - 2 - 2 * padding)
+
+    # 1. Apply scroll to content lines
     scrolled_lines = apply_scroll(content_lines, spec.scroll_y, inner_h)
-    
-    # 2. Build BorderSpec
+
+    # 1b. Apply inner padding (indent each content line and pad to inner_w)
+    if padding > 0:
+        pad_str = " " * padding
+        padded_lines: list[str] = []
+        # top padding rows
+        for _ in range(padding):
+            padded_lines.append(" " * (inner_w + 2 * padding))
+        for line in scrolled_lines:
+            # Strip trailing so we can safely pad
+            padded_lines.append(pad_str + line[:inner_w].ljust(inner_w) + pad_str)
+        # bottom padding rows
+        for _ in range(padding):
+            padded_lines.append(" " * (inner_w + 2 * padding))
+        scrolled_lines = padded_lines
+
     border_spec = BorderSpec(
         style=spec.border_style,
         title=spec.title,
@@ -138,5 +154,18 @@ def render_window(
         shadowed_result.append(bottom_row)
         
         final_lines = shadowed_result
-        
+
+    # 5. Apply outer margin: blank rows top/bottom, blank cols left/right
+    if margin > 0:
+        blank_row = " " * (width + 2 * margin)
+        margin_col = " " * margin
+        margined: list[str] = []
+        for _ in range(margin):
+            margined.append(blank_row)
+        for line in final_lines:
+            margined.append(margin_col + line + margin_col)
+        for _ in range(margin):
+            margined.append(blank_row)
+        final_lines = margined
+
     return final_lines

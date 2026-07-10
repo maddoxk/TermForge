@@ -17,6 +17,8 @@ class WindowSpec(RenderableSpec):
     content: RenderableSpec | None = None
     shadow: bool = False
     tags: list[str] = field(default_factory=list)
+    padding: int = 0   # inner content padding (shrinks usable area inside border)
+    margin: int = 0    # outer margin (blank rows/cols added around the whole window)
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -31,7 +33,9 @@ class WindowSpec(RenderableSpec):
             "z_index": self.z_index,
             "content": self.content.to_dict() if self.content else None,
             "shadow": self.shadow,
-            "tags": self.tags
+            "tags": self.tags,
+            "padding": self.padding,
+            "margin": self.margin
         }
 
     @classmethod
@@ -48,7 +52,9 @@ class WindowSpec(RenderableSpec):
             z_index=d.get("z_index", 0),
             content=content,
             shadow=d.get("shadow", False),
-            tags=d.get("tags", [])
+            tags=d.get("tags", []),
+            padding=d.get("padding", 0),
+            margin=d.get("margin", 0)
         )
 
 @dataclass
