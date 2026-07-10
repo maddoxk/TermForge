@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.9.0
+- **Feature**: Added Custom Unicode Border Character Preset Loader (`BorderSpec.glyphs`).
+- **Feature**: Added Layout Constraint Validator for Max Width/Height Limits (`termforge-validate --check-bounds`).
+- **Feature**: Added Custom Input Key Routing Mapper Validation in configuration linter (`validate_config` checks `keybindings`).
+- **Feature**: Added Custom Padding and Alignment Specs for Table Columns (`ColumnSpec.padding_left` and `padding_right`).
+- **Fix**: Defined HTML template as raw string in `generate_docs.py` to preserve JavaScript escape characters.
+
 ## v1.8.0
 - **Feature**: Added color depth simulation option to layout visualizer (`termforge-layout --color-depth`).
 - **Feature**: Added interactive playground REPL shell (`termforge-play`).
