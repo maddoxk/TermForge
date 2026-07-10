@@ -1,0 +1,105 @@
+--- TermForge Theme Gallery Preview ---
+=== Theme Preview: Catppuccin Mocha ===
+Author:      Catppuccin Org
+Description: Soothing pastel theme for the high-spirited!
+
+--- Color Palette ---
+  [38;2;137;180;250m[48;2;137;180;250m    [0m  primary      #89b4fa (RGB: 137,180,250)
+  [38;2;180;190;254m[48;2;180;190;254m    [0m  secondary    #b4befe (RGB: 180,190,254)
+  [38;2;30;30;46m[48;2;30;30;46m    [0m  surface      #1e1e2e (RGB: 30,30,46)
+  [38;2;205;214;244m[48;2;205;214;244m    [0m  text         #cdd6f4 (RGB: 205,214,244)
+  [38;2;243;139;168m[48;2;243;139;168m    [0m  error        #f38ba8 (RGB: 243,139,168)
+  [38;2;249;226;175m[48;2;249;226;175m    [0m  warning      #f9e2af (RGB: 249,226,175)
+  [38;2;166;227;161m[48;2;166;227;161m    [0m  success      #a6e3a1 (RGB: 166,227,161)
+  [38;2;88;91;112m[48;2;88;91;112m    [0m  border       #585b70 (RGB: 88,91,112)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 11.34 │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 7.79  │ [32mPASS[0m │ [32mPASS[0m
+  secondary    │ 9.17  │ [32mPASS[0m │ [32mPASS[0m
+  success      │ 11.03 │ [32mPASS[0m │ [32mPASS[0m
+  error        │ 7.08  │ [32mPASS[0m │ [32mPASS[0m
+  warning      │ 12.91 │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+
+=== Theme Preview: Dracula ===
+Author:      Zeno Rocha
+Description: A dark theme for many editors, shells, and more.
+
+--- Color Palette ---
+  [38;2;189;147;249m[48;2;189;147;249m    [0m  primary      #bd93f9 (RGB: 189,147,249)
+  [38;2;139;233;253m[48;2;139;233;253m    [0m  secondary    #8be9fd (RGB: 139,233,253)
+  [38;2;40;42;54m[48;2;40;42;54m    [0m  surface      #282a36 (RGB: 40,42,54)
+  [38;2;248;248;242m[48;2;248;248;242m    [0m  text         #f8f8f2 (RGB: 248,248,242)
+  [38;2;255;85;85m[48;2;255;85;85m    [0m  error        #ff5555 (RGB: 255,85,85)
+  [38;2;241;250;140m[48;2;241;250;140m    [0m  warning      #f1fa8c (RGB: 241,250,140)
+  [38;2;80;250;123m[48;2;80;250;123m    [0m  success      #50fa7b (RGB: 80,250,123)
+  [38;2;68;71;90m[48;2;68;71;90m    [0m  border       #44475a (RGB: 68,71,90)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 13.36 │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 5.9   │ [32mPASS[0m │ [31mFAIL[0m
+  secondary    │ 10.29 │ [32mPASS[0m │ [32mPASS[0m
+  success      │ 10.38 │ [32mPASS[0m │ [32mPASS[0m
+  error        │ 4.53  │ [32mPASS[0m │ [31mFAIL[0m
+  warning      │ 12.74 │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+
+=== Theme Preview: Tokyo Night ===
+Author:      folke
+Description: A clean dark Tokyo Night theme.
+
+--- Color Palette ---
+  [38;2;122;162;247m[48;2;122;162;247m    [0m  primary      #7aa2f7 (RGB: 122,162,247)
+  [38;2;187;154;247m[48;2;187;154;247m    [0m  secondary    #bb9af7 (RGB: 187,154,247)
+  [38;2;26;27;38m[48;2;26;27;38m    [0m  surface      #1a1b26 (RGB: 26,27,38)
+  [38;2;192;202;245m[48;2;192;202;245m    [0m  text         #c0caf5 (RGB: 192,202,245)
+  [38;2;247;118;142m[48;2;247;118;142m    [0m  error        #f7768e (RGB: 247,118,142)
+  [38;2;224;175;104m[48;2;224;175;104m    [0m  warning      #e0af68 (RGB: 224,175,104)
+  [38;2;158;206;106m[48;2;158;206;106m    [0m  success      #9ece6a (RGB: 158,206,106)
+  [38;2;61;63;85m[48;2;61;63;85m    [0m  border       #3d3f55 (RGB: 61,63,85)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 10.59 │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 6.79  │ [32mPASS[0m │ [31mFAIL[0m
+  secondary    │ 7.39  │ [32mPASS[0m │ [32mPASS[0m
+  success      │ 9.35  │ [32mPASS[0m │ [32mPASS[0m
+  error        │ 6.46  │ [32mPASS[0m │ [31mFAIL[0m
+  warning      │ 8.55  │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+
+=== Theme Preview: High Contrast ===
+Author:      TermForge Contributors
+Description: High contrast accessible black-and-white theme.
+
+--- Color Palette ---
+  [38;2;0;255;255m[48;2;0;255;255m    [0m  primary      #00ffff (RGB: 0,255,255)
+  [38;2;255;255;0m[48;2;255;255;0m    [0m  secondary    #ffff00 (RGB: 255,255,0)
+  [38;2;0;0;0m[48;2;0;0;0m    [0m  surface      #000000 (RGB: 0,0,0)
+  [38;2;255;255;255m[48;2;255;255;255m    [0m  text         #ffffff (RGB: 255,255,255)
+  [38;2;255;0;0m[48;2;255;0;0m    [0m  error        #ff0000 (RGB: 255,0,0)
+  [38;2;255;255;0m[48;2;255;255;0m    [0m  warning      #ffff00 (RGB: 255,255,0)
+  [38;2;0;255;0m[48;2;0;255;0m    [0m  success      #00ff00 (RGB: 0,255,0)
+  [38;2;255;255;255m[48;2;255;255;255m    [0m  border       #ffffff (RGB: 255,255,255)
+
+--- Contrast Audit (vs Surface) ---
+  Token        │ Ratio │ AA   │ AAA
+  ─────────────┼───────┼──────┼─────
+  text         │ 21.0  │ [32mPASS[0m │ [32mPASS[0m
+  primary      │ 16.75 │ [32mPASS[0m │ [32mPASS[0m
+  secondary    │ 19.56 │ [32mPASS[0m │ [32mPASS[0m
+  success      │ 15.3  │ [32mPASS[0m │ [32mPASS[0m
+  error        │ 5.25  │ [32mPASS[0m │ [31mFAIL[0m
+  warning      │ 19.56 │ [32mPASS[0m │ [32mPASS[0m
+
+==================================================
+

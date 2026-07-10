@@ -1,0 +1,29 @@
+--- TermForge Text Markup Gallery ---
+Plain text example.
+[1mBold text example.[0m[22m
+[2mDim text example.[0m[22m
+[3mItalic text example.[0m[23m
+[4mUnderline text example.[0m[24m
+[9mStrikethrough text example.[0m[29m
+[1m[3m[4mBold, italic, and underline combined.[0m[24m[23m[22m
+[38;2;205;0;0mRed foreground text.[0m
+[48;2;0;0;238mBlue background text.[0m
+[38;2;0;205;0m[48;2;205;205;0mGreen on yellow text.[0m
+[38;2;255;0;255mCustom Magenta via hex #ff00ff[0m
+
+--- Alignment Examples (width=40) ---
+|[1mAligned LEFT[0m[22m|
+|             [1mAligned CENTER[0m[22m             |
+|                           [1mAligned RIGHT[0m[22m|
+
+--- Truncation / Overflow Examples (width=15) ---
+--- CLIP ---
+This is a very 
+--- ELLIPSIS ---
+This is a very 
+--- WRAP ---
+This is a very
+long string
+that will be
+cut off or
+wrapped.
