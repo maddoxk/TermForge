@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0
+- **Feature**: Added declarative JSON Schema exporter CLI subcommand (`termforge-schema`).
+- **Feature**: Added declarative layout config auto-formatter CLI subcommand (`termforge-format`).
+- **Feature**: Added declarative layout format translator/converter CLI subcommand (`termforge-convert`).
+- **Feature**: Added CLI layout tree hierarchy and computed coordinates inspector (`termforge-inspect`).
+
 ## v1.5.0
 - **Feature**: Added declarative input keybinding parser and matching router (`InputRouter`, `InputBindingSpec`).
 - **Feature**: Added declarative configuration validation/linter CLI subcommand (`termforge-validate`).

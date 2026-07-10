@@ -56,3 +56,9 @@
 - **Completed:** 2026-07-10T13:00:00-06:00
 - **Goal:** Implement CLI declarative config validator, core layout constraint solver checks, layout collapse logger diagnostics, and declarative keybinding input routing.
 - **Result:** DONE — 4 major developer features implemented, validator subcommand, layout constraint error handler, debug logging framework, and input router, v1.5.0 compiled.
+
+### Iteration 6 — Config format utilities, Schema exporter & Hierarchy inspector ✅
+- **Started:** 2026-07-10T13:05:00-06:00
+- **Completed:** 2026-07-10T14:00:00-06:00
+- **Goal:** Implement CLI declarative schema exporter subcommand, auto-formatter reordering subcommand, format translation subcommand, and layout hierarchy geometry inspector tree subcommand.
+- **Result:** DONE — 4 config developer commands successfully integrated and tested, v1.6.0 compiled.
