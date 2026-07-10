@@ -23,17 +23,21 @@ class ComponentConfig:
             children=[ComponentConfig.from_dict(c) for c in d.get("children", [])]
         )
 
+from termforge.config.input import InputBindingSpec
+
 @dataclass
 class LayoutConfig:
     components: list[ComponentConfig] = field(default_factory=list)
     theme: str | None = None
     title: str | None = None
+    keybindings: list[InputBindingSpec] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "components": [c.to_dict() for c in self.components],
             "theme": self.theme,
-            "title": self.title
+            "title": self.title,
+            "keybindings": [k.to_dict() for k in self.keybindings]
         }
 
     @classmethod
@@ -41,5 +45,6 @@ class LayoutConfig:
         return cls(
             components=[ComponentConfig.from_dict(c) for c in d.get("components", [])],
             theme=d.get("theme"),
-            title=d.get("title")
+            title=d.get("title"),
+            keybindings=[InputBindingSpec.from_dict(k) for k in d.get("keybindings", [])]
         )
