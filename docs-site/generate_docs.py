@@ -37,7 +37,7 @@ def main() -> None:
                     }
                     
     # 2. Write HTML template
-    html_template = """<!DOCTYPE html>
+    html_template = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

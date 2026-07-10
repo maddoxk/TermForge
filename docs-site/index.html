@@ -661,22 +661,21 @@
             
             term.open(document.getElementById('terminal-screen-preview'));
             
-            term.writeln("[1;36mWelcome to TermForge Interactive Documentation Shell![0m");
-            term.writeln("Type [33mhelp[0m to list available commands.");
+            term.writeln("\x1b[1;36mWelcome to TermForge Interactive Documentation Shell!\x1b[0m");
+            term.writeln("Type \x1b[33mhelp\x1b[0m to list available commands.");
             term.writeln("");
             prompt();
             
             term.onData(data => {
                 const code = data.charCodeAt(0);
                 if (code === 13) { // Enter
-                    term.write("
-");
+                    term.write("\r\n");
                     handleCommand(currentLine);
                     currentLine = "";
                 } else if (code === 127) { // Backspace
                     if (currentLine.length > 0) {
                         currentLine = currentLine.slice(0, -1);
-                        term.write(" ");
+                        term.write("\b \b");
                     }
                 } else if (code < 32) {
                     // Ignore other control codes
@@ -689,9 +688,9 @@
 
         function prompt() {
             if (inRepl) {
-                term.write("[32m>>> [0m");
+                term.write("\x1b[32m>>> \x1b[0m");
             } else {
-                term.write("[1;34mdox@termforge[0m:[1;32m~[0m$ ");
+                term.write("\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ ");
             }
         }
 
@@ -713,7 +712,7 @@
                 if (cmd.startsWith("from termforge")) {
                     term.writeln("");
                 } else if (cmd.includes(".render()")) {
-                    term.writeln("[33m[Simulated Rendering Output][0m");
+                    term.writeln("\x1b[33m[Simulated Rendering Output]\x1b[0m");
                     term.writeln("┌──────────────────────────┐");
                     term.writeln("│   Hello from TermForge   │");
                     term.writeln("└──────────────────────────┘");
@@ -729,14 +728,14 @@
             
             if (mainCmd === "help") {
                 term.writeln("Available commands:");
-                term.writeln("  [33mlist[0m                    List all available stories");
-                term.writeln("  [33mrun <story>[0m             Run a story (e.g. run text/markup_demo)");
-                term.writeln("  [33mtermforge-play[0m          Boot interactive python REPL");
-                term.writeln("  [33mtermforge-layout[0m        Run layout visualizer simulation");
-                term.writeln("  [33mclear[0m                   Clear terminal screen");
+                term.writeln("  \x1b[33mlist\x1b[0m                    List all available stories");
+                term.writeln("  \x1b[33mrun <story>\x1b[0m             Run a story (e.g. run text/markup_demo)");
+                term.writeln("  \x1b[33mtermforge-play\x1b[0m          Boot interactive python REPL");
+                term.writeln("  \x1b[33mtermforge-layout\x1b[0m        Run layout visualizer simulation");
+                term.writeln("  \x1b[33mclear\x1b[0m                   Clear terminal screen");
             } else if (mainCmd === "clear") {
                 term.clear();
-                term.write("[H"); // Reset cursor home
+                term.write("\x1b[H"); // Reset cursor home
             } else if (mainCmd === "list") {
                 term.writeln("Stories:");
                 for (const mod in storiesData) {
@@ -868,11 +867,9 @@
             
             // Clear and render raw ANSI in terminal emulator
             term.clear();
-            term.write("[H"); // Reset cursor home
-            term.writeln(`[1;34mdox@termforge[0m:[1;32m~[0m$ run ${mod}/${comp}`);
-            term.write(data.raw_ansi.replace(/
-/g, "
-"));
+            term.write("\x1b[H"); // Reset cursor home
+            term.writeln(`\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ run ${mod}/${comp}`);
+            term.write(data.raw_ansi.replace(/\n/g, "\r\n"));
             term.writeln("");
             prompt();
             
