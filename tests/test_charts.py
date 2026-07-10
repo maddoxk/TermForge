@@ -52,6 +52,18 @@ def test_sparkline():
     assert len(lines) == 1
     assert lines[0] == " ▂▃▄▅▆▇█"
 
+def test_sparkline_gradient():
+    from termforge.core.theme import load_theme_from_dict, TOKYO_NIGHT
+    theme = load_theme_from_dict(TOKYO_NIGHT)
+    spec = ChartSpec(
+        chart_type=ChartType.SPARKLINE,
+        series=[Series(data=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])],
+        color_config={"gradient": ["success", "error"]}
+    )
+    lines = render_chart(spec, theme=theme)
+    assert len(lines) == 1
+    assert "\033[" in lines[0]
+
 def test_line_chart_rendering():
     spec = ChartSpec(
         chart_type=ChartType.LINE,

@@ -1,11 +1,12 @@
 from __future__ import annotations
 import math
-from termforge.core.types import StyleSpec, ColorValue
+from termforge.core.types import StyleSpec, ColorValue, ColorDepth
+from termforge.core.theme import ThemeTokens
 from termforge.charts.types import ChartSpec, OHLCSeries
 from termforge.charts.scale import compute_bounds, scale_value, nice_bounds
 from termforge.charts.canvas import Canvas, BrailleCanvas, set_cell, draw_line, set_braille_pixel, draw_braille_line
 
-def render_sparkline(spec: ChartSpec) -> str:
+def render_sparkline(spec: ChartSpec, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> str:
     if not spec.series or not spec.series[0].data:
         return ""
     data = spec.series[0].data
@@ -14,13 +15,33 @@ def render_sparkline(spec: ChartSpec) -> str:
     if val_min == val_max:
         return "▄" * len(data)
         
+    c_start = None
+    c_end = None
+    if theme and spec.color_config and "gradient" in spec.color_config:
+        grad = spec.color_config["gradient"]
+        if isinstance(grad, list) and len(grad) >= 2:
+            from termforge.core.theme import resolve_token
+            c_start = resolve_token(theme, f"colors.{grad[0]}")
+            c_end = resolve_token(theme, f"colors.{grad[1]}")
+            
     blocks = " ▂▃▄▅▆▇█"
     num_blocks = len(blocks)
     spark = []
     for val in data:
         ratio = (val - val_min) / (val_max - val_min)
         idx = min(num_blocks - 1, max(0, int(ratio * (num_blocks - 1))))
-        spark.append(blocks[idx])
+        char = blocks[idx]
+        
+        if c_start and c_end:
+            from termforge.core.color import interpolate_color
+            from termforge.text.render import style_to_ansi
+            
+            c_curr = interpolate_color(c_start, c_end, ratio)
+            style = StyleSpec(fg=c_curr)
+            start_ansi, end_ansi = style_to_ansi(style, theme, depth)
+            char = f"{start_ansi}{char}{end_ansi}"
+            
+        spark.append(char)
     return "".join(spark)
 
 def get_style_for_token(color_token: str) -> StyleSpec:

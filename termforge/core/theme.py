@@ -234,3 +234,20 @@ GRUVBOX: dict[str, Any] = {
     "typography": _DEFAULT_TYPOGRAPHY,
 }
 
+NORD: dict[str, Any] = {
+    "colors": {
+        "primary": {"r": 136, "g": 192, "b": 208, "name": "frost_blue"},
+        "secondary": {"r": 94, "g": 129, "b": 172, "name": "dark_blue"},
+        "surface": {"r": 46, "g": 52, "b": 64, "name": "polar_night"},
+        "text": {"r": 229, "g": 233, "b": 240, "name": "snow_storm"},
+        "error": {"r": 191, "g": 97, "b": 106, "name": "aurora_red"},
+        "warning": {"r": 235, "g": 203, "b": 139, "name": "aurora_yellow"},
+        "success": {"r": 163, "g": 190, "b": 140, "name": "aurora_green"},
+        "border": {"r": 76, "g": 86, "b": 106, "name": "polar_gray"},
+    },
+    "spacing": _DEFAULT_SPACING,
+    "border_glyphs": _BORDER_GLYPHS,
+    "typography": _DEFAULT_TYPOGRAPHY,
+}
+
+

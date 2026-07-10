@@ -12,7 +12,7 @@ from termforge.charts.renderers import (
 def render_chart(spec: ChartSpec, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     # Sparkline is inline, handles itself
     if spec.chart_type == ChartType.SPARKLINE:
-        return [render_sparkline(spec)]
+        return [render_sparkline(spec, theme, depth)]
         
     # Calculate Plotting Area dimensions (accounting for axes)
     # y-axis label column: 8 chars (e.g. "  12.5 │")
