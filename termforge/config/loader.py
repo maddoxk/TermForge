@@ -37,7 +37,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.charts.types import ChartSpec
     from termforge.borders.types import BorderSpec
     from termforge.windows.types import WindowSpec, PaneSpec, ModalSpec
-    from termforge.logos.types import LogoSpec
+    from termforge.logos.types import LogoSpec, BannerSpec
     from termforge.animation.types import SpinnerSpec, TransitionSpec
     
     spec_classes = {
@@ -49,6 +49,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "pane": PaneSpec,
         "modal": ModalSpec,
         "logo": LogoSpec,
+        "banner": BannerSpec,
         "spinner": SpinnerSpec,
         "transition": TransitionSpec
     }
