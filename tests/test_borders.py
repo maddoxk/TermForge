@@ -61,3 +61,15 @@ def test_per_side_visibility():
     assert lines[0] == "──" # top border line (width = 2)
     assert lines[1] == "Hi" # body line (no side borders)
     assert lines[2] == "──" # bottom border line
+
+def test_render_border_with_tags():
+    spec = BorderSpec(
+        style=BorderStyle.SINGLE,
+        title="App",
+        tags=["Active", "v1"]
+    )
+    content = ["Content"]
+    lines = render_border(spec, content, width=30)
+    assert "App" in lines[0]
+    assert "[Active]" in lines[0]
+    assert "[v1]" in lines[0]

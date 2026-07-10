@@ -44,6 +44,7 @@ class BorderSpec(RenderableSpec):
     title_align: TextAlign = TextAlign.LEFT
     subtitle: str | None = None
     content: RenderableSpec | None = None
+    tags: list[str] = field(default_factory=list)
     spec_type: str = "border"
 
     def to_dict(self) -> dict[str, Any]:
@@ -57,18 +58,16 @@ class BorderSpec(RenderableSpec):
             "title": self.title,
             "title_align": self.title_align.value,
             "subtitle": self.subtitle,
-            "content": self.content.to_dict() if self.content else None
+            "content": self.content.to_dict() if self.content else None,
+            "tags": self.tags
         }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> BorderSpec:
         from termforge.core.types import RenderableSpec
         content_dict = d.get("content")
-        # In a real loader we'd resolve by spec_type, but let's fall back to default RenderableSpec
-        # theme/config loader will have 1:1 map.
         content = None
         if content_dict:
-            # We will reconstruct this properly in termforge.config
             content = RenderableSpec.from_dict(content_dict)
             
         return cls(
@@ -80,5 +79,6 @@ class BorderSpec(RenderableSpec):
             title=d.get("title"),
             title_align=TextAlign(d.get("title_align", "left")),
             subtitle=d.get("subtitle"),
-            content=content
+            content=content,
+            tags=d.get("tags", [])
         )
