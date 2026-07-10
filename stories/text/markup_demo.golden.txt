@@ -20,7 +20,7 @@ Plain text example.
 --- CLIP ---
 This is a very 
 --- ELLIPSIS ---
-This is a very 
+This is a very…
 --- WRAP ---
 This is a very
 long string

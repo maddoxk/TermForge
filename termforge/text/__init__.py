@@ -22,6 +22,7 @@ from termforge.text.wrap import (
 from termforge.text.render import (
     style_to_ansi,
     render_text,
+    apply_overflow_cascade,
 )
 
 __all__ = [
@@ -40,4 +41,5 @@ __all__ = [
     "wrap_run",
     "style_to_ansi",
     "render_text",
+    "apply_overflow_cascade",
 ]

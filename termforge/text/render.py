@@ -94,7 +94,39 @@ def style_to_ansi(style: StyleSpec | None, theme: ThemeTokens | None, depth: Col
         
     return "".join(start_codes), "".join(reversed(end_codes))
 
-def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR, available_width: int | None = None, frame_number: int = 0) -> list[str]:
+
+def apply_overflow_cascade(spec: "TextSpec", override: TextOverflow | None) -> "TextSpec":
+    """Return a new TextSpec with overflow replaced by `override` (if provided).
+    
+    This is the pure function that implements the cascading overflow model:
+    a container (WindowSpec/PaneSpec) passes its text_overflow down, and
+    this function applies it to any child TextSpec before rendering.
+    
+    Args:
+        spec: The original TextSpec.
+        override: Container-level TextOverflow to apply. None = no change.
+    
+    Returns:
+        A new TextSpec with overflow = override, or the original spec unchanged.
+    """
+    if override is None:
+        return spec
+    from dataclasses import replace
+    return replace(spec, overflow=override)
+
+
+def render_text(
+    spec: "TextSpec",
+    theme: ThemeTokens | None = None,
+    depth: ColorDepth = ColorDepth.TRUECOLOR,
+    available_width: int | None = None,
+    frame_number: int = 0,
+    override_overflow: TextOverflow | None = None
+) -> list[str]:
+    # Apply container-level overflow cascade if provided
+    if override_overflow is not None:
+        spec = apply_overflow_cascade(spec, override_overflow)
+
     # 1. Parse content to TextRun
     if isinstance(spec.content, str):
         run = parse_markup(spec.content)
@@ -147,7 +179,7 @@ def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDe
                 spans.append(TextSpan(text=current_span_text, style=current_span_style))
                 
             lines = [TextRun(spans=spans)]
-    elif spec.overflow == TextOverflow.ELLIPSIS or spec.overflow == TextOverflow.CLIP:
+    elif spec.overflow == TextOverflow.ELLIPSIS or spec.overflow == TextOverflow.CLIP or spec.overflow == TextOverflow.TRUNCATE:
         # Truncate content to width
         from termforge.text.wrap import truncate_text
         # We can convert run to plain text, truncate, and then reconstruct a simple TextRun
@@ -161,14 +193,17 @@ def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDe
         for span in run.spans:
             for c in span.text:
                 chars.append((c, span.style))
-        
-        truncated_chars = chars[:len(truncated)]
-        # If truncated has suffix, give the suffix the style of the last char or None
-        if len(truncated) > len(truncated_chars):
+
+        # Determine how many plain-text chars were kept (before suffix)
+        # truncate_text may add suffix so the plain prefix length = len(truncated) - len(suffix)
+        plain_prefix_len = len(truncated) - len(suffix)
+        truncated_chars = chars[:plain_prefix_len]
+        # Append each suffix char with the style of the last original char
+        if suffix:
             last_style = chars[-1][1] if chars else None
             for s_char in suffix:
                 truncated_chars.append((s_char, last_style))
-                
+
         # Reconstruct TextRun
         spans = []
         current_span_text = ""
@@ -183,7 +218,7 @@ def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDe
                 current_span_style = style
         if current_span_text:
             spans.append(TextSpan(text=current_span_text, style=current_span_style))
-            
+
         lines = [TextRun(spans=spans)]
         
     # 4. Handle max_lines limit
