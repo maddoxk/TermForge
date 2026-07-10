@@ -77,3 +77,53 @@ def test_window_drop_shadow():
     assert len(lines) == 6
     assert lines[5].startswith("  ")
     assert "█" in lines[5]
+
+def test_window_padding_serialization():
+    """WindowSpec.padding and .margin round-trip through to_dict/from_dict."""
+    spec = WindowSpec(title="Padded", padding=2, margin=1)
+    d = spec.to_dict()
+    assert d["padding"] == 2
+    assert d["margin"] == 1
+    spec2 = WindowSpec.from_dict(d)
+    assert spec2.padding == 2
+    assert spec2.margin == 1
+
+def test_window_padding_shrinks_inner_area():
+    """Inner padding with padding=1 on a 12x8 window should still produce 12 wide output."""
+    spec = WindowSpec(title="PadTest", width=12, height=8, padding=1)
+    content = ["Hello", "World"]
+    lines = render_window(spec, content)
+    # Total height = 8 (no margin); width = 12
+    assert len(lines) == 8
+    # Strip ANSI for plain width measurement
+    import re
+    for line in lines:
+        plain = re.sub(r'\x1b\[[^m]*m', '', line)
+        assert len(plain) == 12, f"Expected 12, got {len(plain)}: {repr(plain)}"
+
+def test_window_margin_expands_outer_dimensions():
+    """Outer margin=2 on a 10x5 window adds 2 rows top+bottom and 2 cols left+right."""
+    spec = WindowSpec(title="MarginTest", width=10, height=5, margin=2)
+    content = ["Line1", "Line2"]
+    lines = render_window(spec, content)
+    # Expected rows: 2 (top margin) + 5 (window) + 2 (bottom margin) = 9
+    assert len(lines) == 9
+    # Expected cols: 2 (left margin) + 10 (window) + 2 (right margin) = 14
+    import re
+    for line in lines:
+        plain = re.sub(r'\x1b\[[^m]*m', '', line)
+        assert len(plain) == 14, f"Expected 14, got {len(plain)}: {repr(plain)}"
+
+def test_window_padding_and_margin_combined():
+    """padding=1 + margin=1 work together without overlap."""
+    spec = WindowSpec(title="Both", width=14, height=8, padding=1, margin=1)
+    content = ["Content"]
+    lines = render_window(spec, content)
+    # rows: 1 (top margin) + 8 (window) + 1 (bottom margin) = 10
+    assert len(lines) == 10
+    import re
+    for line in lines:
+        plain = re.sub(r'\x1b\[[^m]*m', '', line)
+        # cols: 1 (left margin) + 14 (window) + 1 (right margin) = 16
+        assert len(plain) == 16, f"Expected 16, got {len(plain)}: {repr(plain)}"
+
