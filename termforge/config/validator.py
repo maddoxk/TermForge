@@ -26,6 +26,16 @@ def validate_properties(properties: dict[str, Any], spec_type: str, line: int, e
         if val is not None:
             if not isinstance(val, int) or val < 0:
                 errors.append(f"[Line {line}] Error: Property 'gap' in '{spec_type}' must be a non-negative integer, got {val}")
+                
+    if "glyphs" in properties:
+        glyphs = properties["glyphs"]
+        if not isinstance(glyphs, dict):
+            errors.append(f"[Line {line}] Error: Property 'glyphs' in '{spec_type}' must be a dictionary.")
+        else:
+            for k, v in glyphs.items():
+                if v is not None:
+                    if not isinstance(v, str) or len(v) != 1:
+                        errors.append(f"[Line {line}] Error: Custom glyph '{k}' in '{spec_type}' must be exactly a single character, got '{v}'")
 
 def validate_component(comp: dict[str, Any], errors: list[str]) -> None:
     line = comp.get("__line__", 1)

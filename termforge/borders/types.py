@@ -44,6 +44,7 @@ class BorderSpec(RenderableSpec):
     title_align: TextAlign = TextAlign.LEFT
     subtitle: str | None = None
     content: RenderableSpec | None = None
+    glyphs: dict[str, str] | None = None
     tags: list[str] = field(default_factory=list)
     spec_type: str = "border"
 
@@ -59,6 +60,7 @@ class BorderSpec(RenderableSpec):
             "title_align": self.title_align.value,
             "subtitle": self.subtitle,
             "content": self.content.to_dict() if self.content else None,
+            "glyphs": self.glyphs,
             "tags": self.tags
         }
 
@@ -80,5 +82,6 @@ class BorderSpec(RenderableSpec):
             title_align=TextAlign(d.get("title_align", "left")),
             subtitle=d.get("subtitle"),
             content=content,
+            glyphs=d.get("glyphs"),
             tags=d.get("tags", [])
         )

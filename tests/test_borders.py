@@ -73,3 +73,24 @@ def test_render_border_with_tags():
     assert "App" in lines[0]
     assert "[Active]" in lines[0]
     assert "[v1]" in lines[0]
+
+def test_render_border_custom_glyphs():
+    spec = BorderSpec(
+        style=BorderStyle.SINGLE,
+        glyphs={
+            "tl": "X",
+            "tr": "Y",
+            "bl": "Z",
+            "br": "W",
+            "h": "=",
+            "v": "!"
+        }
+    )
+    content = ["Hello"]
+    lines = render_border(spec, content)
+    # top: X=====Y
+    # body: !Hello!
+    # bottom: Z=====W
+    assert lines[0] == "X=====Y"
+    assert lines[1] == "!Hello!"
+    assert lines[2] == "Z=====W"

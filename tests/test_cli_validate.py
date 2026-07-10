@@ -111,3 +111,30 @@ components:
     finally:
         if os.path.exists(path):
             os.remove(path)
+
+def test_validate_cli_custom_glyphs():
+    yaml_content = """
+components:
+  - spec_type: border
+    properties:
+      glyphs:
+        tl: "TOO_LONG"
+"""
+    with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8") as f:
+        f.write(yaml_content)
+        path = f.name
+        
+    try:
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        res = subprocess.run(
+            [sys.executable, "-m", "termforge.cli.validate", path],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        assert res.returncode == 1
+        assert "must be exactly a single character" in res.stdout.lower()
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
