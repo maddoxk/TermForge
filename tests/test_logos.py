@@ -72,3 +72,18 @@ def test_render_banner():
     lines = render_banner(spec, depth=ColorDepth.TRUECOLOR)
     assert len(lines) == 3
     assert "\033[1m" in lines[0]
+
+def test_render_logo_reveal():
+    from termforge.logos.reveal import render_logo_reveal
+    from termforge.animation.types import TransitionType
+    spec = LogoSpec(text="TF", font="small", color_token="primary")
+    # progress = 0.0 (fully faded out/space representation)
+    lines_start = render_logo_reveal(spec, TransitionType.FADE, 0.0)
+    from termforge.borders.render import strip_ansi
+    assert len(lines_start) == 3
+    assert strip_ansi(lines_start[0]).strip() == ""
+    
+    # progress = 1.0 (fully faded in)
+    lines_end = render_logo_reveal(spec, TransitionType.FADE, 1.0)
+    assert len(lines_end) == 3
+    assert "\033[" in lines_end[0]

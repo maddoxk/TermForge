@@ -4,6 +4,7 @@ from termforge.logos.fonts import FONT_SMALL, FONT_STANDARD, FONT_SLANT, render_
 from termforge.logos.gradient import apply_gradient, apply_vertical_gradient
 from termforge.logos.render import render_logo
 from termforge.logos.banner import render_banner
+from termforge.logos.reveal import render_logo_reveal
 
 __all__ = [
     "LogoSpec",
@@ -16,4 +17,5 @@ __all__ = [
     "apply_vertical_gradient",
     "render_logo",
     "render_banner",
+    "render_logo_reveal",
 ]
