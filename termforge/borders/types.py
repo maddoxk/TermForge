@@ -42,6 +42,7 @@ class BorderSpec(RenderableSpec):
     left: BorderSide = field(default_factory=BorderSide)
     title: str | None = None
     title_align: TextAlign = TextAlign.LEFT
+    tag_align: TextAlign = TextAlign.RIGHT
     subtitle: str | None = None
     content: RenderableSpec | None = None
     glyphs: dict[str, str] | None = None
@@ -58,6 +59,7 @@ class BorderSpec(RenderableSpec):
             "left": self.left.to_dict(),
             "title": self.title,
             "title_align": self.title_align.value,
+            "tag_align": self.tag_align.value,
             "subtitle": self.subtitle,
             "content": self.content.to_dict() if self.content else None,
             "glyphs": self.glyphs,
@@ -80,6 +82,7 @@ class BorderSpec(RenderableSpec):
             left=BorderSide.from_dict(d.get("left", {})),
             title=d.get("title"),
             title_align=TextAlign(d.get("title_align", "left")),
+            tag_align=TextAlign(d.get("tag_align", "right")),
             subtitle=d.get("subtitle"),
             content=content,
             glyphs=d.get("glyphs"),

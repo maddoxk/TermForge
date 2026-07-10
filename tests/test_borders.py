@@ -2,6 +2,7 @@ import pytest
 from termforge.borders.types import BorderSpec, BorderStyle, BorderSide
 from termforge.borders.glyphs import get_glyphs, resolve_border_glyphs
 from termforge.borders.render import render_border
+from termforge.text.types import TextAlign
 
 def test_border_spec_serialization():
     spec = BorderSpec(style=BorderStyle.DOUBLE, title="Main", subtitle="End")
@@ -94,3 +95,19 @@ def test_render_border_custom_glyphs():
     assert lines[0] == "X=====Y"
     assert lines[1] == "!Hello!"
     assert lines[2] == "Z=====W"
+
+def test_render_border_tag_alignment():
+    spec = BorderSpec(
+        style=BorderStyle.SINGLE,
+        title="App",
+        title_align=TextAlign.LEFT,
+        tags=["v1"],
+        tag_align=TextAlign.LEFT
+    )
+    content = ["Hello"]
+    lines = render_border(spec, content, width=20)
+    # top: ┌─ App  [v1] ──────┐
+    # ' App ' has length 5, starts at pos 1.
+    # ' [v1] ' has length 6, starts at pos 1+5=6.
+    # Rest are dashes.
+    assert lines[0] == "┌─ App  [v1] ──────┐"
