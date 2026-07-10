@@ -31,9 +31,12 @@ def render_table(spec: TableSpec, max_size: Size, theme: ThemeTokens) -> list[st
         padded_content = " " * col.padding_left + content + " " * col.padding_right
         header_parts.append(padded_content)
         
-    header_line = " │ ".join(header_parts)
+    sep = " " * spec.column_gap + "│" + " " * spec.column_gap
+    dash_sep = "─" * spec.column_gap + "┼" + "─" * spec.column_gap
+
+    header_line = sep.join(header_parts)
     lines.append(header_line)
-    lines.append("─┼─".join("─" * w for w in col_widths))
+    lines.append(dash_sep.join("─" * w for w in col_widths))
     
     # 3. Render rows
     for r_idx, row in enumerate(spec.rows):
@@ -45,6 +48,6 @@ def render_table(spec: TableSpec, max_size: Size, theme: ThemeTokens) -> list[st
             content = res[0] if res else " " * inner_w
             padded_content = " " * col.padding_left + content + " " * col.padding_right
             row_parts.append(padded_content)
-        lines.append(" │ ".join(row_parts))
+        lines.append(sep.join(row_parts))
         
     return lines
