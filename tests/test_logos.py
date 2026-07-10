@@ -72,3 +72,11 @@ def test_render_banner():
     lines = render_banner(spec, depth=ColorDepth.TRUECOLOR)
     assert len(lines) == 3
     assert "\033[1m" in lines[0]
+
+def test_all_fonts_character_dimensions():
+    from termforge.logos.fonts import FONT_SMALL, FONT_STANDARD, FONT_SLANT
+    
+    for name, font in [("small", FONT_SMALL), ("standard", FONT_STANDARD), ("slant", FONT_SLANT)]:
+        for char, rows in font.items():
+            lengths = [len(r) for r in rows]
+            assert len(set(lengths)) == 1, f"Font '{name}' character '{char}' has unequal row lengths: {lengths}"
