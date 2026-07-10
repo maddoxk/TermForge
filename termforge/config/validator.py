@@ -61,10 +61,46 @@ def validate_theme_contrast(theme_pack: ThemePack, line: int, errors: list[str])
                 f"which fails WCAG AA standards (minimum 4.5)."
             )
 
-def validate_config(data: dict[str, Any]) -> list[str]:
+def check_circular_references(obj: Any, visited: dict[int, str], path: list[str]) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(obj, (dict, list)):
+        return errors
+        
+    obj_id = id(obj)
+    if obj_id in visited:
+        cycle_start = visited[obj_id]
+        cycle_path = " -> ".join(path + [cycle_start])
+        return [f"Error: Circular reference detected in component graph: {cycle_path}"]
+        
+    if isinstance(obj, dict):
+        spec_type = obj.get("spec_type", "unknown")
+        line = obj.get("__line__", "?")
+        label = f"{spec_type} (line {line})"
+        
+        new_visited = dict(visited)
+        new_visited[obj_id] = label
+        
+        for k, v in obj.items():
+            if k == "__line__":
+                continue
+            errors.extend(check_circular_references(v, new_visited, path + [f"{label}.{k}"]))
+            
+    elif isinstance(obj, list):
+        for idx, item in enumerate(obj):
+            errors.extend(check_circular_references(item, visited, path + [f"[{idx}]"]))
+            
+    return errors
+
+def validate_config(data: dict[str, Any], check_cyclic: bool = False) -> list[str]:
     errors: list[str] = []
     line = data.get("__line__", 1)
     
+    cyclic_errors = check_circular_references(data, {}, [])
+    if cyclic_errors:
+        # If user explicitly wants cyclic checking, report it; otherwise it is still fatal
+        errors.extend(cyclic_errors)
+        return errors
+        
     if "meta" in data and "tokens" in data:
         try:
             theme_pack = ThemePack.from_dict(data)
