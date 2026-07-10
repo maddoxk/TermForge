@@ -4,6 +4,8 @@ Implements a simplified flex-like layout with margin, padding, flex_grow,
 flex_shrink, gap, and wrapping.
 """
 from __future__ import annotations
+import logging
+import os
 
 from dataclasses import dataclass, field
 from enum import Enum
@@ -120,6 +122,21 @@ def _clamp(value: int, lo: int, hi: int) -> int:
     return max(lo, min(hi, value))
 
 
+def _get_logger() -> logging.Logger:
+    logger = logging.getLogger("termforge.core.layout")
+    if not logger.handlers:
+        log_file = os.environ.get("TERMFORGE_LOG_FILE", "termforge.log")
+        log_level_str = os.environ.get("TERMFORGE_LOG_LEVEL", "WARNING").upper()
+        log_level = getattr(logging, log_level_str, logging.WARNING)
+        
+        logger.setLevel(log_level)
+        handler = logging.FileHandler(log_file, encoding="utf-8")
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+
 def compute_layout(node: LayoutNode, constraints: BoxConstraints) -> LayoutResult:
     """Compute absolute positions and sizes for a layout tree.
 
@@ -164,10 +181,17 @@ def _compute(
     else:
         own_h = avail_h
 
+    if own_w <= 0 or own_h <= 0:
+        logger = _get_logger()
+        logger.warning(f"Component '{node.spec.spec_type}' collapsed to size {own_w}x{own_h}!")
+
     # Leaf node
     if not node.children or node.flex is None:
         w = _clamp(own_w, constraints.min_width, constraints.max_width)
         h = _clamp(own_h, constraints.min_height, constraints.max_height)
+        if w <= 0 or h <= 0:
+            logger = _get_logger()
+            logger.warning(f"Component '{node.spec.spec_type}' collapsed to size {w}x{h}!")
         return LayoutResult(
             position=Position(x=inner_x, y=inner_y),
             size=Size(width=w, height=h),
@@ -222,6 +246,18 @@ def _compute(
         remaining = 0
 
     # Second pass: distribute remaining space and compute child layouts
+    total_extra_distributed = sum(
+        int(remaining * (child.box.flex_grow / total_flex_grow))
+        for child in node.children
+        if total_flex_grow > 0 and child.box.flex_grow > 0
+    )
+    if total_flex_grow > 0 and total_extra_distributed != remaining:
+        logger = _get_logger()
+        logger.warning(
+            f"Layout rounding error: distributed {total_extra_distributed} cells of remaining {remaining} cells "
+            f"for container '{node.spec.spec_type}'."
+        )
+
     child_results: list[LayoutResult] = []
     cursor_x = inner_x + padding.left
     cursor_y = inner_y + padding.top
