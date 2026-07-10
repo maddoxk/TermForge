@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.0
+- **Feature**: Added status tags rendering in window borders.
+- **Feature**: Added peak high/low highlighting options to sparkline charts.
+- **Feature**: Added declarative layout config serialization exporter to JSON, TOML, and YAML.
+- **Feature**: Added layout validator and visualizer CLI subcommand (`termforge-layout`).
+- **Feature**: Added hot-reloading file watcher subcommand (`--watch`) for the layout previewer.
+
 ## v1.3.0
 - **Feature**: Added Retro `Gruvbox` and `Nord` color palettes.
 - **Feature**: Added local `color_config` overrides for individual components.
