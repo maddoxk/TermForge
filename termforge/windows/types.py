@@ -4,6 +4,7 @@ from typing import Any
 from termforge.core.types import RenderableSpec
 from termforge.core import FlexDirection
 from termforge.borders.types import BorderStyle
+from termforge.text.types import TextOverflow
 
 @dataclass
 class WindowSpec(RenderableSpec):
@@ -17,8 +18,9 @@ class WindowSpec(RenderableSpec):
     content: RenderableSpec | None = None
     shadow: bool = False
     tags: list[str] = field(default_factory=list)
-    padding: int = 0   # inner content padding (shrinks usable area inside border)
-    margin: int = 0    # outer margin (blank rows/cols added around the whole window)
+    padding: int = 0
+    margin: int = 0
+    text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -35,13 +37,15 @@ class WindowSpec(RenderableSpec):
             "shadow": self.shadow,
             "tags": self.tags,
             "padding": self.padding,
-            "margin": self.margin
+            "margin": self.margin,
+            "text_overflow": self.text_overflow.value if self.text_overflow else None
         }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> WindowSpec:
         content_dict = d.get("content")
         content = RenderableSpec.from_dict(content_dict) if content_dict else None
+        overflow_val = d.get("text_overflow")
         return cls(
             title=d.get("title", "Window"),
             border_style=BorderStyle(d.get("border_style", "single")),
@@ -54,7 +58,8 @@ class WindowSpec(RenderableSpec):
             shadow=d.get("shadow", False),
             tags=d.get("tags", []),
             padding=d.get("padding", 0),
-            margin=d.get("margin", 0)
+            margin=d.get("margin", 0),
+            text_overflow=TextOverflow(overflow_val) if overflow_val else None
         )
 
 @dataclass
@@ -63,6 +68,7 @@ class PaneSpec(RenderableSpec):
     children: list[RenderableSpec] = field(default_factory=list)
     ratios: list[float] | None = None
     gap: int = 0
+    text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
     spec_type: str = "pane"
 
     def to_dict(self) -> dict[str, Any]:
@@ -71,16 +77,19 @@ class PaneSpec(RenderableSpec):
             "direction": self.direction.value,
             "children": [c.to_dict() for c in self.children],
             "ratios": self.ratios,
-            "gap": self.gap
+            "gap": self.gap,
+            "text_overflow": self.text_overflow.value if self.text_overflow else None
         }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> PaneSpec:
+        overflow_val = d.get("text_overflow")
         return cls(
             direction=FlexDirection(d.get("direction", "row")),
             children=[RenderableSpec.from_dict(c) for c in d.get("children", [])],
             ratios=d.get("ratios"),
-            gap=d.get("gap", 0)
+            gap=d.get("gap", 0),
+            text_overflow=TextOverflow(overflow_val) if overflow_val else None
         )
 
 @dataclass

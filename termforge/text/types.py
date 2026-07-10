@@ -11,6 +11,7 @@ class TextAlign(str, Enum):
 
 class TextOverflow(str, Enum):
     CLIP = "clip"
+    TRUNCATE = "truncate"   # explicit hard-truncate (alias for CLIP, no suffix)
     ELLIPSIS = "ellipsis"
     WRAP = "wrap"
     MARQUEE = "marquee"

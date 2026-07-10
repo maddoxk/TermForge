@@ -109,3 +109,89 @@ def test_render_text():
     plain_line = ansi_escape.sub('', lines[0])
     assert len(plain_line) == 20
 
+
+def test_truncate_overflow_mode():
+    """TRUNCATE mode hard-clips text with no suffix (like CLIP)."""
+    from termforge.text.render import render_text
+    spec = TextSpec(content="Hello World, this is a long string", overflow=TextOverflow.TRUNCATE, max_width=10)
+    lines = render_text(spec)
+    assert len(lines) == 1
+    # TRUNCATE = no suffix, hard clip
+    assert lines[0] == "Hello Worl"
+
+
+def test_truncate_vs_ellipsis():
+    """TRUNCATE hard-clips, ELLIPSIS adds '…' — they should differ."""
+    from termforge.text.render import render_text
+    spec_trunc = TextSpec(content="Hello World", overflow=TextOverflow.TRUNCATE, max_width=8)
+    spec_ellip = TextSpec(content="Hello World", overflow=TextOverflow.ELLIPSIS, max_width=8)
+    lines_trunc = render_text(spec_trunc)
+    lines_ellip = render_text(spec_ellip)
+    assert "…" not in lines_trunc[0]
+    assert lines_trunc[0] == "Hello Wo"
+    assert "…" in lines_ellip[0]
+
+
+def test_apply_overflow_cascade_changes_mode():
+    """apply_overflow_cascade returns a new spec with overridden overflow."""
+    from termforge.text.render import apply_overflow_cascade
+    original = TextSpec(content="Hello", overflow=TextOverflow.WRAP)
+    cascaded = apply_overflow_cascade(original, TextOverflow.TRUNCATE)
+    # Should not mutate original
+    assert original.overflow == TextOverflow.WRAP
+    # New spec should have TRUNCATE
+    assert cascaded.overflow == TextOverflow.TRUNCATE
+    assert cascaded.content == "Hello"
+
+
+def test_apply_overflow_cascade_no_override_returns_same():
+    """apply_overflow_cascade with None returns the original spec unchanged."""
+    from termforge.text.render import apply_overflow_cascade
+    original = TextSpec(content="Hello", overflow=TextOverflow.WRAP)
+    result = apply_overflow_cascade(original, None)
+    assert result is original
+
+
+def test_render_text_with_override_overflow():
+    """render_text override_overflow parameter applies cascade inline."""
+    from termforge.text.render import render_text
+    # Spec says WRAP but container overrides to ELLIPSIS
+    spec = TextSpec(content="Long text that would wrap", overflow=TextOverflow.WRAP, max_width=12)
+    lines_normal = render_text(spec)
+    lines_overridden = render_text(spec, override_overflow=TextOverflow.ELLIPSIS)
+    # Normal should wrap to multiple lines, overridden should be 1 line with …
+    assert len(lines_normal) > 1
+    assert len(lines_overridden) == 1
+    assert "…" in lines_overridden[0]
+
+
+def test_window_spec_text_overflow_serialization():
+    """WindowSpec.text_overflow serializes/deserializes correctly."""
+    from termforge.windows.types import WindowSpec
+    spec = WindowSpec(title="Test", text_overflow=TextOverflow.ELLIPSIS)
+    d = spec.to_dict()
+    assert d["text_overflow"] == "ellipsis"
+    spec2 = WindowSpec.from_dict(d)
+    assert spec2.text_overflow == TextOverflow.ELLIPSIS
+
+
+def test_window_spec_text_overflow_defaults_none():
+    """WindowSpec.text_overflow defaults to None (no cascade)."""
+    from termforge.windows.types import WindowSpec
+    spec = WindowSpec(title="Test")
+    assert spec.text_overflow is None
+    d = spec.to_dict()
+    assert d["text_overflow"] is None
+    spec2 = WindowSpec.from_dict(d)
+    assert spec2.text_overflow is None
+
+
+def test_pane_spec_text_overflow_serialization():
+    """PaneSpec.text_overflow serializes/deserializes correctly."""
+    from termforge.windows.types import PaneSpec
+    from termforge.core import FlexDirection
+    pane = PaneSpec(direction=FlexDirection.COLUMN, text_overflow=TextOverflow.TRUNCATE)
+    d = pane.to_dict()
+    assert d["text_overflow"] == "truncate"
+    pane2 = PaneSpec.from_dict(d)
+    assert pane2.text_overflow == TextOverflow.TRUNCATE
