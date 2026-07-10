@@ -217,3 +217,20 @@ HIGH_CONTRAST: dict[str, Any] = {
     "border_glyphs": _BORDER_GLYPHS,
     "typography": _DEFAULT_TYPOGRAPHY,
 }
+
+GRUVBOX: dict[str, Any] = {
+    "colors": {
+        "primary": {"r": 250, "g": 189, "b": 47, "name": "gold"},
+        "secondary": {"r": 142, "g": 192, "b": 124, "name": "aqua"},
+        "surface": {"r": 40, "g": 40, "b": 40, "name": "dark0"},
+        "text": {"r": 235, "g": 219, "b": 178, "name": "fg"},
+        "error": {"r": 251, "g": 73, "b": 52, "name": "red"},
+        "warning": {"r": 250, "g": 189, "b": 47, "name": "gold"},
+        "success": {"r": 184, "g": 187, "b": 38, "name": "green"},
+        "border": {"r": 146, "g": 131, "b": 116, "name": "gray"},
+    },
+    "spacing": _DEFAULT_SPACING,
+    "border_glyphs": _BORDER_GLYPHS,
+    "typography": _DEFAULT_TYPOGRAPHY,
+}
+
