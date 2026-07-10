@@ -97,6 +97,7 @@ class ChartSpec(RenderableSpec):
     title: str | None = None
     show_legend: bool = True
     braille: bool = False
+    color_config: dict[str, Any] | None = None
     spec_type: str = "chart"
 
     def to_dict(self) -> dict[str, Any]:
@@ -111,7 +112,8 @@ class ChartSpec(RenderableSpec):
             "height": self.height,
             "title": self.title,
             "show_legend": self.show_legend,
-            "braille": self.braille
+            "braille": self.braille,
+            "color_config": self.color_config
         }
 
     @classmethod
@@ -130,5 +132,6 @@ class ChartSpec(RenderableSpec):
             height=d.get("height", 24),
             title=d.get("title"),
             show_legend=d.get("show_legend", True),
-            braille=d.get("braille", False)
+            braille=d.get("braille", False),
+            color_config=d.get("color_config")
         )
