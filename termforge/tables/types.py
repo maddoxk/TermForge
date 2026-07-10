@@ -41,6 +41,7 @@ class TableSpec(RenderableSpec):
     header_style: StyleSpec | None = None
     row_style: StyleSpec | None = None
     alt_row_style: StyleSpec | None = None
+    column_gap: int = 1
     spec_type: str = "table"
 
     def to_dict(self) -> dict[str, Any]:
@@ -50,7 +51,8 @@ class TableSpec(RenderableSpec):
             "rows": self.rows,
             "header_style": self.header_style.to_dict() if self.header_style else None,
             "row_style": self.row_style.to_dict() if self.row_style else None,
-            "alt_row_style": self.alt_row_style.to_dict() if self.alt_row_style else None
+            "alt_row_style": self.alt_row_style.to_dict() if self.alt_row_style else None,
+            "column_gap": self.column_gap
         }
 
     @classmethod
@@ -60,5 +62,6 @@ class TableSpec(RenderableSpec):
             rows=d.get("rows", []),
             header_style=StyleSpec.from_dict(d["header_style"]) if d.get("header_style") else None,
             row_style=StyleSpec.from_dict(d["row_style"]) if d.get("row_style") else None,
-            alt_row_style=StyleSpec.from_dict(d["alt_row_style"]) if d.get("alt_row_style") else None
+            alt_row_style=StyleSpec.from_dict(d["alt_row_style"]) if d.get("alt_row_style") else None,
+            column_gap=d.get("column_gap", 1)
         )

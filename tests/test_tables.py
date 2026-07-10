@@ -42,3 +42,38 @@ def test_render_table_with_padding():
     assert result[0] == "  A  │  B  "
     assert result[1] == "─────┼─────"
     assert result[2] == "  1  │  2  "
+
+def test_table_spec_serialization_with_gap():
+    spec = TableSpec(
+        columns=[ColumnSpec(title="Col1")],
+        rows=[["1"]],
+        column_gap=2
+    )
+    d = spec.to_dict()
+    assert d["column_gap"] == 2
+    
+    spec2 = TableSpec.from_dict(d)
+    assert spec2.column_gap == 2
+
+def test_render_table_with_column_gap():
+    theme = load_theme_from_dict(TOKYO_NIGHT)
+    spec = TableSpec(
+        columns=[
+            ColumnSpec(title="A"),
+            ColumnSpec(title="B")
+        ],
+        rows=[
+            ["1", "2"]
+        ],
+        column_gap=2
+    )
+    result = render_table(spec, Size(80, 20), theme)
+    # col 0: inner_w=1, title="A" -> content="A" -> padded="A" (no padding)
+    # col 1: inner_w=1, title="B" -> content="B" -> padded="B" (no padding)
+    # sep: "  │  " (two spaces on each side)
+    # header: "A  │  B"
+    # dashes: "─" + "──┼──" + "─" = "───┼───"
+    # row 0: "1  │  2"
+    assert result[0] == "A  │  B"
+    assert result[1] == "───┼───"
+    assert result[2] == "1  │  2"
