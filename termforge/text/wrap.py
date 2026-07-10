@@ -22,7 +22,7 @@ def wrap_text(text: str, width: int) -> list[str]:
         return [text]
     lines = []
     for paragraph in text.split("\n"):
-        current_line = []
+        current_line: list[str] = []
         current_width = 0
         words = paragraph.split(" ")
         i = 0
@@ -100,7 +100,7 @@ def wrap_run(run: TextRun, width: int) -> list[TextRun]:
             chars.append((c, span.style))
             
     lines: list[list[tuple[str, StyleSpec | None]]] = []
-    current_line = []
+    current_line: list[tuple[str, StyleSpec | None]] = []
     current_w = 0
     
     i = 0
