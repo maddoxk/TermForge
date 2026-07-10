@@ -14,6 +14,7 @@ class ProgressSpec(RenderableSpec):
     width: int | None = None
     filled_style: StyleSpec | None = None
     empty_style: StyleSpec | None = None
+    color_config: dict[str, str] | None = None
     spec_type: str = "progress"
 
     def to_dict(self) -> dict[str, Any]:
@@ -27,7 +28,8 @@ class ProgressSpec(RenderableSpec):
             "text_format": self.text_format,
             "width": self.width,
             "filled_style": self.filled_style.to_dict() if self.filled_style else None,
-            "empty_style": self.empty_style.to_dict() if self.empty_style else None
+            "empty_style": self.empty_style.to_dict() if self.empty_style else None,
+            "color_config": self.color_config
         }
 
     @classmethod
@@ -41,5 +43,6 @@ class ProgressSpec(RenderableSpec):
             text_format=d.get("text_format", "{percent}%"),
             width=d.get("width"),
             filled_style=StyleSpec.from_dict(d["filled_style"]) if d.get("filled_style") else None,
-            empty_style=StyleSpec.from_dict(d["empty_style"]) if d.get("empty_style") else None
+            empty_style=StyleSpec.from_dict(d["empty_style"]) if d.get("empty_style") else None,
+            color_config=d.get("color_config")
         )

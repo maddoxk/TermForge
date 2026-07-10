@@ -1,4 +1,4 @@
-from termforge.core.theme import CATPPUCCIN_MOCHA, DRACULA, TOKYO_NIGHT, HIGH_CONTRAST, ThemeTokens
+from termforge.core.theme import CATPPUCCIN_MOCHA, DRACULA, TOKYO_NIGHT, HIGH_CONTRAST, GRUVBOX, ThemeTokens
 from termforge.theme.types import ThemePack, ThemeMeta
 
 CATPPUCCIN_MOCHA_PACK = ThemePack(
@@ -45,9 +45,22 @@ HIGH_CONTRAST_PACK = ThemePack(
     tokens=ThemeTokens.from_dict(HIGH_CONTRAST)
 )
 
+GRUVBOX_PACK = ThemePack(
+    meta=ThemeMeta(
+        name="Gruvbox",
+        author="morhetz",
+        version="1.0.0",
+        description="Retro groove color scheme for Vim and terminal.",
+        dark=True
+    ),
+    tokens=ThemeTokens.from_dict(GRUVBOX)
+)
+
 BUILTIN_THEMES: dict[str, ThemePack] = {
     "catppuccin_mocha": CATPPUCCIN_MOCHA_PACK,
     "dracula": DRACULA_PACK,
     "tokyo_night": TOKYO_NIGHT_PACK,
-    "high_contrast": HIGH_CONTRAST_PACK
+    "high_contrast": HIGH_CONTRAST_PACK,
+    "gruvbox": GRUVBOX_PACK
 }
+
