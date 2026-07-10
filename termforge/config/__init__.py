@@ -5,6 +5,7 @@ from termforge.config.validator import validate_config, LineNumberLoader
 from termforge.config.input import InputBindingSpec, InputRouter
 from termforge.config.schema import generate_json_schema
 from termforge.config.formatter import format_config_file
+from termforge.config.converter import convert_config_file
 
 __all__ = [
     "ComponentConfig",
@@ -20,4 +21,5 @@ __all__ = [
     "InputRouter",
     "generate_json_schema",
     "format_config_file",
+    "convert_config_file",
 ]

@@ -47,6 +47,7 @@ termforge-validate = "termforge.cli.validate:main"
 termforge-inspect = "termforge.cli.inspect:main"
 termforge-schema = "termforge.cli.schema:main"
 termforge-format = "termforge.cli.format:main"
+termforge-convert = "termforge.cli.convert:main"
 
 [tool.ruff]
 target-version = "py310"
