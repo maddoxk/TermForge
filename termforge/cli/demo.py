@@ -3,7 +3,7 @@ import sys
 import time
 import os
 from termforge.core import Size, ColorDepth, detect_capabilities
-from termforge.core.types import FlexDirection
+from termforge.core import FlexDirection
 from termforge.core.scheduler import create_scheduler, register_animation, tick, AnimationSpec
 from termforge.windows.types import WindowSpec, PaneSpec
 from termforge.windows.compositor import compose_panes, render_window

@@ -4,6 +4,7 @@ from termforge.borders.types import BorderSpec, BorderStyle
 from termforge.borders.glyphs import resolve_border_glyphs
 from termforge.text.wrap import get_string_width
 from termforge.text.types import TextAlign
+from termforge.core.theme import ThemeTokens
 
 def strip_ansi(text: str) -> str:
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
