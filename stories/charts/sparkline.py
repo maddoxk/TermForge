@@ -12,8 +12,18 @@ def main() -> None:
     )
     
     lines = render_chart(spec)
-    print("Sparkline:")
+    print("Standard Sparkline:")
     print(lines[0])
+    
+    spec_hl = ChartSpec(
+        chart_type=ChartType.SPARKLINE,
+        series=[Series(name="spark_hl", data=data)],
+        highlight_max=True,
+        highlight_min=True
+    )
+    lines_hl = render_chart(spec_hl)
+    print("\nHighlighted Peaks & Valleys Sparkline:")
+    print(lines_hl[0])
 
 if __name__ == "__main__":
     main()

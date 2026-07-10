@@ -1,2 +1,5 @@
-Sparkline:
+Standard Sparkline:
  ▂ ▄▃▆▅▇▄█
+
+Highlighted Peaks & Valleys Sparkline:
+[38;2;0;0;0m [0m▂ ▄▃▆▅▇▄[38;2;0;0;0m█[0m

@@ -90,3 +90,14 @@ def test_candlestick_rendering():
     )
     lines = render_chart(spec)
     assert len(lines) == 10
+
+def test_sparkline_peak_highlighting():
+    from termforge.charts.renderers import render_sparkline
+    spec = ChartSpec(
+        chart_type=ChartType.SPARKLINE,
+        series=[Series(data=[1.0, 5.0, 10.0])],
+        highlight_max=True,
+        highlight_min=True
+    )
+    res = render_sparkline(spec)
+    assert "\033[" in res
