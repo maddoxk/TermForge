@@ -172,3 +172,28 @@ components:
     finally:
         if os.path.exists(path):
             os.remove(path)
+
+def test_validate_cli_invalid_keybinding():
+    yaml_content = """
+keybindings:
+  - key: ""
+    action: "quit"
+"""
+    with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8") as f:
+        f.write(yaml_content)
+        path = f.name
+        
+    try:
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        res = subprocess.run(
+            [sys.executable, "-m", "termforge.cli.validate", path],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        assert res.returncode == 1
+        assert "must be a non-empty string" in res.stdout.lower()
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
