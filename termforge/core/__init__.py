@@ -52,6 +52,7 @@ from termforge.core.layout import (
     FlexContainer,
     FlexDirection,
     LayoutNode,
+    LayoutConstraintError,
     compute_layout,
 )
 
@@ -103,6 +104,7 @@ __all__ = [
     "FlexContainer",
     "FlexDirection",
     "LayoutNode",
+    "LayoutConstraintError",
     "compute_layout",
     # scheduler
     "AnimationSpec",
