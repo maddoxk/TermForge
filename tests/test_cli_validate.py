@@ -138,3 +138,37 @@ components:
     finally:
         if os.path.exists(path):
             os.remove(path)
+
+def test_validate_cli_bounds_overflow():
+    yaml_content = """
+components:
+  - spec_type: pane
+    properties:
+      width: 100
+      direction: row
+    children:
+      - spec_type: window
+        properties:
+          width: 60
+      - spec_type: window
+        properties:
+          width: 50
+"""
+    with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8") as f:
+        f.write(yaml_content)
+        path = f.name
+        
+    try:
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        res = subprocess.run(
+            [sys.executable, "-m", "termforge.cli.validate", path, "--check-bounds"],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        assert res.returncode == 1
+        assert "exceeds component" in res.stdout.lower() or "exceeds parent" in res.stdout.lower()
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
