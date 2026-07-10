@@ -6,20 +6,27 @@
 
 | Module | Status | Iteration | Notes |
 |--------|--------|-----------|-------|
-| `termforge.core` | 🔄 IN PROGRESS | 1 | Layout, capability, theming, scheduler, Renderable protocol |
-| `termforge.text` | ⏳ WAITING | — | Blocked on core |
-| `termforge.image` | ⏳ WAITING | — | Blocked on core |
-| `termforge.charts` | ⏳ WAITING | — | Blocked on core |
-| `termforge.borders` | ⏳ WAITING | — | Blocked on core |
-| `termforge.windows` | ⏳ WAITING | — | Blocked on core + borders |
-| `termforge.animation` | ⏳ WAITING | — | Blocked on core scheduler |
-| `termforge.logos` | ⏳ WAITING | — | Blocked on image + animation |
-| `termforge.theme` | ⏳ WAITING | — | Blocked on core tokens |
-| `termforge.config` | ⏳ WAITING | — | Blocked on all modules |
+| `termforge.core` | ✅ STABLE | 1 | 61 tests passing, SPEC.md complete, zero Rich imports |
+| `termforge.text` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.image` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.charts` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.borders` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.windows` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build (with borders) |
+| `termforge.animation` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.logos` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.theme` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
+| `termforge.config` | 🔄 IN PROGRESS | 2 | Wave 2 — parallel build |
 
 ## Iteration Log
 
-### Iteration 1 — Bootstrap
+### Iteration 1 — Bootstrap ✅
 - **Started:** 2026-07-09T20:42:00-06:00
+- **Completed:** 2026-07-09T20:54:00-06:00
 - **Goal:** Repo scaffolding + `termforge.core` stable
+- **Result:** DONE — 61 tests, SPEC.md, 2 stories, portability verified
+- **Commits:** `3918d0f`, `db56621`
+
+### Iteration 2 — Wave 2 (All Remaining Modules)
+- **Started:** 2026-07-09T20:55:00-06:00
+- **Goal:** Build all remaining modules in parallel
 - **Status:** IN PROGRESS
