@@ -39,12 +39,22 @@ def render_border(
         if spec.left.visible:
             top_line += glyphs.tl
         
-        # Determine top center content (title)
+        # Determine top center content (title and tags)
         title_text = f" {spec.title} " if spec.title else ""
         title_w = get_string_width(title_text)
         
-        if title_w > 0 and title_w <= inner_w:
-            # We have a title that fits
+        tags_text = ""
+        if spec.tags:
+            tags_str = " ".join(f"[{t}]" for t in spec.tags)
+            tags_text = f" {tags_str} "
+        tags_w = get_string_width(tags_text)
+        
+        if title_w > 0 and tags_w > 0 and (title_w + tags_w + 2) <= inner_w:
+            # Render both title (left) and tags (right)
+            filler_w = inner_w - title_w - tags_w - 2
+            top_line += glyphs.h + title_text + glyphs.h * filler_w + tags_text + glyphs.h
+        elif title_w > 0 and title_w <= inner_w:
+            # Fallback: only title fits
             rem_space = inner_w - title_w
             if spec.title_align == TextAlign.CENTER:
                 left_pad = rem_space // 2
@@ -54,6 +64,10 @@ def render_border(
                 top_line += glyphs.h * (rem_space - 1) + title_text + glyphs.h
             else: # LEFT
                 top_line += glyphs.h + title_text + glyphs.h * (rem_space - 1)
+        elif tags_w > 0 and tags_w <= inner_w:
+            # Fallback: only tags fit
+            rem_space = inner_w - tags_w
+            top_line += glyphs.h * (rem_space - 1) + tags_text + glyphs.h
         else:
             top_line += glyphs.h * inner_w
             

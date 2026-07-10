@@ -28,3 +28,9 @@
 |Hello TermForge       |
 |Border System Demo    |
 +----------------------+
+
+--- BORDER WITH STATUS TAGS ---
+╭─ Set ──── [On] [v1] ─╮
+│Hello TermForge       │
+│Border System Demo    │
+╰──────────────────────╯

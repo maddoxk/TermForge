@@ -16,6 +16,7 @@ class WindowSpec(RenderableSpec):
     z_index: int = 0
     content: RenderableSpec | None = None
     shadow: bool = False
+    tags: list[str] = field(default_factory=list)
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -29,7 +30,8 @@ class WindowSpec(RenderableSpec):
             "focused": self.focused,
             "z_index": self.z_index,
             "content": self.content.to_dict() if self.content else None,
-            "shadow": self.shadow
+            "shadow": self.shadow,
+            "tags": self.tags
         }
 
     @classmethod
@@ -45,7 +47,8 @@ class WindowSpec(RenderableSpec):
             focused=d.get("focused", False),
             z_index=d.get("z_index", 0),
             content=content,
-            shadow=d.get("shadow", False)
+            shadow=d.get("shadow", False),
+            tags=d.get("tags", [])
         )
 
 @dataclass

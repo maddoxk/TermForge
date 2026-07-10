@@ -79,7 +79,8 @@ def render_window(
     border_spec = BorderSpec(
         style=spec.border_style,
         title=spec.title,
-        content=spec.content
+        content=spec.content,
+        tags=spec.tags
     )
     
     # 3. Render the border
