@@ -1,0 +1,3 @@
+  [x] Item A
+> [ ] Item B
+  [x] Item C
