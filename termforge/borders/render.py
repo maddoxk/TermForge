@@ -18,6 +18,21 @@ def render_border(
     unicode_supported: bool = True
 ) -> list[str]:
     glyphs = resolve_border_glyphs(spec.style, theme, unicode_supported)
+    if spec.glyphs:
+        from termforge.borders.glyphs import BorderGlyphs
+        glyphs = BorderGlyphs(
+            tl=spec.glyphs.get("tl", glyphs.tl),
+            tr=spec.glyphs.get("tr", glyphs.tr),
+            bl=spec.glyphs.get("bl", glyphs.bl),
+            br=spec.glyphs.get("br", glyphs.br),
+            h=spec.glyphs.get("h", glyphs.h),
+            v=spec.glyphs.get("v", glyphs.v),
+            t_down=spec.glyphs.get("t_down", glyphs.t_down),
+            t_up=spec.glyphs.get("t_up", glyphs.t_up),
+            t_right=spec.glyphs.get("t_right", glyphs.t_right),
+            t_left=spec.glyphs.get("t_left", glyphs.t_left),
+            cross=spec.glyphs.get("cross", glyphs.cross)
+        )
     
     # 1. Determine inner width
     left_w = 1 if spec.left.visible else 0
