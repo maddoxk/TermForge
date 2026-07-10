@@ -49,6 +49,7 @@ termforge-schema = "termforge.cli.schema:main"
 termforge-format = "termforge.cli.format:main"
 termforge-convert = "termforge.cli.convert:main"
 termforge-init = "termforge.cli.init:main"
+termforge-contrast = "termforge.cli.contrast:main"
 
 [tool.ruff]
 target-version = "py310"
