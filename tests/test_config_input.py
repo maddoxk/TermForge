@@ -47,3 +47,31 @@ components:
     finally:
         if os.path.exists(path):
             os.remove(path)
+
+def test_multikey_combo_routing():
+    bindings = [
+        InputBindingSpec(key="ctrl+k c", action="create_window"),
+        InputBindingSpec(key="ctrl+k d", action="delete_window"),
+        InputBindingSpec(key="escape", action="cancel"),
+        InputBindingSpec(key="g g", action="scroll_top")
+    ]
+    router = InputRouter(bindings=bindings)
+    
+    # 1. Test multi-key combo "ctrl+k c"
+    assert router.route("ctrl+k") is None
+    assert router.route("c") == "create_window"
+    
+    # 2. Test multi-key combo "ctrl+k d"
+    assert router.route("ctrl+k") is None
+    assert router.route("d") == "delete_window"
+    
+    # 3. Test failed chord reset & fallback (starts with invalid second key)
+    assert router.route("ctrl+k") is None
+    assert router.route("x") is None
+    
+    # 4. Test "escape" (single key)
+    assert router.route("escape") == "cancel"
+    
+    # 5. Test "g g"
+    assert router.route("g") is None
+    assert router.route("g") == "scroll_top"
