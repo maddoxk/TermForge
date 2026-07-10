@@ -15,6 +15,7 @@ class WindowSpec(RenderableSpec):
     focused: bool = False
     z_index: int = 0
     content: RenderableSpec | None = None
+    shadow: bool = False
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -27,7 +28,8 @@ class WindowSpec(RenderableSpec):
             "scroll_y": self.scroll_y,
             "focused": self.focused,
             "z_index": self.z_index,
-            "content": self.content.to_dict() if self.content else None
+            "content": self.content.to_dict() if self.content else None,
+            "shadow": self.shadow
         }
 
     @classmethod
@@ -42,7 +44,8 @@ class WindowSpec(RenderableSpec):
             scroll_y=d.get("scroll_y", 0),
             focused=d.get("focused", False),
             z_index=d.get("z_index", 0),
-            content=content
+            content=content,
+            shadow=d.get("shadow", False)
         )
 
 @dataclass

@@ -90,14 +90,14 @@ def render_window(
     style = StyleSpec(fg=ColorValue(0, 0, 0, name=f"colors.{border_color_token}"))
     start_ansi, end_ansi = style_to_ansi(style, theme, depth)
     
+    final_lines = []
     if start_ansi:
         # We want to color only the border frame (corners, top, bottom, sides)
         # For simplicity, we can wrap the top line, bottom line, and the side characters of each line.
         # This keeps the content styles completely untouched!
-        styled_lines = []
         
         # Top line
-        styled_lines.append(f"{start_ansi}{bordered[0]}{end_ansi}")
+        final_lines.append(f"{start_ansi}{bordered[0]}{end_ansi}")
         
         # Body lines (each has side borders)
         for line in bordered[1:-1]:
@@ -106,18 +106,36 @@ def render_window(
             # line starts with left border char and ends with right border char
             if len(line) >= 2:
                 # Extract first char and last char
-                # Wait, content might have ANSI codes, but the border glyphs are added as plain characters at start/end of the line.
-                # So line[0] is left border, line[-1] is right border!
                 left_border = line[0]
                 right_border = line[-1]
                 content = line[1:-1]
-                styled_lines.append(f"{start_ansi}{left_border}{end_ansi}{content}{start_ansi}{right_border}{end_ansi}")
+                final_lines.append(f"{start_ansi}{left_border}{end_ansi}{content}{start_ansi}{right_border}{end_ansi}")
             else:
-                styled_lines.append(line)
+                final_lines.append(line)
                 
         # Bottom line
         if len(bordered) > 1:
-            styled_lines.append(f"{start_ansi}{bordered[-1]}{end_ansi}")
-        return styled_lines
+            final_lines.append(f"{start_ansi}{bordered[-1]}{end_ansi}")
+    else:
+        final_lines = list(bordered)
         
-    return bordered
+    if spec.shadow:
+        shadow_style = StyleSpec(fg=ColorValue(80, 80, 80), dim=True)
+        s_shad, e_shad = style_to_ansi(shadow_style, theme, depth)
+        shadow_block = "█"
+        
+        shadowed_result = []
+        # Row 0 has no side shadow, pad with 2 spaces
+        shadowed_result.append(final_lines[0] + "  ")
+        
+        # Rows 1 to height-1 get 2 columns side shadow
+        for line in final_lines[1:]:
+            shadowed_result.append(line + f"{s_shad}{shadow_block * 2}{e_shad}")
+            
+        # Row height gets bottom shadow shifted by 2 columns
+        bottom_row = "  " + f"{s_shad}{shadow_block * width}{e_shad}"
+        shadowed_result.append(bottom_row)
+        
+        final_lines = shadowed_result
+        
+    return final_lines

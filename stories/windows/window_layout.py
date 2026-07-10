@@ -42,10 +42,25 @@ def main() -> None:
     left_rendered = render_window(spec_left, left_content)
     right_rendered = render_window(spec_right, right_content)
     
-    # 3. Combine row by row
+    # Render a centered popup modal window with a drop shadow
+    popup_win = WindowSpec(title="Modal Alert", width=25, height=5, shadow=True, focused=True)
+    popup_content = [
+        " Are you sure you",
+        " want to proceed?",
+        "  [ OK ]  [ Cancel ]"
+    ]
+    popup_rendered = render_window(popup_win, popup_content)
+    
+    # 3. Combine and overlay row by row
     print("--- Window Layout Composited Screen ---")
     for r in range(total_size.height):
-        line = left_rendered[r] + right_rendered[r]
+        if 2 <= r < 8:
+            left_slice = left_rendered[r][:18]
+            mid_slice = popup_rendered[r - 2]
+            right_slice = right_rendered[r][25:]
+            line = left_slice + mid_slice + right_slice
+        else:
+            line = left_rendered[r] + right_rendered[r]
         print(line)
 
 if __name__ == "__main__":
