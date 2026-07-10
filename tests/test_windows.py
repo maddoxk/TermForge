@@ -69,3 +69,11 @@ def test_render_window_scroll():
     assert "Line 3" in lines[1]
     assert "Line 4" in lines[2]
     assert "Line 5" in lines[3]
+
+def test_window_drop_shadow():
+    spec = WindowSpec(title="ShadowBox", width=10, height=5, shadow=True)
+    content = ["Content 1", "Content 2", "Content 3"]
+    lines = render_window(spec, content)
+    assert len(lines) == 6
+    assert lines[5].startswith("  ")
+    assert "█" in lines[5]
