@@ -44,6 +44,7 @@ termforge-demo = "termforge.cli.demo:main"
 termforge-story = "termforge.cli.story:main"
 termforge-layout = "termforge.cli.layout:main"
 termforge-validate = "termforge.cli.validate:main"
+termforge-inspect = "termforge.cli.inspect:main"
 
 [tool.ruff]
 target-version = "py310"
