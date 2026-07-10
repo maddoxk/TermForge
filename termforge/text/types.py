@@ -13,6 +13,7 @@ class TextOverflow(str, Enum):
     CLIP = "clip"
     ELLIPSIS = "ellipsis"
     WRAP = "wrap"
+    MARQUEE = "marquee"
 
 @dataclass
 class TextSpan:

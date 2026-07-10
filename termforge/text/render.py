@@ -94,7 +94,7 @@ def style_to_ansi(style: StyleSpec | None, theme: ThemeTokens | None, depth: Col
         
     return "".join(start_codes), "".join(reversed(end_codes))
 
-def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR, available_width: int | None = None) -> list[str]:
+def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR, available_width: int | None = None, frame_number: int = 0) -> list[str]:
     # 1. Parse content to TextRun
     if isinstance(spec.content, str):
         run = parse_markup(spec.content)
@@ -113,6 +113,40 @@ def render_text(spec: TextSpec, theme: ThemeTokens | None = None, depth: ColorDe
     lines: list[TextRun] = []
     if spec.overflow == TextOverflow.WRAP:
         lines = wrap_run(run, width)
+    elif spec.overflow == TextOverflow.MARQUEE:
+        plain = "".join(span.text for span in run.spans)
+        if len(plain) <= width:
+            lines = [run]
+        else:
+            chars = []
+            for span in run.spans:
+                for c in span.text:
+                    chars.append((c, span.style))
+            
+            last_style = run.spans[-1].style if run.spans else None
+            for _ in range(3):
+                chars.append((" ", last_style))
+                
+            cycle_len = len(chars)
+            repeated_chars = chars * 3
+            start_idx = frame_number % cycle_len
+            sliced_chars = repeated_chars[start_idx : start_idx + width]
+            
+            spans = []
+            current_span_text = ""
+            current_span_style = None
+            for c, style in sliced_chars:
+                if style == current_span_style:
+                    current_span_text += c
+                else:
+                    if current_span_text:
+                        spans.append(TextSpan(text=current_span_text, style=current_span_style))
+                    current_span_text = c
+                    current_span_style = style
+            if current_span_text:
+                spans.append(TextSpan(text=current_span_text, style=current_span_style))
+                
+            lines = [TextRun(spans=spans)]
     elif spec.overflow == TextOverflow.ELLIPSIS or spec.overflow == TextOverflow.CLIP:
         # Truncate content to width
         from termforge.text.wrap import truncate_text

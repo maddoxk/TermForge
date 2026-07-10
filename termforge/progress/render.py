@@ -1,11 +1,11 @@
 from __future__ import annotations
-from termforge.core.types import Size, StyleSpec, ColorValue
+from termforge.core.types import Size, StyleSpec, ColorValue, ColorDepth
 from termforge.core.theme import ThemeTokens
 from termforge.text.render import style_to_ansi
 from termforge.progress.types import ProgressSpec
 import math
 
-def render_progress(spec: ProgressSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+def render_progress(spec: ProgressSpec, max_size: Size, theme: ThemeTokens, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     width = spec.width if spec.width is not None else max_size.width
     if width <= 0:
         return []
@@ -33,8 +33,8 @@ def render_progress(spec: ProgressSpec, max_size: Size, theme: ThemeTokens) -> l
     f_style = StyleSpec(fg=ColorValue(0, 0, 0, name=f"colors.{filled_role}"))
     e_style = StyleSpec(fg=ColorValue(0, 0, 0, name=f"colors.{empty_role}"))
     
-    s_fill, e_fill = style_to_ansi(f_style, theme)
-    s_empty, e_empty = style_to_ansi(e_style, theme)
+    s_fill, e_fill = style_to_ansi(f_style, theme, depth)
+    s_empty, e_empty = style_to_ansi(e_style, theme, depth)
     
     filled_str = spec.filled_char * filled_len
     if spec.head_char and empty_len > 0 and filled_len > 0:
