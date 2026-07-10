@@ -101,7 +101,88 @@ def check_circular_references(obj: Any, visited: dict[int, str], path: list[str]
             
     return errors
 
-def validate_config(data: dict[str, Any], check_cyclic: bool = False) -> list[str]:
+def check_layout_bounds(comp: dict[str, Any], parent_w: int | None = None, parent_h: int | None = None) -> list[str]:
+    errors: list[str] = []
+    line = comp.get("__line__", 1)
+    spec_type = comp.get("spec_type", "unknown")
+    
+    properties = comp.get("properties", {})
+    w = properties.get("width")
+    h = properties.get("height")
+    
+    # 1. Check if individual width/height exceeds parent's size
+    if parent_w is not None and isinstance(w, int) and w > parent_w:
+        errors.append(f"[Line {line}] Error: Component '{spec_type}' width {w} exceeds parent max width {parent_w}")
+    if parent_h is not None and isinstance(h, int) and h > parent_h:
+        errors.append(f"[Line {line}] Error: Component '{spec_type}' height {h} exceeds parent max height {parent_h}")
+        
+    # 2. Check children sum
+    children = comp.get("children", [])
+    if isinstance(children, dict):
+        children = [children]
+        
+    if isinstance(children, list) and children:
+        direction = properties.get("direction", "row")
+        if hasattr(direction, "value"):
+            direction = direction.value
+        direction = str(direction).lower()
+        
+        gap = properties.get("gap", 0)
+        if not isinstance(gap, int):
+            gap = 0
+            
+        fixed_children_w = []
+        fixed_children_h = []
+        for child in children:
+            if isinstance(child, dict):
+                child_props = child.get("properties", {})
+                cw = child_props.get("width")
+                ch = child_props.get("height")
+                if isinstance(cw, int):
+                    fixed_children_w.append(cw)
+                if isinstance(ch, int):
+                    fixed_children_h.append(ch)
+                    
+        # Check sum of children along main axis
+        if direction == "row":
+            if isinstance(w, int) and fixed_children_w:
+                total_w = sum(fixed_children_w) + gap * (len(children) - 1)
+                if total_w > w:
+                    errors.append(f"[Line {line}] Error: Sum of children widths ({total_w}) in 'row' exceeds component '{spec_type}' width {w}")
+            # Check individual heights against parent height
+            if isinstance(h, int):
+                for child in children:
+                    if isinstance(child, dict):
+                        child_props = child.get("properties", {})
+                        ch = child_props.get("height")
+                        if isinstance(ch, int) and ch > h:
+                            child_line = child.get("__line__", line)
+                            child_type = child.get("spec_type", "unknown")
+                            errors.append(f"[Line {child_line}] Error: Component '{child_type}' height {ch} exceeds parent '{spec_type}' height {h}")
+        elif direction == "column" or direction == "col":
+            if isinstance(h, int) and fixed_children_h:
+                total_h = sum(fixed_children_h) + gap * (len(children) - 1)
+                if total_h > h:
+                    errors.append(f"[Line {line}] Error: Sum of children heights ({total_h}) in 'column' exceeds component '{spec_type}' height {h}")
+            # Check individual widths against parent width
+            if isinstance(w, int):
+                for child in children:
+                    if isinstance(child, dict):
+                        child_props = child.get("properties", {})
+                        cw = child_props.get("width")
+                        if isinstance(cw, int) and cw > w:
+                            child_line = child.get("__line__", line)
+                            child_type = child.get("spec_type", "unknown")
+                            errors.append(f"[Line {child_line}] Error: Component '{child_type}' width {cw} exceeds parent '{spec_type}' width {w}")
+                            
+        # Recurse
+        for child in children:
+            if isinstance(child, dict):
+                errors.extend(check_layout_bounds(child, w, h))
+                
+    return errors
+
+def validate_config(data: dict[str, Any], check_cyclic: bool = False, check_bounds: bool = False) -> list[str]:
     errors: list[str] = []
     line = data.get("__line__", 1)
     
@@ -127,6 +208,14 @@ def validate_config(data: dict[str, Any], check_cyclic: bool = False) -> list[st
             for comp in components:
                 if isinstance(comp, dict):
                     validate_component(comp, errors)
+                    
+    if check_bounds:
+        if "components" in data:
+            components = data["components"]
+            if isinstance(components, list):
+                for comp in components:
+                    if isinstance(comp, dict):
+                        errors.extend(check_layout_bounds(comp))
                     
     theme_name = data.get("theme")
     if theme_name:
