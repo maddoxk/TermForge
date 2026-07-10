@@ -42,6 +42,7 @@ dev = [
 [project.scripts]
 termforge-demo = "termforge.cli.demo:main"
 termforge-story = "termforge.cli.story:main"
+termforge-layout = "termforge.cli.layout:main"
 
 [tool.ruff]
 target-version = "py310"
