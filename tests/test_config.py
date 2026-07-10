@@ -67,3 +67,45 @@ components:
     finally:
         if os.path.exists(path):
             os.remove(path)
+
+def test_save_config_to_file():
+    from termforge.config.loader import save_config_to_file, load_config_toml, load_config_yaml, load_config_json
+    spec = WindowSpec(
+        title="Settings Window",
+        width=50,
+        height=15,
+        content=TextSpec(content="Hello Export")
+    )
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # 1. Save as TOML
+        toml_path = os.path.join(tmpdir, "layout.toml")
+        save_config_to_file(spec, toml_path, format="toml", theme="nord", title="Settings Layout")
+        
+        # Load back and verify
+        config_toml = load_config_toml(toml_path)
+        assert config_toml.theme == "nord"
+        assert config_toml.title == "Settings Layout"
+        specs_toml = config_to_specs(config_toml)
+        assert len(specs_toml) == 1
+        assert specs_toml[0].title == "Settings Window"
+        assert specs_toml[0].width == 50
+        assert specs_toml[0].content.content == "Hello Export"
+        
+        # 2. Save as YAML
+        yaml_path = os.path.join(tmpdir, "layout.yaml")
+        save_config_to_file(spec, yaml_path, format="yaml", theme="dracula")
+        
+        config_yaml = load_config_yaml(yaml_path)
+        assert config_yaml.theme == "dracula"
+        specs_yaml = config_to_specs(config_yaml)
+        assert specs_yaml[0].title == "Settings Window"
+        
+        # 3. Save as JSON
+        json_path = os.path.join(tmpdir, "layout.json")
+        save_config_to_file(spec, json_path, format="json", theme="tokyo_night")
+        
+        config_json = load_config_json(json_path)
+        assert config_json.theme == "tokyo_night"
+        specs_json = config_to_specs(config_json)
+        assert specs_json[0].title == "Settings Window"

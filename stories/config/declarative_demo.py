@@ -98,6 +98,14 @@ def main() -> None:
         for line in final_screen:
             print(line)
             
+        # Showcase save_config_to_file
+        from termforge.config.loader import save_config_to_file
+        temp_export = os.path.join(tempfile.gettempdir(), "termforge_export_demo.yaml")
+        save_config_to_file(main_window_spec, temp_export, format="yaml", theme="catppuccin_mocha")
+        print(f"\n[Exporter] Successfully exported spec config back to {temp_export}")
+        if os.path.exists(temp_export):
+            os.remove(temp_export)
+            
     finally:
         if os.path.exists(path):
             os.remove(path)
