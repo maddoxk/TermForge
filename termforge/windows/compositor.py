@@ -1,5 +1,5 @@
 from __future__ import annotations
-from termforge.core.types import Size, Position, ColorDepth, StyleSpec, ColorValue
+from termforge.core.types import Size, Position, ColorDepth, StyleSpec, ColorValue, RenderableSpec
 from termforge.core.theme import ThemeTokens
 from termforge.core import FlexDirection
 from termforge.windows.types import WindowSpec, PaneSpec, ModalSpec

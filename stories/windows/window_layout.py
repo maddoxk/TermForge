@@ -27,7 +27,7 @@ def main() -> None:
         "Welcome to TermForge!",
         "This is a split screen layout demo.",
         "The right window has focus.",
-        "Layout math distributed sizes automatically:"
+        "Layout math distributed sizes auto:"
     ]
     
     # Update widths/heights of specs from composed layout
