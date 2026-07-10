@@ -16,6 +16,12 @@
 | `termforge.logos` | ✅ STABLE | 2 | 4 tests, 3 custom text-art fonts, gradient stops |
 | `termforge.theme` | ✅ STABLE | 2 | 4 tests, contrast audit (WCAG), preview, loader |
 | `termforge.config` | ✅ STABLE | 2 | 3 tests, declarative YAML config-to-specs parser |
+| `termforge.tables` | ✅ STABLE | 3 | DataTable component implemented with column constraints |
+| `termforge.progress` | ✅ STABLE | 3 | ProgressBar component implemented with custom formatting |
+| `termforge.tree` | ✅ STABLE | 3 | TreeView component implemented with nested collapsible directories |
+| `termforge.selection` | ✅ STABLE | 3 | SelectionList / Checkbox component implemented |
+| `termforge.dialog` | ✅ STABLE | 3 | Modal Dialog pop-up component implemented |
+| `termforge.tabs` | ✅ STABLE | 3 | Tabbed Container component implemented |
 
 ## Iteration Log
 
@@ -32,3 +38,9 @@
 - **Goal:** Build all remaining modules, CLI commands, docs site, and stories
 - **Result:** DONE — 110 tests passing, 14 golden story checks passing, docs site compiled, flagship TUI demo functional
 - **Commits:** `777cd6b`, `4e61d2e`, `b782eba`, `87ed8ff`, `71f9789`, `9edb557`
+
+### Iteration 3 — Rich Component Expansion & CI Automation ✅
+- **Started:** 2026-07-09T22:40:00-06:00
+- **Completed:** 2026-07-10T00:05:00-06:00
+- **Goal:** Add DataTable, ProgressBar, TreeView, SelectionList, Dialog, and Tab components. Establish Pull Request workflow with automated QA and release deployments.
+- **Result:** DONE — 6 new components implemented, strict UI alignment tests added to verify ragged borders, Auto-Docs action live, v1.2.0 released.
