@@ -61,4 +61,42 @@ function spec_to_component(spec: RenderableSpec) -> ComponentConfig:
             children.append(spec_to_component(child))
             
     return ComponentConfig(spec_type, properties, children)
-```
+
+---
+
+## 4. Declarative Forms & Validation
+
+Allows collecting user inputs via a structured form of text inputs, textareas, or checkboxes, with built-in validation constraints.
+
+### FieldType (enum)
+- `TEXT`: Standard single-line text input field.
+- `CHECKBOX`: Boolean selection checkbox.
+- `TEXTAREA`: Multi-line text block field.
+
+### FormFieldSpec
+
+| Field | Type | Description |
+|-------|------|-------------|
+| name | string | Internal key for the field data |
+| label | string | User-facing display label |
+| field_type | FieldType | Input field type (default TEXT) |
+| placeholder | string | Optional helper text |
+| default_value | Any | Default value for the field |
+| validation_rules | dict | Validation constraints (required, choices, numeric, etc.) |
+
+### FormSpec
+
+| Field | Type | Description |
+|-------|------|-------------|
+| title | string | Optional form title |
+| fields | list[FormFieldSpec] | List of fields in the form |
+
+### `validate(data)` -> (is_valid: bool, errors: dict[str, str])
+Runs validation constraints across data:
+- `required`: Non-null and non-empty string.
+- `choices`: Must exist inside allowed values list.
+- `numeric`: Must parse as a float/int.
+- `min_length`: String must satisfy minimum character length.
+- `max_length`: String must satisfy maximum character length.
+- `regex`: String must match regular expression pattern.
+
