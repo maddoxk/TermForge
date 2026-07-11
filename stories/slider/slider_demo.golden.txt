@@ -1,0 +1,16 @@
+=== TermForge Slider Component Demo ===
+
+--- 1. Slider at Minimum (0%) (Width = 40, Height = 2) ---
+Volume Level  [38;2;61;63;85m[[0m[38;2;158;206;106m[0m[38;2;122;162;247m●[0m[38;2;187;154;247m--------------------[0m[38;2;61;63;85m][0m 0%
+                                        
+
+--- 2. Slider at Middle (50%) (Width = 40, Height = 2) ---
+Volume Level  [38;2;61;63;85m[[0m[38;2;158;206;106m=========[0m[38;2;122;162;247m●[0m[38;2;187;154;247m----------[0m[38;2;61;63;85m][0m 50%
+                                        
+
+--- 3. Slider at Maximum (100%) (Width = 40, Height = 2) ---
+Volume Level  [38;2;61;63;85m[[0m[38;2;158;206;106m==================[0m[38;2;122;162;247m●[0m[38;2;187;154;247m[0m[38;2;61;63;85m][0m 100%
+                                        
+
+JSON serialization length: 383 bytes
+Portability check: OK
