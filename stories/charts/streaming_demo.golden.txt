@@ -1,0 +1,26 @@
+=== TermForge Chart Streaming Demo ===
+
+─── 1. Single-series CPU rolling buffer (max_points=5) ───
+  pushed 8 samples, window holds 5
+  is_full: True
+  latest 2 rows: [[71.2], [63.5]]
+  spec type: line  y_min=47.78  y_max=72.31
+
+─── 2. Multi-series CPU + Memory (max_points=4) ───
+  series: ['CPU', 'Memory']
+  window size: 4
+  [CPU] data=[44.7, 47.3, 50.0, 52.8]
+  [Memory] data=[71.0, 73.5, 75.1, 77.3]
+
+─── 3. OHLC candlestick buffer (max_points=4) ───
+  bars in window: 4
+  latest bar: {'open': 108.7, 'high': 112.0, 'low': 107.4, 'close': 110.5, 'volume': 0.0, 'timestamp': 'T5'}
+  ohlc_series name: BTC/USD
+  timestamps: ['T2', 'T3', 'T4', 'T5']
+  y range: [100.45, 112.55]
+
+─── 4. Portability: JSON round-trip ───
+  JSON bytes: 245
+  restored series count: 2
+  restored point count: 4
+  Portability: OK
