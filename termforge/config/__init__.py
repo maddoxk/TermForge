@@ -6,6 +6,7 @@ from termforge.config.input import InputBindingSpec, InputRouter
 from termforge.config.schema import generate_json_schema
 from termforge.config.formatter import format_config_file
 from termforge.config.converter import convert_config_file
+from termforge.config.presets import get_preset, list_presets
 
 __all__ = [
     "ComponentConfig",
@@ -22,4 +23,6 @@ __all__ = [
     "generate_json_schema",
     "format_config_file",
     "convert_config_file",
+    "get_preset",
+    "list_presets",
 ]

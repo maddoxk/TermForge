@@ -1,0 +1,34 @@
+=== TermForge Layout Presets ===
+
+Available presets:
+  dashboard        — Bordered window with a header, scrollable body pane, and a status-bar footer.
+  log-viewer       — Scrollable bordered text window optimised for log / output display.
+  modal-dialog     — Centered modal window with a title, message body, and a rounded border.
+  split-pane       — Two horizontal panes side-by-side with configurable ratios and gap.
+  split-pane-v     — Two vertical panes stacked top-and-bottom with configurable ratios and gap.
+
+[dashboard]
+  spec_type = pane
+  JSON size = 867 bytes
+  Portability: OK (roundtrip via JSON)
+
+[split-pane]
+  spec_type = pane
+  JSON size = 591 bytes
+  Portability: OK (roundtrip via JSON)
+
+[split-pane-v]
+  spec_type = pane
+  JSON size = 594 bytes
+  Portability: OK (roundtrip via JSON)
+
+[modal-dialog]
+  spec_type = window
+  JSON size = 243 bytes
+  Portability: OK (roundtrip via JSON)
+
+[log-viewer]
+  spec_type = window
+  JSON size = 242 bytes
+  Portability: OK (roundtrip via JSON)
+
