@@ -23,6 +23,8 @@ from termforge.toggle.types import ToggleSwitchSpec
 from termforge.slider.types import SliderSpec
 from termforge.radio.types import RadioButtonSpec, RadioButtonItemSpec
 from termforge.spinnerbox.types import SpinnerBoxSpec
+from termforge.stepper.types import StepperSpec
+
 
 
 
@@ -78,7 +80,9 @@ __all__ = [
     "RadioButtonSpec",
     "RadioButtonItemSpec",
     "SpinnerBoxSpec",
+    "StepperSpec",
 ]
+
 
 
 
