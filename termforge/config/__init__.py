@@ -12,6 +12,8 @@ from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
 from termforge.keylegend.types import KeyLegendSpec
 from termforge.logging.types import LogStreamerSpec
 from termforge.navigation.types import BreadcrumbsSpec
+from termforge.menu.types import MenuBarSpec, MenuItemSpec
+
 
 
 
@@ -41,7 +43,10 @@ __all__ = [
     "KeyLegendSpec",
     "LogStreamerSpec",
     "BreadcrumbsSpec",
+    "MenuBarSpec",
+    "MenuItemSpec",
 ]
+
 
 
 

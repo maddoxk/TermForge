@@ -1,0 +1,25 @@
+=== TermForge MenuBar Component Demo ===
+
+--- 1. Menu Bar Closed (Width = 50, Height = 2) ---
+[38;2;122;162;247m File [0m      [38;2;187;154;247m Edit [0m      [38;2;187;154;247m Help [0m                    
+                                                  
+
+--- 2. File Dropdown Menu Open (Width = 50, Height = 8) ---
+[38;2;122;162;247m File [0m      [38;2;187;154;247m Edit [0m      [38;2;187;154;247m Help [0m                    
+┌────┐                                            
+│[38;2;187;154;247mNew [0m│                                            
+│[38;2;224;175;104mOpen[0m│                                            
+│[38;2;187;154;247mSave[0m│                                            
+├────┤                                            
+│[38;2;187;154;247mExit[0m│                                            
+└────┘                                            
+
+--- 3. Help Dropdown Right Shifting (Width = 30, Height = 5) ---
+[38;2;187;154;247m File [0m    [38;2;187;154;247m Edit [0m    [38;2;122;162;247m Help [0m    
+             ┌───────────────┐
+             │[38;2;224;175;104mAbout TermForge[0m│
+             └───────────────┘
+                              
+
+JSON serialization length: 478 bytes
+Portability check: OK
