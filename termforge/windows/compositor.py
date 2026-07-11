@@ -96,7 +96,9 @@ def render_window(
         style=spec.border_style,
         title=spec.title,
         content=spec.content,
-        tags=spec.tags
+        tags=spec.tags,
+        title_align=spec.title_align,
+        title_pad=spec.title_pad,
     )
     
     # 3. Render the border

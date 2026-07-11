@@ -55,7 +55,8 @@ def render_border(
             top_line += glyphs.tl
         
         # Determine top center content (title and tags)
-        title_text = f" {spec.title} " if spec.title else ""
+        _pad = " " * max(0, spec.title_pad)
+        title_text = f"{_pad}{spec.title}{_pad}" if spec.title else ""
         title_w = get_string_width(title_text)
         
         tags_text = ""
