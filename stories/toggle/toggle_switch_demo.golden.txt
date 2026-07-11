@@ -1,0 +1,12 @@
+=== TermForge ToggleSwitch Component Demo ===
+
+--- 1. Toggle Switch Active (ON) (Width = 40, Height = 2) ---
+[38;2;122;162;247mBackground Music Service[0m         [38;2;158;206;106m[● ON ][0m
+                                        
+
+--- 2. Toggle Switch Inactive (OFF) (Width = 40, Height = 2) ---
+[38;2;122;162;247mDiagnostic Logging API[0m           [38;2;187;154;247m[○ OFF][0m
+                                        
+
+JSON serialization length: 313 bytes
+Portability check: OK
