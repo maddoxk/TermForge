@@ -74,3 +74,12 @@
 - **Completed:** 2026-07-10T16:00:00-06:00
 - **Goal:** Implement color depth override simulation in layout visualizer, interactive components REPL playground shell CLI, and fully clean up the GitHub open issues backlog.
 - **Result:** DONE — Completed color depth overrides, preloaded REPL environment, resolved and closed all 45 open issues on GitHub, compiled and released v1.8.0.
+
+### Iteration 9 — Layout Presets, Title Alignment & Continuous Team ✅
+- **Started:** 2026-07-10T18:30:00-06:00
+- **Completed:** 2026-07-10T18:40:00-06:00
+- **Goal:** Implement Issue #138 (named layout presets) and Issue #140 (border title alignment/padding) via strict PR workflow.
+- **Result:** DONE
+  - PR #139: `termforge/config/presets.py` — 5 named presets (`dashboard`, `split-pane`, `split-pane-v`, `modal-dialog`, `log-viewer`), `get_preset()`, `list_presets()`. 23 tests. Portability contract: all specs JSON-serializable.
+  - PR #141: `title_align` (TextAlign) and `title_pad` (int) on `WindowSpec` and `BorderSpec`. `render_border` now uses configurable spacing. Wired through compositor. 196 tests passing.
+  - All scheduled agents (Creator x5/min, QA x7/min, Implementer x7/min, Refactor x30/min, Docs x1/hr, CTO/PM x2/hr) running.
