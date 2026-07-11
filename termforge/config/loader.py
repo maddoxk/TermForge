@@ -53,6 +53,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.toggle.types import ToggleSwitchSpec
     from termforge.slider.types import SliderSpec
     from termforge.radio.types import RadioButtonSpec
+    from termforge.spinnerbox.types import SpinnerBoxSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -81,7 +82,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "toggle_switch": ToggleSwitchSpec,
         "slider": SliderSpec,
         "radio_button": RadioButtonSpec,
+        "spinner_box": SpinnerBoxSpec,
     }
+
 
 
 
