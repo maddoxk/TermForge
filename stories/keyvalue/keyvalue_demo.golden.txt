@@ -1,0 +1,16 @@
+=== TermForge KeyValueGrid Component Demo ===
+
+[38;2;0;0;0m┌──────────────── System Diagnostics ────────────────┐[0m
+[38;2;0;0;0m│[0m[38;2;136;192;208mOS Distribution [0m | TermForge OS v1.0                [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0mCPU Architecture | x86_64 (12 Cores)                [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0mSystem Load      | [38;2;235;203;139m45.8%[0m                            [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0mMemory status    | 12.4 GB / 16.0 GB                [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0mActive Network   | [38;2;163;190;140mConnected (10 Gbps)[0m              [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0mSystem Uptime    | [38;2;136;192;208m42 days, 11 hours[0m                [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m                                                    [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m                                                    [38;2;0;0;0m│[0m
+[38;2;0;0;0m└────────────────────────────────────────────────────┘[0m
+
+JSON serialization length: 909 bytes
+Restored items count: 6
+Portability check: OK
