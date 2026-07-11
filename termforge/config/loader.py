@@ -41,6 +41,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.animation.types import SpinnerSpec, TransitionSpec
     from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
     from termforge.keylegend.types import KeyLegendSpec
+    from termforge.logging.types import LogStreamerSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -57,7 +58,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "keyvalue_grid": KeyValueGridSpec,
         "keyvalue_item": KeyValueItemSpec,
         "key_legend": KeyLegendSpec,
+        "log_streamer": LogStreamerSpec,
     }
+
 
 
     

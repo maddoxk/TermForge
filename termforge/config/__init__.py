@@ -10,6 +10,8 @@ from termforge.config.presets import get_preset, list_presets
 from termforge.config.form import FieldType, FormFieldSpec, FormSpec
 from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
 from termforge.keylegend.types import KeyLegendSpec
+from termforge.logging.types import LogStreamerSpec
+
 
 
 __all__ = [
@@ -35,5 +37,7 @@ __all__ = [
     "KeyValueItemSpec",
     "KeyValueGridSpec",
     "KeyLegendSpec",
+    "LogStreamerSpec",
 ]
+
 
