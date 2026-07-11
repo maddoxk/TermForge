@@ -4,6 +4,7 @@ from termforge.charts.scale import nice_bounds, compute_bounds, scale_value, gen
 from termforge.charts.canvas import Canvas, BrailleCanvas, create_canvas, create_braille_canvas
 from termforge.charts.chart import render_chart
 from termforge.charts.renderers import render_sparkline
+from termforge.charts.streaming import StreamingChartBuffer
 
 __all__ = [
     "ChartType",
@@ -21,4 +22,5 @@ __all__ = [
     "create_braille_canvas",
     "render_chart",
     "render_sparkline",
+    "StreamingChartBuffer",
 ]
