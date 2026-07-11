@@ -53,6 +53,8 @@ termforge-contrast = "termforge.cli.contrast:main"
 termforge-responsive = "termforge.cli.responsive:main"
 termforge-benchmark = "termforge.cli.benchmark:main"
 termforge-play = "termforge.cli.play:main"
+termforge-watch = "termforge.cli.watch:main"
+
 
 [tool.ruff]
 target-version = "py310"
