@@ -1,0 +1,15 @@
+=== TermForge LogStreamer Component Demo ===
+
+[38;2;61;63;85m┌─────────────── System Events Log ────────────────┐[0m
+[38;2;61;63;85m│[0m[12:00:00] [38;2;158;206;106m[INFO][0m Starting engine thread          [38;2;61;63;85m│[0m
+[38;2;61;63;85m│[0m[12:00:01] [38;2;158;206;106m[INFO][0m Loading configuration presets   [38;2;61;63;85m│[0m
+[38;2;61;63;85m│[0m[12:00:03] [38;2;224;175;104m[WARNING][0m Slow DB response detected, r…[38;2;61;63;85m│[0m
+[38;2;61;63;85m│[0m[12:00:05] [ERROR] Database connection lost!      [38;2;61;63;85m│[0m
+[38;2;61;63;85m│[0m[12:00:06] [38;2;158;206;106m[INFO][0m Reconnecting to primary cluster [38;2;61;63;85m│[0m
+[38;2;61;63;85m│[0m[12:00:07] [38;2;158;206;106m[INFO][0m Cluster status: OK              [38;2;61;63;85m│[0m
+[38;2;61;63;85m└──────────────────────────────────────────────────┘[0m
+
+JSON serialization length: 759 bytes
+Restored timestamp format: %H:%M:%S
+Restored log buffer size: 6
+Portability check: OK
