@@ -40,6 +40,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.logos.types import LogoSpec, BannerSpec
     from termforge.animation.types import SpinnerSpec, TransitionSpec
     from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
+    from termforge.keylegend.types import KeyLegendSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -55,7 +56,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "transition": TransitionSpec,
         "keyvalue_grid": KeyValueGridSpec,
         "keyvalue_item": KeyValueItemSpec,
+        "key_legend": KeyLegendSpec,
     }
+
 
     
     spec_type = config.spec_type.lower()

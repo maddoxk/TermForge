@@ -1,0 +1,16 @@
+=== TermForge KeyLegend Component Demo ===
+
+--- 1. Horizontal Layout (Footer Bar Style) ---
+[[38;2;136;192;208mF1[0m] [38;2;94;129;172mHelp[0m    [[38;2;136;192;208mCtrl+C[0m] [38;2;94;129;172mQuit[0m    [[38;2;136;192;208mF10[0m] [38;2;94;129;172mMenu[0m    [[38;2;136;192;208mShift+Tab[0m] [38;2;94;129;172mBack[0m
+
+--- 2. Vertical Layout (Sidebar panel Style) ---
+[38;2;0;0;0m┌───── Active Hotkeys ─────┐[0m
+[38;2;0;0;0m│[0m[38;2;136;192;208mF1[0m -> [38;2;235;203;139mHelp[0m                [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m[38;2;136;192;208mCtrl+C[0m -> [38;2;235;203;139mQuit[0m            [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m[38;2;136;192;208mF10[0m -> [38;2;235;203;139mMenu[0m               [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m[38;2;136;192;208mShift+Tab[0m -> [38;2;235;203;139mBack[0m         [38;2;0;0;0m│[0m
+[38;2;0;0;0m└──────────────────────────┘[0m
+
+JSON serialization length: 359 bytes
+Restored format: [{key}] {description}
+Portability check: OK
