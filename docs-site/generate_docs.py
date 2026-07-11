@@ -501,17 +501,21 @@ def main() -> None:
                 <button id="btn-interactive" class="btn-interactive" onclick="toggleInteractive()">Boot Interactive REPL</button>
             </div>
             
-            <div class="tab-bar">
-                <button id="tab-preview" class="tab-button active" onclick="showTab('preview')">Terminal Preview</button>
-                <button id="tab-code" class="tab-button" onclick="showTab('code')">Python Source Code</button>
+            <div class="tab-bar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.4); border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-right: 12px;">
+                <div style="display: flex; gap: 2px;">
+                    <button id="tab-preview" class="tab-button active" onclick="showTab('preview')">Terminal Preview</button>
+                    <button id="tab-code" class="tab-button" onclick="showTab('code')">Python Source Code</button>
+                </div>
+                <div id="code-actions" style="display: none; gap: 10px;">
+                    <button class="btn-interactive" onclick="resetCode()" style="background: rgba(255,255,255,0.08); color: var(--text-color); box-shadow: none; padding: 6px 12px; font-size: 11px;">Reset Code</button>
+                    <button class="btn-interactive" onclick="runCodeLive()" style="padding: 6px 12px; font-size: 11px;">Run Code Live ⚡</button>
+                </div>
             </div>
             
             <div class="terminal-body" id="terminal-screen-preview" style="display: block;">
                 <!-- xterm.js mounts here -->
             </div>
-            <div class="terminal-body" id="terminal-screen-code" style="display: none; background: #111217; color: #a9b1d6;">
-                <!-- code text loaded here -->
-            </div>
+            <pre contenteditable="true" spellcheck="false" class="terminal-body" id="terminal-screen-code" style="display: none; background: #111217; color: #a9b1d6; font-family: 'Fira Code', monospace; font-size: 14px; line-height: 1.45; outline: none; border: 1px dashed rgba(255,255,255,0.15); padding: 24px; min-height: 420px; overflow-y: auto; white-space: pre;"></pre>
         </div>
     </div>
     
@@ -1019,11 +1023,7 @@ def main() -> None:
             writeTerm(data.raw_ansi.replace(/\n/g, "\r\n"));
             writeTerm("\r\n");
             
-            const codeEscaped = data.code
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-            document.getElementById("terminal-screen-code").innerHTML = codeEscaped;
+            document.getElementById("terminal-screen-code").innerText = data.code;
         }
         
         function showTab(tab) {
@@ -1031,15 +1031,44 @@ def main() -> None:
             document.getElementById("tab-preview").classList.remove("active");
             document.getElementById("tab-code").classList.remove("active");
             
+            const actions = document.getElementById("code-actions");
             if (tab === 'preview') {
                 document.getElementById("tab-preview").classList.add("active");
                 document.getElementById("terminal-screen-preview").style.display = "block";
                 document.getElementById("terminal-screen-code").style.display = "none";
+                if (actions) actions.style.display = "none";
             } else {
                 document.getElementById("tab-code").classList.add("active");
                 document.getElementById("terminal-screen-preview").style.display = "none";
                 document.getElementById("terminal-screen-code").style.display = "block";
+                if (actions) actions.style.display = "flex";
             }
+        }
+
+        function resetCode() {
+            if (currentMod && currentComp && storiesData[currentMod] && storiesData[currentMod][currentComp]) {
+                const originalCode = storiesData[currentMod][currentComp].code;
+                document.getElementById("terminal-screen-code").innerText = originalCode;
+            }
+        }
+
+        async function runCodeLive() {
+            const code = document.getElementById("terminal-screen-code").innerText;
+            
+            showTab('preview');
+            
+            if (!interactive) {
+                await toggleInteractive();
+            }
+            
+            writeTerm(`\r\n\x1b[32m>>> Executing modified code live... \x1b[0m\r\n`);
+            
+            try {
+                await pyodide.runPythonAsync(code);
+            } catch (e) {
+                writeTerm(`\x1b[31mError during execution: ${e.message}\x1b[0m\r\n`);
+            }
+            prompt();
         }
         
         function changeThemeSkin(theme) {
