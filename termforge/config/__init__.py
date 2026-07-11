@@ -7,6 +7,7 @@ from termforge.config.schema import generate_json_schema
 from termforge.config.formatter import format_config_file
 from termforge.config.converter import convert_config_file
 from termforge.config.presets import get_preset, list_presets
+from termforge.config.form import FieldType, FormFieldSpec, FormSpec
 
 __all__ = [
     "ComponentConfig",
@@ -25,4 +26,7 @@ __all__ = [
     "convert_config_file",
     "get_preset",
     "list_presets",
+    "FieldType",
+    "FormFieldSpec",
+    "FormSpec",
 ]
