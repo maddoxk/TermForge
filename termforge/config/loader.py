@@ -50,6 +50,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.search.types import SearchBarSpec
     from termforge.checklist.types import ChecklistSpec
     from termforge.combobox.types import ComboboxSpec
+    from termforge.toggle.types import ToggleSwitchSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -75,7 +76,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "search_bar": SearchBarSpec,
         "checklist": ChecklistSpec,
         "combobox": ComboboxSpec,
+        "toggle_switch": ToggleSwitchSpec,
     }
+
 
 
 
