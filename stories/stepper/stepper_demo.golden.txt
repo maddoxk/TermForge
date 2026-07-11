@@ -1,0 +1,12 @@
+=== TermForge Stepper Component Demo ===
+
+--- 1. Arrow Connector & Selection focused on Step 1 (Configure) ---
+[38;2;187;154;247mChoose Directory[0m[38;2;61;63;85m -> [0m[38;2;122;162;247m[Select Core Specs][0m[38;2;61;63;85m -> [0m[38;2;187;154;247mInstall Bundles[0m[38;2;61;63;85m -> [0m[38;2;187;154;247mLaunch Application[0m
+                                                                                
+
+--- 2. Heavy Connector & Selection focused on Step 2 (Install) ---
+[38;2;187;154;247mChoose Directory[0m[38;2;61;63;85m » [0m[38;2;187;154;247mSelect Core Specs[0m[38;2;61;63;85m » [0m[38;2;158;206;106m[Install Bundles][0m[38;2;61;63;85m » [0m[38;2;187;154;247mLaunch Application[0m   
+                                                                                
+
+JSON serialization length: 287 bytes
+Portability check: OK
