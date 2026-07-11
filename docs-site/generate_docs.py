@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""TermForge documentation site compiler.
+
+Aggregates all story code and pre-rendered golden outputs, packages the entire
+termforge package source files, and compiles a single, fully self-contained
+HTML documentation page featuring:
+1. Category-grouped, collapsable storybook menu.
+2. Live interactive Python shell and CLI command runner in the browser using
+   Pyodide (WebAssembly) and xterm.js, with graceful static fallback.
+3. Dracula, Tokyo Night, Catppuccin, and High Contrast responsive dark themes.
+"""
 import os
 import re
 import json
@@ -35,8 +45,19 @@ def main() -> None:
                         "raw_ansi": content,
                         "code": py_code
                     }
+
+    # 2. Gather all termforge Python files for virtual filesystem
+    termforge_sources = {}
+    termforge_dir = os.path.join(base_dir, "termforge")
+    for root, _, files in os.walk(termforge_dir):
+        for file in files:
+            if file.endswith(".py"):
+                path = os.path.join(root, file)
+                rel_path = os.path.relpath(path, base_dir)
+                with open(path, "r", encoding="utf-8") as f:
+                    termforge_sources[rel_path] = f.read()
                     
-    # 2. Write HTML template
+    # 3. Write HTML template
     html_template = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +67,7 @@ def main() -> None:
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
     <style>
         :root {
             /* Catppuccin Mocha Theme (Default) */
@@ -105,7 +127,8 @@ def main() -> None:
             border-radius: 50%;
             filter: blur(120px);
             z-index: -1;
-            opacity: 0.25;
+            opacity: 0.18;
+            pointer-events: none;
         }
         .sphere-1 {
             width: 400px;
@@ -181,6 +204,7 @@ def main() -> None:
         .module-group {
             display: flex;
             flex-direction: column;
+            margin-bottom: 5px;
         }
         
         .module-header {
@@ -223,6 +247,11 @@ def main() -> None:
             gap: 5px;
             padding-left: 10px;
             margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .menu-list.show {
+            display: flex;
         }
         
         .menu-item button {
@@ -279,6 +308,12 @@ def main() -> None:
             font-weight: 600;
         }
         
+        .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .theme-selector {
             display: flex;
             align-items: center;
@@ -335,6 +370,24 @@ def main() -> None:
             opacity: 0.5;
         }
         
+        .btn-interactive {
+            background: linear-gradient(135deg, var(--border-glow), var(--accent-glow));
+            border: none;
+            color: #11111b;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(137, 180, 250, 0.25);
+        }
+
+        .btn-interactive:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
         .tab-bar {
             display: flex;
             background: rgba(0, 0, 0, 0.4);
@@ -371,7 +424,7 @@ def main() -> None:
         #terminal-screen-code {
             padding: 24px;
             font-family: 'Fira Code', monospace;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.45;
             white-space: pre;
             overflow-x: auto;
@@ -424,14 +477,16 @@ def main() -> None:
                 <h2 id="active-title">Story Showcase</h2>
                 <p style="font-size: 13px; opacity: 0.6; margin-top: 5px;">Interactive TermForge rendering gallery</p>
             </div>
-            <div class="theme-selector">
-                <label for="theme-skin" style="font-size: 14px; font-weight: 600;">Theme skin:</label>
-                <select id="theme-skin" onchange="changeThemeSkin(this.value)">
-                    <option value="catppuccin">Catppuccin Mocha</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="tokyo">Tokyo Night</option>
-                    <option value="contrast">High Contrast</option>
-                </select>
+            <div class="controls-right">
+                <div class="theme-selector">
+                    <label for="theme-skin" style="font-size: 14px; font-weight: 600;">Theme skin:</label>
+                    <select id="theme-skin" onchange="changeThemeSkin(this.value)">
+                        <option value="catppuccin">Catppuccin Mocha</option>
+                        <option value="dracula">Dracula</option>
+                        <option value="tokyo">Tokyo Night</option>
+                        <option value="contrast">High Contrast</option>
+                    </select>
+                </div>
             </div>
         </div>
         
@@ -443,7 +498,7 @@ def main() -> None:
                     <div class="dot dot-green"></div>
                 </div>
                 <div class="terminal-title" id="term-filename">story.py</div>
-                <div></div>
+                <button id="btn-interactive" class="btn-interactive" onclick="toggleInteractive()">Boot Interactive REPL</button>
             </div>
             
             <div class="tab-bar">
@@ -462,13 +517,22 @@ def main() -> None:
     
     <script>
         const storiesData = %STORIES_DATA%;
+        const termforgeSources = %TERMFORGE_SOURCES%;
+        
         let currentMod = "";
         let currentComp = "";
         let currentTab = "preview";
         
         let term;
-        let currentLine = "";
+        let hasXterm = true;
+        let currentInput = "";
+        let interactive = false;
         let inRepl = false;
+        let pyodide = null;
+        let pyodideLoading = false;
+        
+        const history = [];
+        let historyIndex = -1;
         
         const xtermThemes = {
             catppuccin: {
@@ -558,128 +622,295 @@ def main() -> None:
         };
 
         function initTerminal() {
-            term = new Terminal({
-                fontFamily: '"Fira Code", monospace',
-                fontSize: 14,
-                lineHeight: 1.25,
-                cols: 80,
-                rows: 24,
-                theme: xtermThemes.catppuccin,
-                cursorBlink: true,
-                cursorStyle: 'block'
-            });
-            
-            term.open(document.getElementById('terminal-screen-preview'));
-            
-            term.writeln("\x1b[1;36mWelcome to TermForge Interactive Documentation Shell!\x1b[0m");
-            term.writeln("Type \x1b[33mhelp\x1b[0m to list available commands.");
-            term.writeln("");
-            prompt();
-            
-            term.onData(data => {
-                const code = data.charCodeAt(0);
-                if (code === 13) { // Enter
-                    term.write("\r\n");
-                    handleCommand(currentLine);
-                    currentLine = "";
-                } else if (code === 127) { // Backspace
-                    if (currentLine.length > 0) {
-                        currentLine = currentLine.slice(0, -1);
-                        term.write("\b \b");
-                    }
-                } else if (code < 32) {
-                    // Ignore other control codes
-                } else {
-                    currentLine += data;
-                    term.write(data);
+            try {
+                if (typeof Terminal === 'undefined') {
+                    throw new Error("Terminal class not loaded");
                 }
-            });
-        }
-
-        function prompt() {
-            if (inRepl) {
-                term.write("\x1b[32m>>> \x1b[0m");
-            } else {
-                term.write("\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ ");
+                term = new Terminal({
+                    fontFamily: '"Fira Code", monospace',
+                    fontSize: 14,
+                    lineHeight: 1.25,
+                    cols: 80,
+                    rows: 24,
+                    theme: xtermThemes.catppuccin,
+                    cursorBlink: true,
+                    cursorStyle: 'block'
+                });
+                
+                term.open(document.getElementById('terminal-screen-preview'));
+                
+                term.writeln("\x1b[1;36mWelcome to TermForge Storybook Gallery!\x1b[0m");
+                term.writeln("Select a story on the left to instantly preview pre-rendered terminal outputs.");
+                term.writeln("Click \x1b[33mBoot Interactive REPL\x1b[0m to run actual TermForge python code live in your browser!");
+                term.writeln("");
+                prompt();
+                
+                term.onData(data => {
+                    if (!interactive) {
+                        term.write(data);
+                        term.writeln("\r\n\x1b[33m[Hint] Click 'Boot Interactive REPL' at the top right to start a live Python shell!\x1b[0m");
+                        prompt();
+                        return;
+                    }
+                    
+                    if (pyodideLoading) {
+                        return;
+                    }
+                    
+                    const code = data.charCodeAt(0);
+                    if (data === "\r") { // Enter
+                        term.write("\r\n");
+                        handleCommand(currentInput);
+                        currentInput = "";
+                    } else if (code === 127) { // Backspace
+                        if (currentInput.length > 0) {
+                            currentInput = currentInput.slice(0, -1);
+                            term.write("\b \b");
+                        }
+                    } else if (data === "\x1b[A") { // Up arrow
+                        if (history.length > 0) {
+                            if (historyIndex === -1) historyIndex = history.length;
+                            if (historyIndex > 0) {
+                                historyIndex--;
+                                for (let i = 0; i < currentInput.length; i++) term.write("\b \b");
+                                currentInput = history[historyIndex];
+                                term.write(currentInput);
+                            }
+                        }
+                    } else if (data === "\x1b[B") { // Down arrow
+                        if (historyIndex !== -1) {
+                            if (historyIndex < history.length - 1) {
+                                historyIndex++;
+                                for (let i = 0; i < currentInput.length; i++) term.write("\b \b");
+                                currentInput = history[historyIndex];
+                                term.write(currentInput);
+                            } else {
+                                historyIndex = -1;
+                                for (let i = 0; i < currentInput.length; i++) term.write("\b \b");
+                                currentInput = "";
+                            }
+                        }
+                    } else if (data === "\x03") { // Ctrl+C
+                        term.write("^C\r\n");
+                        currentInput = "";
+                        prompt();
+                    } else {
+                        if (code >= 32) {
+                            currentInput += data;
+                            term.write(data);
+                        }
+                    }
+                });
+            } catch (e) {
+                console.warn("xterm.js load failed, falling back to static pre element:", e);
+                hasXterm = false;
+                const previewDiv = document.getElementById('terminal-screen-preview');
+                previewDiv.innerHTML = `<pre id="fallback-term-screen" style="font-family: 'Fira Code', monospace; font-size: 14px; line-height: 1.25; color: var(--text-color); background: rgba(0,0,0,0.4); padding: 20px; border-radius: 8px; overflow: auto; min-height: 420px; white-space: pre;"></pre>`;
+                
+                // Hide interactive button
+                const btn = document.getElementById("btn-interactive");
+                if (btn) btn.style.display = "none";
+                
+                writeTerm("Welcome to TermForge Documentation Gallery!\nSelect any story on the left to render its output.\n\n");
             }
         }
 
-        function handleCommand(line) {
+        function writeTerm(text) {
+            if (hasXterm && term) {
+                term.write(text);
+            } else {
+                const screen = document.getElementById("fallback-term-screen");
+                if (screen) {
+                    // Strip ANSI codes for clean fallback viewing
+                    const cleanText = text.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+                    screen.textContent += cleanText;
+                    screen.scrollTop = screen.scrollHeight;
+                }
+            }
+        }
+
+        function clearTerm() {
+            if (hasXterm && term) {
+                term.clear();
+                term.write("\x1b[H");
+            } else {
+                const screen = document.getElementById("fallback-term-screen");
+                if (screen) {
+                    screen.textContent = "";
+                }
+            }
+        }
+
+        function prompt() {
+            if (!interactive) return;
+            if (inRepl) {
+                writeTerm("\x1b[32m>>> \x1b[0m");
+            } else {
+                writeTerm("\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ ");
+            }
+        }
+
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            if (pyodideLoading) return null;
+            pyodideLoading = true;
+            
+            writeTerm("\r\n\x1b[33mBooting Python WebAssembly (Pyodide) from CDN...\x1b[0m\r\n");
+            
+            try {
+                pyodide = await loadPyodide({
+                    stdout: (text) => {
+                        writeTerm(text + "\r\n");
+                    },
+                    stderr: (text) => {
+                        writeTerm("\x1b[31m" + text + "\x1b[0m\r\n");
+                    }
+                });
+                
+                writeTerm("\x1b[32mPython WebAssembly loaded. Bootstrapping dependencies...\x1b[0m\r\n");
+                await pyodide.loadPackage("micropip");
+                
+                writeTerm("\x1b[32mInstalling rich and pyyaml...\x1b[0m\r\n");
+                await pyodide.runPythonAsync(`
+                    import micropip
+                    await micropip.install(['rich', 'pyyaml'])
+                `);
+                
+                writeTerm("\x1b[32mLoading Pillow...\x1b[0m\r\n");
+                await pyodide.loadPackage("pillow");
+                
+                writeTerm("\x1b[32mWriting TermForge source files to virtual environment...\x1b[0m\r\n");
+                for (const [path, content] of Object.entries(termforgeSources)) {
+                    const parts = path.split('/');
+                    let current = "";
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        current += (current ? "/" : "") + parts[i];
+                        try { pyodide.FS.mkdir(current); } catch(e) {}
+                    }
+                    pyodide.FS.writeFile(path, content);
+                }
+                
+                writeTerm("\x1b[1;32mInitialization complete! Python environment is ready.\x1b[0m\r\n\r\n");
+                pyodideLoading = false;
+                return pyodide;
+            } catch (e) {
+                writeTerm("\x1b[31mError loading environment: " + e.message + "\x1b[0m\r\n");
+                pyodideLoading = false;
+                pyodide = null;
+                return null;
+            }
+        }
+
+        async function runCLICommand(commandModule, commandFunc) {
+            writeTerm(`Executing live command: ${commandModule}.${commandFunc}()...\r\n`);
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    sys.argv = ["termforge"]
+                    from ${commandModule} import ${commandFunc}
+                    try:
+                        ${commandFunc}()
+                    except SystemExit:
+                        pass
+                `);
+            } catch(e) {
+                writeTerm("\x1b[31m" + e.message + "\x1b[0m\r\n");
+            }
+        }
+
+        async function handleCommand(line) {
             const cmd = line.trim();
+            if (inRepl) {
+                if (cmd === "exit()" || cmd === "quit()" || cmd === "exit" || cmd === "quit") {
+                    inRepl = false;
+                    writeTerm("Exiting Python REPL. Back to shell.\r\n");
+                    prompt();
+                    return;
+                }
+                if (cmd) {
+                    history.push(line);
+                    historyIndex = -1;
+                    try {
+                        await pyodide.runPythonAsync(line);
+                    } catch(e) {
+                        writeTerm("\x1b[31m" + e.message + "\x1b[0m\r\n");
+                    }
+                }
+                prompt();
+                return;
+            }
+            
             if (!cmd) {
                 prompt();
                 return;
             }
             
-            if (inRepl) {
-                if (cmd === "exit()" || cmd === "quit" || cmd === "exit") {
-                    inRepl = false;
-                    term.writeln("Exiting TermForge interactive REPL.");
-                    prompt();
-                    return;
-                }
-                
-                if (cmd.startsWith("from termforge")) {
-                    term.writeln("");
-                } else if (cmd.includes(".render()")) {
-                    term.writeln("\x1b[33m[Simulated Rendering Output]\x1b[0m");
-                    term.writeln("┌──────────────────────────┐");
-                    term.writeln("│   Hello from TermForge   │");
-                    term.writeln("└──────────────────────────┘");
-                } else {
-                    term.writeln("Python 3.12 (mock): executed successfully.");
-                }
-                prompt();
-                return;
-            }
+            history.push(line);
+            historyIndex = -1;
             
             const parts = cmd.split(" ");
             const mainCmd = parts[0];
             
             if (mainCmd === "help") {
-                term.writeln("Available commands:");
-                term.writeln("  \x1b[33mlist\x1b[0m                    List all available stories");
-                term.writeln("  \x1b[33mrun <story>\x1b[0m             Run a story (e.g. run text/markup_demo)");
-                term.writeln("  \x1b[33mtermforge-play\x1b[0m          Boot interactive python REPL");
-                term.writeln("  \x1b[33mtermforge-layout\x1b[0m        Run layout visualizer simulation");
-                term.writeln("  \x1b[33mclear\x1b[0m                   Clear terminal screen");
+                writeTerm("Available shell commands:\r\n");
+                writeTerm("  \x1b[33mtermforge-demo\x1b[0m        Run the flagship TUI dashboard demo\r\n");
+                writeTerm("  \x1b[33mtermforge-layout\x1b[0m      Run layout visualizer simulation\r\n");
+                writeTerm("  \x1b[33mtermforge-benchmark\x1b[0m   Run rendering performance benchmarker\r\n");
+                writeTerm("  \x1b[33mtermforge-validate\x1b[0m    Validate a declarative layout configuration\r\n");
+                writeTerm("  \x1b[33mtermforge-inspect\x1b[0m     Inspect layout geometry tree hierarchy\r\n");
+                writeTerm("  \x1b[33mpython3\x1b[0m               Launch interactive python playground REPL\r\n");
+                writeTerm("  \x1b[33mclear\x1b[0m                 Clear terminal screen\r\n");
+                writeTerm("  \x1b[33mexit\x1b[0m                  Exit interactive mode\r\n");
             } else if (mainCmd === "clear") {
-                term.clear();
-                term.write("\x1b[H"); // Reset cursor home
-            } else if (mainCmd === "list") {
-                term.writeln("Stories:");
-                for (const mod in storiesData) {
-                    for (const comp in storiesData[mod]) {
-                        term.writeln(`  - ${mod}/${comp}`);
-                    }
-                }
-            } else if (mainCmd === "run") {
-                const target = parts[1];
-                if (!target) {
-                    term.writeln("Usage: run <module/component>");
-                } else {
-                    const [mod, comp] = target.split("/");
-                    if (storiesData[mod] && storiesData[mod][comp]) {
-                        selectStory(mod, comp);
-                    } else {
-                        term.writeln(`Error: Story not found: ${target}`);
-                    }
-                }
-            } else if (mainCmd === "termforge-play") {
+                clearTerm();
+            } else if (mainCmd === "exit") {
+                toggleInteractive();
+                return;
+            } else if (mainCmd === "python3" || mainCmd === "termforge-play") {
                 inRepl = true;
-                term.writeln("TermForge Interactive Playground REPL (mock)");
-                term.writeln("Type exit() to return to shell.");
+                writeTerm("TermForge Python 3.12 WebAssembly REPL\r\n");
+                writeTerm("Type exit() to return to shell.\r\n");
+            } else if (mainCmd === "termforge-demo") {
+                await runCLICommand("termforge.cli.demo", "main");
             } else if (mainCmd === "termforge-layout") {
-                term.writeln("TermForge Layout Visualizer simulation:");
-                term.writeln("┌───────────────────────────────────┐");
-                term.writeln("│  [Window] width=60 height=10      │");
-                term.writeln("│  - Box constraints: FIXED         │");
-                term.writeln("└───────────────────────────────────┘");
+                await runCLICommand("termforge.cli.layout", "main");
+            } else if (mainCmd === "termforge-benchmark") {
+                await runCLICommand("termforge.cli.benchmark", "main");
+            } else if (mainCmd === "termforge-validate") {
+                await runCLICommand("termforge.cli.validate", "main");
+            } else if (mainCmd === "termforge-inspect") {
+                await runCLICommand("termforge.cli.inspect", "main");
             } else {
-                term.writeln(`bash: ${mainCmd}: command not found`);
+                writeTerm(`bash: ${mainCmd}: command not found. Type 'help' for options.\r\n`);
             }
-            
             prompt();
+        }
+
+        async function toggleInteractive() {
+            const btn = document.getElementById("btn-interactive");
+            if (interactive) {
+                interactive = false;
+                inRepl = false;
+                btn.textContent = "Boot Interactive REPL";
+                // Restore currently selected story golden
+                if (currentMod && currentComp) {
+                    selectStory(currentMod, currentComp);
+                } else {
+                    clearTerm();
+                    writeTerm("Select a story on the left to render.\r\n");
+                }
+            } else {
+                interactive = true;
+                btn.textContent = "Exit Interactive Mode";
+                clearTerm();
+                writeTerm("\x1b[1;36mTermForge Interactive WebAssembly Shell\x1b[0m\r\n");
+                prompt();
+                
+                const loaded = await ensurePyodide();
+                if (loaded) {
+                    prompt();
+                }
+            }
         }
 
         function populateMenu() {
@@ -734,7 +965,6 @@ def main() -> None:
             
             if (firstKey) {
                 const [mod, comp] = firstKey.split("/");
-                // Open first module group automatically
                 toggleModule(mod);
                 selectStory(mod, comp);
             }
@@ -744,28 +974,37 @@ def main() -> None:
             const header = document.getElementById("header-" + mod);
             const list = document.getElementById("group-" + mod);
             
-            if (list.style.display === "flex") {
+            const isShown = list.classList.contains("show");
+            if (isShown) {
+                list.classList.remove("show");
                 list.style.display = "none";
                 header.classList.remove("expanded");
             } else {
+                list.classList.add("show");
                 list.style.display = "flex";
                 header.classList.add("expanded");
             }
         }
 
-        function selectStory(mod, comp) {
+        async function selectStory(mod, comp) {
             currentMod = mod;
             currentComp = comp;
             
-            // Remove active state
+            // If in interactive mode, exit interactive mode first
+            if (interactive) {
+                interactive = false;
+                inRepl = false;
+                const btn = document.getElementById("btn-interactive");
+                if (btn) btn.textContent = "Boot Interactive REPL";
+            }
+            
             document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
             
             const item = document.getElementById("item-" + mod + "-" + comp);
             if (item) {
                 item.classList.add("active");
-                // Ensure parent list is displayed
                 const list = document.getElementById("group-" + mod);
-                if (list && list.style.display !== "flex") {
+                if (list && !list.classList.contains("show")) {
                     toggleModule(mod);
                 }
             }
@@ -775,15 +1014,11 @@ def main() -> None:
             
             const data = storiesData[mod][comp];
             
-            // Clear and render raw ANSI in terminal emulator
-            term.clear();
-            term.write("\x1b[H"); // Reset cursor home
-            term.writeln(`\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ run ${mod}/${comp}`);
-            term.write(data.raw_ansi.replace(/\n/g, "\r\n"));
-            term.writeln("");
-            prompt();
+            clearTerm();
+            writeTerm(`\x1b[1;34mdox@termforge\x1b[0m:\x1b[1;32m~\x1b[0m$ python3 stories/${mod}/${comp}.py\r\n`);
+            writeTerm(data.raw_ansi.replace(/\n/g, "\r\n"));
+            writeTerm("\r\n");
             
-            // Code view
             const codeEscaped = data.code
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -823,8 +1058,9 @@ def main() -> None:
 </html>
 """
     
-    # 3. Inject goldens JSON data
+    # 4. Inject data
     injected_html = html_template.replace("%STORIES_DATA%", json.dumps(goldens, indent=2))
+    injected_html = injected_html.replace("%TERMFORGE_SOURCES%", json.dumps(termforge_sources, indent=2))
     
     output_path = os.path.join(docs_dir, "index.html")
     with open(output_path, "w", encoding="utf-8") as f:
