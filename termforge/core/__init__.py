@@ -43,6 +43,7 @@ from termforge.core.theme import (
     ThemeTokens,
     load_theme_from_dict,
     resolve_token,
+    resolve_state_token,
     theme_to_dict,
 )
 
@@ -115,6 +116,7 @@ __all__ = [
     "ThemeTokens",
     "load_theme_from_dict",
     "resolve_token",
+    "resolve_state_token",
     "theme_to_dict",
     # layout
     "BoxModel",
