@@ -1,0 +1,13 @@
+=== TermForge StatusBar Component Demo ===
+
+--- 1. Full Width Fit (Width = 60) ---
+[38;2;158;206;106m NORMAL [0m[38;2;61;63;85m │ [0m[38;2;187;154;247mmain.py[0m    Line: 12 Col: 5          [38;2;61;63;85mUTF-8[0m[38;2;61;63;85m │ [0m[38;2;122;162;247m 95% [0m
+
+--- 2. Narrow Width, Center Omitted (Width = 34) ---
+[38;2;158;206;106m NORMAL [0m[38;2;61;63;85m │ [0m[38;2;187;154;247mmain.py[0m   [38;2;61;63;85mUTF-8[0m[38;2;61;63;85m │ [0m[38;2;122;162;247m 95% [0m
+
+--- 3. Extremely Narrow, Right Truncated (Width = 22) ---
+[38;2;158;206;106m NORMAL [0m[38;2;61;63;85m │ [0m[38;2;187;154;247mmain.py[0m[38;2;122;162;247mUTF…[0m
+
+JSON serialization length: 386 bytes
+Portability check: OK

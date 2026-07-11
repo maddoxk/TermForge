@@ -44,6 +44,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.logging.types import LogStreamerSpec
     from termforge.navigation.types import BreadcrumbsSpec
     from termforge.menu.types import MenuBarSpec
+    from termforge.statusbar.types import StatusBarSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -63,7 +64,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "log_streamer": LogStreamerSpec,
         "breadcrumbs": BreadcrumbsSpec,
         "menu_bar": MenuBarSpec,
+        "status_bar": StatusBarSpec,
     }
+
 
 
 
