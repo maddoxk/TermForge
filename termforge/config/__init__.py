@@ -15,6 +15,8 @@ from termforge.navigation.types import BreadcrumbsSpec
 from termforge.menu.types import MenuBarSpec, MenuItemSpec
 from termforge.statusbar.types import StatusBarSpec, StatusSectionSpec
 from termforge.tooltip.types import TooltipSpec
+from termforge.toast.types import ToastSpec
+
 
 
 
@@ -52,7 +54,9 @@ __all__ = [
     "StatusBarSpec",
     "StatusSectionSpec",
     "TooltipSpec",
+    "ToastSpec",
 ]
+
 
 
 
