@@ -88,11 +88,13 @@
 
 ### Iteration 10 — Component Hooks, Spec Diff & Interactive Documentation Site Revamp ✅
 - **Started:** 2026-07-10T20:11:00-06:00
-- **Completed:** 2026-07-10T20:15:00-06:00
+- **Completed:** 2026-07-10T20:19:00-06:00
 - **Goal:** Reschedule all stopped tasks from server restart. Close Issue #146 (Component Event Hooks). Resolve documentation agent request issues #6, #7, #8 by reorganizing the stories list into groups/dropdowns and implementing an interactive browser shell terminal using Pyodide (WASM) that packages the entire TermForge codebase.
 - **Result:** DONE
   - Rescheduled Docs, Refactoring, CTO/PM, QA, Implementer, and Creator background cron tasks.
   - PR #148: Component Event Hooks — implemented `HookPhase`, `RenderHook`, `invoke_hooks`, `apply_patches` in `termforge/core/hooks.py`. Fully serializable. Added `hooks` fields to `WindowSpec` and `PaneSpec`. 7 tests.
   - PR #149: Documentation Revamp — updated `docs-site/generate_docs.py` to recursively package the python codebase. Added collapsible/grouped stories navigation categories with chevron indicators. Implemented real interactive Python REPL and CLI execution in browser via Pyodide and `xterm.js`, with robust static fallback to avoid page crashes.
+  - PR #152: Live Component Editor & Runner — updated the "Python Source Code" tab to be a contenteditable text editor, and added "Run Code Live ⚡" and "Reset Code" actions. Users can now modify story source code directly in the browser and see their customized components rendered live inside the terminal emulator.
   - Updated `termforge/core/SPEC.md` for both features. 272 tests passing. All storybooks passing golden checks.
+
 
