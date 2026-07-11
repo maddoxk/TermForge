@@ -45,6 +45,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.navigation.types import BreadcrumbsSpec
     from termforge.menu.types import MenuBarSpec
     from termforge.statusbar.types import StatusBarSpec
+    from termforge.tooltip.types import TooltipSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -65,7 +66,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "breadcrumbs": BreadcrumbsSpec,
         "menu_bar": MenuBarSpec,
         "status_bar": StatusBarSpec,
+        "tooltip": TooltipSpec,
     }
+
 
 
 

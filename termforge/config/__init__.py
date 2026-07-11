@@ -14,6 +14,8 @@ from termforge.logging.types import LogStreamerSpec
 from termforge.navigation.types import BreadcrumbsSpec
 from termforge.menu.types import MenuBarSpec, MenuItemSpec
 from termforge.statusbar.types import StatusBarSpec, StatusSectionSpec
+from termforge.tooltip.types import TooltipSpec
+
 
 
 
@@ -49,7 +51,9 @@ __all__ = [
     "MenuItemSpec",
     "StatusBarSpec",
     "StatusSectionSpec",
+    "TooltipSpec",
 ]
+
 
 
 
