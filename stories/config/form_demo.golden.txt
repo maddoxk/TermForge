@@ -1,0 +1,27 @@
+=== TermForge Declarative Forms & Validation Demo ===
+
+--- 1. Form Specification ---
+  Title: Account Setup
+  - [text    ] username     | Label: Username                 | Rules: {'required': True, 'min_length': 4, 'regex': '^[a-z0-9_]+$'}
+  - [text    ] age          | Label: Age                      | Rules: {'required': True, 'numeric': True}
+  - [text    ] role         | Label: Role                     | Rules: {'required': False, 'choices': ['admin', 'developer', 'guest']}
+  - [checkbox] newsletter   | Label: Subscribe to newsletter  | Rules: {}
+
+--- 2. Valid Input Test ---
+  Data: {'username': 'dox_user', 'age': '28', 'role': 'developer', 'newsletter': True}
+  Valid? True
+  Errors: {}
+
+--- 3. Invalid Input Test ---
+  Data: {'username': 'JD', 'age': 'twenty', 'role': 'manager', 'newsletter': False}
+  Valid? False
+  Validation Errors:
+    - username: Username must be at least 4 characters.
+    - age: Age must be numeric.
+    - role: Role must be one of: admin, developer, guest.
+
+--- 4. Portability / JSON check ---
+  JSON length: 747 bytes
+  Restored Title: Account Setup
+  Restored field count: 4
+  Portability: OK
