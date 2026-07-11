@@ -263,9 +263,9 @@ class StreamingChartBuffer:
             y_min=y_min, y_max=y_max, **kwargs
         )
 
-    def _build_series_spec(self, *, chart_type, title, width, height,
-                           show_legend, braille, x_label, y_label,
-                           tick_count, y_min, y_max, **kwargs) -> ChartSpec:
+    def _build_series_spec(self, *, chart_type: ChartType, title: str | None, width: int, height: int,
+                           show_legend: bool, braille: bool, x_label: str | None, y_label: str | None,
+                           tick_count: int, y_min: float | None, y_max: float | None, **kwargs: Any) -> ChartSpec:
         series_list = []
         all_values: list[float] = []
         for i, dq in enumerate(self._data):
@@ -295,11 +295,11 @@ class StreamingChartBuffer:
             **kwargs,
         )
 
-    def _build_ohlc_spec(self, *, chart_type, title, width, height,
-                         show_legend, braille, x_label, y_label,
-                         tick_count, y_min, y_max, **kwargs) -> ChartSpec:
+    def _build_ohlc_spec(self, *, chart_type: ChartType, title: str | None, width: int, height: int,
+                         show_legend: bool, braille: bool, x_label: str | None, y_label: str | None,
+                         tick_count: int, y_min: float | None, y_max: float | None, **kwargs: Any) -> ChartSpec:
         bars = list(self._ohlc)
-        timestamps = [b["timestamp"] for b in bars if "timestamp" in b]
+        timestamps = [str(b["timestamp"]) for b in bars if "timestamp" in b]
         ohlc_data = [
             {k: v for k, v in b.items() if k != "timestamp"}
             for b in bars
@@ -314,6 +314,8 @@ class StreamingChartBuffer:
             data=ohlc_data,
             timestamps=timestamps if timestamps else None,
         )
+
+
         y_axis = Axis(
             label=y_label,
             min_val=y_min if y_min is not None else computed_min,

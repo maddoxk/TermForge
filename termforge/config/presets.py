@@ -15,7 +15,7 @@ Usage::
     spec = get_preset("log-viewer", title="Logs", width=80, height=20)
 """
 from __future__ import annotations
-from typing import Any
+from typing import Any, Callable
 from termforge.core.types import RenderableSpec
 from termforge.windows.types import WindowSpec, PaneSpec
 from termforge.borders.types import BorderStyle
@@ -27,9 +27,9 @@ from termforge.text.types import TextSpec, TextOverflow
 _PRESET_REGISTRY: dict[str, tuple[Any, str]] = {}
 
 
-def _register(name: str, description: str):
+def _register(name: str, description: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to register a preset factory function."""
-    def decorator(fn):
+    def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
         _PRESET_REGISTRY[name] = (fn, description)
         return fn
     return decorator
@@ -278,4 +278,5 @@ def get_preset(name: str, **kwargs: Any) -> RenderableSpec:
             f"Unknown preset {name!r}. Available presets: {available}"
         )
     factory, _ = _PRESET_REGISTRY[name]
-    return factory(**kwargs)
+    res: RenderableSpec = factory(**kwargs)
+    return res
