@@ -9,6 +9,8 @@ from termforge.config.converter import convert_config_file
 from termforge.config.presets import get_preset, list_presets
 from termforge.config.form import FieldType, FormFieldSpec, FormSpec
 from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
+from termforge.keylegend.types import KeyLegendSpec
+
 
 __all__ = [
     "ComponentConfig",
@@ -32,4 +34,6 @@ __all__ = [
     "FormSpec",
     "KeyValueItemSpec",
     "KeyValueGridSpec",
+    "KeyLegendSpec",
 ]
+
