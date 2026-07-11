@@ -55,6 +55,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.radio.types import RadioButtonSpec
     from termforge.spinnerbox.types import SpinnerBoxSpec
     from termforge.stepper.types import StepperSpec
+    from termforge.card.types import CardSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -85,7 +86,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "radio_button": RadioButtonSpec,
         "spinner_box": SpinnerBoxSpec,
         "stepper": StepperSpec,
+        "card": CardSpec,
     }
+
 
 
 
