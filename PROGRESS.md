@@ -22,6 +22,8 @@
 | `termforge.selection` | ✅ STABLE | 3 | SelectionList / Checkbox component implemented |
 | `termforge.dialog` | ✅ STABLE | 3 | Modal Dialog pop-up component implemented |
 | `termforge.tabs` | ✅ STABLE | 3 | Tabbed Container component implemented |
+| `termforge.core.diff` | ✅ STABLE | 10 | Spec diffing & change detection (diff_specs, SpecChange) |
+| `termforge.core.hooks` | ✅ STABLE | 10 | Component event hooks (HookPhase, RenderHook, invoke_hooks) |
 
 ## Iteration Log
 
@@ -83,3 +85,14 @@
   - PR #139: `termforge/config/presets.py` — 5 named presets (`dashboard`, `split-pane`, `split-pane-v`, `modal-dialog`, `log-viewer`), `get_preset()`, `list_presets()`. 23 tests. Portability contract: all specs JSON-serializable.
   - PR #141: `title_align` (TextAlign) and `title_pad` (int) on `WindowSpec` and `BorderSpec`. `render_border` now uses configurable spacing. Wired through compositor. 196 tests passing.
   - All scheduled agents (Creator x5/min, QA x7/min, Implementer x7/min, Refactor x30/min, Docs x1/hr, CTO/PM x2/hr) running.
+
+### Iteration 10 — Component Hooks, Spec Diff & Interactive Documentation Site Revamp ✅
+- **Started:** 2026-07-10T20:11:00-06:00
+- **Completed:** 2026-07-10T20:15:00-06:00
+- **Goal:** Reschedule all stopped tasks from server restart. Close Issue #146 (Component Event Hooks). Resolve documentation agent request issues #6, #7, #8 by reorganizing the stories list into groups/dropdowns and implementing an interactive browser shell terminal using Pyodide (WASM) that packages the entire TermForge codebase.
+- **Result:** DONE
+  - Rescheduled Docs, Refactoring, CTO/PM, QA, Implementer, and Creator background cron tasks.
+  - PR #148: Component Event Hooks — implemented `HookPhase`, `RenderHook`, `invoke_hooks`, `apply_patches` in `termforge/core/hooks.py`. Fully serializable. Added `hooks` fields to `WindowSpec` and `PaneSpec`. 7 tests.
+  - PR #149: Documentation Revamp — updated `docs-site/generate_docs.py` to recursively package the python codebase. Added collapsible/grouped stories navigation categories with chevron indicators. Implemented real interactive Python REPL and CLI execution in browser via Pyodide and `xterm.js`, with robust static fallback to avoid page crashes.
+  - Updated `termforge/core/SPEC.md` for both features. 272 tests passing. All storybooks passing golden checks.
+
