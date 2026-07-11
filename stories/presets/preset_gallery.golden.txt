@@ -9,26 +9,26 @@ Available presets:
 
 [dashboard]
   spec_type = pane
-  JSON size = 1042 bytes
+  JSON size = 1192 bytes
   Portability: OK (roundtrip via JSON)
 
 [split-pane]
   spec_type = pane
-  JSON size = 712 bytes
+  JSON size = 812 bytes
   Portability: OK (roundtrip via JSON)
 
 [split-pane-v]
   spec_type = pane
-  JSON size = 715 bytes
+  JSON size = 815 bytes
   Portability: OK (roundtrip via JSON)
 
 [modal-dialog]
   spec_type = window
-  JSON size = 297 bytes
+  JSON size = 347 bytes
   Portability: OK (roundtrip via JSON)
 
 [log-viewer]
   spec_type = window
-  JSON size = 296 bytes
+  JSON size = 346 bytes
   Portability: OK (roundtrip via JSON)
 
