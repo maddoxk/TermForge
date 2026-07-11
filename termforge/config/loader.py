@@ -49,6 +49,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.toast.types import ToastSpec
     from termforge.search.types import SearchBarSpec
     from termforge.checklist.types import ChecklistSpec
+    from termforge.combobox.types import ComboboxSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -73,7 +74,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "toast": ToastSpec,
         "search_bar": SearchBarSpec,
         "checklist": ChecklistSpec,
+        "combobox": ComboboxSpec,
     }
+
 
 
 
