@@ -99,3 +99,44 @@ function render_border(spec: BorderSpec, content_lines: list[string], width: int
         
     return lines
 ```
+
+---
+
+## 3. Scrollbar Rendering
+
+Draws a vertical scroll indicator showing the current scroll position of a viewport relative to total content height.
+
+### `render_scrollbar`
+Computes the thumb size and start offsets, returning a vertical scroll track array of characters.
+
+#### Parameters:
+- `viewport_h`: integer (height of the viewport)
+- `content_h`: integer (total lines of content)
+- `scroll_y`: integer (current scroll offset)
+
+#### Pseudocode:
+```
+function render_scrollbar(viewport_h: int, content_h: int, scroll_y: int) -> list[str]:
+    # Initialize track filled with background character ░
+    track = fill_array("░", viewport_h)
+    
+    if content_h > viewport_h:
+        # Calculate thumb size proportional to view size
+        thumb_len = max(1, floor((viewport_h / content_h) * viewport_h))
+        max_scroll = content_h - viewport_h
+        
+        # Calculate thumb starting position
+        ratio = max(0.0, min(1.0, scroll_y / max_scroll))
+        rem_track = viewport_h - thumb_len
+        thumb_start = floor(ratio * rem_track)
+        
+        # Draw thumb characters █
+        for i from thumb_start to thumb_start + thumb_len - 1:
+            track[i] = "█"
+    else:
+        # If content fits completely, fill entire track with thumb character
+        track = fill_array("█", viewport_h)
+        
+    return track
+```
+

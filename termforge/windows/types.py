@@ -24,8 +24,11 @@ class WindowSpec(RenderableSpec):
     text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
     title_align: TextAlign = TextAlign.CENTER   # alignment of title in the top border
     title_pad: int = 1                          # spaces to pad on each side of the title text
+    show_scrollbar: bool = False
+    scrollbar_style: str | None = None
     hooks: list[RenderHook] = field(default_factory=list)
     spec_type: str = "window"
+
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -45,8 +48,11 @@ class WindowSpec(RenderableSpec):
             "text_overflow": self.text_overflow.value if self.text_overflow else None,
             "title_align": self.title_align.value,
             "title_pad": self.title_pad,
+            "show_scrollbar": self.show_scrollbar,
+            "scrollbar_style": self.scrollbar_style,
             "hooks": [h.to_dict() for h in self.hooks],
         }
+
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> WindowSpec:
@@ -69,8 +75,11 @@ class WindowSpec(RenderableSpec):
             text_overflow=TextOverflow(overflow_val) if overflow_val else None,
             title_align=TextAlign(d.get("title_align", "center")),
             title_pad=d.get("title_pad", 1),
+            show_scrollbar=d.get("show_scrollbar", False),
+            scrollbar_style=d.get("scrollbar_style"),
             hooks=[RenderHook.from_dict(h) for h in d.get("hooks", [])],
         )
+
 
 @dataclass
 class PaneSpec(RenderableSpec):

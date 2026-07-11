@@ -126,34 +126,45 @@ def render_window(
 
     start_ansi, end_ansi = style_to_ansi(style, theme, depth)
     
+    # 3b. Compute scrollbar lines if active
+    scrollbar_lines = None
+    if spec.show_scrollbar and len(content_lines) > inner_h and inner_h > 0:
+        from termforge.borders.scrollbar import render_scrollbar
+        scrollbar_style = spec.scrollbar_style if spec.scrollbar_style else "border"
+        scrollbar_lines = render_scrollbar(
+            viewport_h=inner_h,
+            content_h=len(content_lines),
+            scroll_y=spec.scroll_y,
+            theme=theme,
+            depth=depth,
+            style_token=scrollbar_style,
+        )
+
     final_lines = []
-    if start_ansi:
-        # We want to color only the border frame (corners, top, bottom, sides)
-        # For simplicity, we can wrap the top line, bottom line, and the side characters of each line.
-        # This keeps the content styles completely untouched!
-        
+    if len(bordered) > 0:
         # Top line
         final_lines.append(f"{start_ansi}{bordered[0]}{end_ansi}")
         
         # Body lines (each has side borders)
-        for line in bordered[1:-1]:
-            # Left side char is first character, right side is last character (or last after ANSI)
-            # Since render_border adds exactly 1 char border on left and right:
-            # line starts with left border char and ends with right border char
+        for line_idx, line in enumerate(bordered[1:-1]):
             if len(line) >= 2:
-                # Extract first char and last char
                 left_border = line[0]
                 right_border = line[-1]
                 content = line[1:-1]
-                final_lines.append(f"{start_ansi}{left_border}{end_ansi}{content}{start_ansi}{right_border}{end_ansi}")
+                
+                if scrollbar_lines is not None and line_idx < len(scrollbar_lines):
+                    # Replace right border character with styled scrollbar character
+                    r_border_styled = scrollbar_lines[line_idx]
+                    final_lines.append(f"{start_ansi}{left_border}{end_ansi}{content}{r_border_styled}")
+                else:
+                    final_lines.append(f"{start_ansi}{left_border}{end_ansi}{content}{start_ansi}{right_border}{end_ansi}")
             else:
                 final_lines.append(line)
                 
         # Bottom line
         if len(bordered) > 1:
             final_lines.append(f"{start_ansi}{bordered[-1]}{end_ansi}")
-    else:
-        final_lines = list(bordered)
+
         
     if spec.shadow:
         shadow_style = StyleSpec(fg=ColorValue(80, 80, 80), dim=True)
