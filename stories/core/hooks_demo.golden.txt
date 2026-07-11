@@ -1,0 +1,26 @@
+=== TermForge Component Event Hooks Demo ===
+
+--- 1. Original Spec ---
+  Title:        Monitor Window
+  Border style: BorderStyle.SINGLE
+  Focused:      False
+  Tags:         ['System']
+  Hooks:        ['check_cpu', 'log_rendered']
+
+--- 2. Render flow under normal CPU (45%) ---
+  Final Title:        Monitor Window
+  Final Border style: BorderStyle.SINGLE
+  Final Focused:      False
+  Final Tags:         ['System', 'RENDERED']
+
+--- 3. Render flow under alert CPU (92%) ---
+  Final Title:        ⚠️ ALERT: CPU at 92%!
+  Final Border style: BorderStyle.DOUBLE
+  Final Focused:      True
+  Final Tags:         ['System', 'RENDERED']
+
+--- 4. Portability / JSON check ---
+  JSON length: 451 bytes
+  Restored Hook count: 2
+  Restored Hook phases: ['pre_render', 'post_render']
+  Portability: OK
