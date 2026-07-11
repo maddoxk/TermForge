@@ -1,0 +1,20 @@
+=== TermForge SearchBar Component Demo ===
+
+--- 1. Search Bar Empty Input (Width = 40, Height = 6) ---
+🔍 Search: [38;2;187;154;247mType search terms here...[0m     
+github                                  
+gitlab                                  
+git commit                              
+subversion                              
+mercurial                               
+
+--- 2. Search Bar Filtered matches for 'git' (Width = 40, Height = 6) ---
+🔍 Search: [38;2;122;162;247mgit[0m                           
+[38;2;224;175;104mgit[0mhub                                  
+[38;2;224;175;104mgit[0mlab                                  
+[38;2;224;175;104mgit[0m commit                              
+di[38;2;224;175;104mgit[0mal ocean                           
+[38;2;224;175;104mGit[0m LFS                                 
+
+JSON serialization length: 300 bytes
+Portability check: OK
