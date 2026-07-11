@@ -1,0 +1,16 @@
+=== TermForge RadioButton Component Demo ===
+
+--- 1. Custom Indicators & Selection focused on Item 2 ---
+[38;2;187;154;247m⚪ [0m[38;2;187;154;247mLight Appearance Mode[0m                 
+[38;2;158;206;106m🔘 [0m[38;2;158;206;106mDark Appearance Mode[0m                  
+[38;2;122;162;247m⚪ [0m[38;2;122;162;247mSystem Default Settings[0m               
+                                        
+
+--- 2. Standard Indicator Brackets & Selection focused on Item 1 ---
+( ) Light Appearance Mode               
+[38;2;224;175;104m(●) [0m[38;2;224;175;104mDark Appearance Mode[0m                
+( ) System Default Settings             
+                                        
+
+JSON serialization length: 427 bytes
+Portability check: OK
