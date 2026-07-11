@@ -39,6 +39,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.windows.types import WindowSpec, PaneSpec, ModalSpec
     from termforge.logos.types import LogoSpec, BannerSpec
     from termforge.animation.types import SpinnerSpec, TransitionSpec
+    from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -51,8 +52,11 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "logo": LogoSpec,
         "banner": BannerSpec,
         "spinner": SpinnerSpec,
-        "transition": TransitionSpec
+        "transition": TransitionSpec,
+        "keyvalue_grid": KeyValueGridSpec,
+        "keyvalue_item": KeyValueItemSpec,
     }
+
     
     spec_type = config.spec_type.lower()
     cls: Any = spec_classes.get(spec_type)
