@@ -2,6 +2,8 @@
 from termforge.borders.types import BorderStyle, BorderSide, BorderSpec
 from termforge.borders.glyphs import BorderGlyphs, SINGLE_GLYPHS, DOUBLE_GLYPHS, ROUNDED_GLYPHS, HEAVY_GLYPHS, ASCII_GLYPHS, get_glyphs, resolve_border_glyphs
 from termforge.borders.render import render_border, strip_ansi
+from termforge.borders.scrollbar import render_scrollbar
+
 
 __all__ = [
     "BorderStyle",
@@ -17,4 +19,6 @@ __all__ = [
     "resolve_border_glyphs",
     "render_border",
     "strip_ansi",
+    "render_scrollbar",
 ]
+

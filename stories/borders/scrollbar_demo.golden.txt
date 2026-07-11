@@ -1,0 +1,24 @@
+=== TermForge Scrollbar Component Demo ===
+
+--- 1. Scrollbar at Top (scroll_y = 0) ---
+[38;2;61;63;85m┌──────────── Logs Buffer (Top) ─────────────┐[0m
+[38;2;61;63;85m│[0m 10:00:00 - Initializing connection         [38;2;224;175;104m█[0m
+[38;2;61;63;85m│[0m 10:00:01 - Loading specs configurations    [38;2;224;175;104m█[0m
+[38;2;61;63;85m│[0m 10:00:02 - Checking layout constraints     [38;2;224;175;104m░[0m
+[38;2;61;63;85m│[0m 10:00:03 - Composing panes coordinates     [38;2;224;175;104m░[0m
+[38;2;61;63;85m│[0m 10:00:04 - Resolving theme tokens colors   [38;2;224;175;104m░[0m
+[38;2;61;63;85m└────────────────────────────────────────────┘[0m
+
+--- 2. Scrollbar at Bottom (scroll_y = 5) ---
+[38;2;61;63;85m┌─────────── Logs Buffer (Bottom) ───────────┐[0m
+[38;2;61;63;85m│[0m 10:00:05 - Validation checks successful    [38;2;224;175;104m░[0m
+[38;2;61;63;85m│[0m 10:00:06 - Starting loop frames tick       [38;2;224;175;104m░[0m
+[38;2;61;63;85m│[0m 10:00:07 - Rendering windows borders       [38;2;224;175;104m░[0m
+[38;2;61;63;85m│[0m 10:00:08 - Component rendering completed   [38;2;224;175;104m█[0m
+[38;2;61;63;85m│[0m 10:00:09 - Exiting program success code 0  [38;2;224;175;104m█[0m
+[38;2;61;63;85m└────────────────────────────────────────────┘[0m
+
+JSON serialization length: 362 bytes
+Restored title: Logs Buffer (Top)
+Restored scrollbar: True
+Portability check: OK

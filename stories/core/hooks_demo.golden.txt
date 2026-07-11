@@ -20,7 +20,7 @@
   Final Tags:         ['System', 'RENDERED']
 
 --- 4. Portability / JSON check ---
-  JSON length: 451 bytes
+  JSON length: 501 bytes
   Restored Hook count: 2
   Restored Hook phases: ['pre_render', 'post_render']
   Portability: OK
