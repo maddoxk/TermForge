@@ -1,7 +1,7 @@
 --- Window Layout Composited Screen ---
-[38;2;0;0;0m┌─ Sidebar ────────┐[0m[38;2;0;0;0m┌─ Content Pane ───────────────────────┐[0m
+[38;2;0;0;0m┌──── Sidebar ─────┐[0m[38;2;0;0;0m┌──────────── Content Pane ────────────┐[0m
 [38;2;0;0;0m│[0m* Home            [38;2;0;0;0m│[0m[38;2;0;0;0m│[0mWelcome to TermForge!                 [38;2;0;0;0m│[0m
-[38;2;0;0;0m│[0m[38;2;0;0;0m┌─ Modal Alert ─────────┐[0m   a split screen layout demo.   [38;2;0;0;0m│[0m
+[38;2;0;0;0m│[0m[38;2;0;0;0m┌───── Modal Alert ─────┐[0m   a split screen layout demo.   [38;2;0;0;0m│[0m
 [38;2;0;0;0m│[0m[38;2;0;0;0m│[0m Are you sure you      [38;2;0;0;0m│[0m[38;2;80;80;80m[2m██[0m[22mht window has focus.           [38;2;0;0;0m│[0m
 [38;2;0;0;0m│[0m[38;2;0;0;0m│[0m want to proceed?      [38;2;0;0;0m│[0m[38;2;80;80;80m[2m██[0m[22mmath distributed sizes auto:   [38;2;0;0;0m│[0m
 [38;2;0;0;0m│[0m[38;2;0;0;0m│[0m  [ OK ]  [ Cancel ]   [38;2;0;0;0m│[0m[38;2;80;80;80m[2m██[0m[22m                               [38;2;0;0;0m│[0m
