@@ -1,0 +1,18 @@
+=== TermForge Checklist Component Demo ===
+
+--- 1. Custom Checkbox Indicators & Selection focused on Item 1 ---
+[38;2;158;206;106m☑ [0m[38;2;158;206;106mInstall Core Dependencies[0m             
+[38;2;122;162;247m☐ [0m[38;2;122;162;247mDownload Asset Resource Bundles[0m       
+[38;2;158;206;106m☑ [0m[38;2;158;206;106mCompile Binary Releases[0m               
+[38;2;187;154;247m☐ [0m[38;2;187;154;247mRun Local Verification Tests[0m          
+                                        
+
+--- 2. Standard Indicator Brackets & Selection focused on Item 2 ---
+[38;2;158;206;106m[x] [0m[38;2;158;206;106mInstall Core Dependencies[0m           
+[ ] Download Asset Resource Bundles     
+[38;2;224;175;104m[x] [0m[38;2;224;175;104mCompile Binary Releases[0m             
+[ ] Run Local Verification Tests        
+                                        
+
+JSON serialization length: 500 bytes
+Portability check: OK
