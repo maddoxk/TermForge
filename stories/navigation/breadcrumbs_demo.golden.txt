@@ -1,0 +1,17 @@
+=== TermForge Breadcrumbs Component Demo ===
+
+--- 1. Full Path Fit (Width = 60) ---
+[38;2;187;154;247mRoot[0m[38;2;61;63;85m › [0m[38;2;187;154;247mUsers[0m[38;2;61;63;85m › [0m[38;2;187;154;247mmaddoxk[0m[38;2;61;63;85m › [0m[38;2;187;154;247mTermForge[0m[38;2;61;63;85m › [0m[38;2;187;154;247mtermforge[0m[38;2;61;63;85m › [0m[38;2;122;162;247mnavigation[0m
+
+--- 2. Collapsed Intermediate Paths (Width = 30) ---
+[38;2;187;154;247mRoot[0m[38;2;61;63;85m › [0m[38;2;187;154;247m...[0m[38;2;61;63;85m › [0m[38;2;122;162;247mnavigation[0m
+
+--- 3. Collapsed Tail Only Path (Width = 18) ---
+[38;2;187;154;247m...[0m[38;2;61;63;85m › [0m[38;2;122;162;247mnavigation[0m
+
+--- 4. Truncated Active Leaf Path (Width = 8) ---
+[38;2;122;162;247mnavigat…[0m
+
+JSON serialization length: 272 bytes
+Restored delimiter:  › 
+Portability check: OK

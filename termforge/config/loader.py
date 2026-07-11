@@ -42,6 +42,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
     from termforge.keylegend.types import KeyLegendSpec
     from termforge.logging.types import LogStreamerSpec
+    from termforge.navigation.types import BreadcrumbsSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -59,7 +60,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "keyvalue_item": KeyValueItemSpec,
         "key_legend": KeyLegendSpec,
         "log_streamer": LogStreamerSpec,
+        "breadcrumbs": BreadcrumbsSpec,
     }
+
 
 
 
