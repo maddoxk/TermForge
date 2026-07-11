@@ -4,7 +4,7 @@ from typing import Any
 from termforge.core.types import RenderableSpec
 from termforge.core import FlexDirection
 from termforge.borders.types import BorderStyle
-from termforge.text.types import TextOverflow
+from termforge.text.types import TextOverflow, TextAlign
 
 @dataclass
 class WindowSpec(RenderableSpec):
@@ -21,6 +21,8 @@ class WindowSpec(RenderableSpec):
     padding: int = 0
     margin: int = 0
     text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
+    title_align: TextAlign = TextAlign.CENTER   # alignment of title in the top border
+    title_pad: int = 1                          # spaces to pad on each side of the title text
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -38,7 +40,9 @@ class WindowSpec(RenderableSpec):
             "tags": self.tags,
             "padding": self.padding,
             "margin": self.margin,
-            "text_overflow": self.text_overflow.value if self.text_overflow else None
+            "text_overflow": self.text_overflow.value if self.text_overflow else None,
+            "title_align": self.title_align.value,
+            "title_pad": self.title_pad,
         }
 
     @classmethod
@@ -59,7 +63,9 @@ class WindowSpec(RenderableSpec):
             tags=d.get("tags", []),
             padding=d.get("padding", 0),
             margin=d.get("margin", 0),
-            text_overflow=TextOverflow(overflow_val) if overflow_val else None
+            text_overflow=TextOverflow(overflow_val) if overflow_val else None,
+            title_align=TextAlign(d.get("title_align", "center")),
+            title_pad=d.get("title_pad", 1),
         )
 
 @dataclass

@@ -42,6 +42,7 @@ class BorderSpec(RenderableSpec):
     left: BorderSide = field(default_factory=BorderSide)
     title: str | None = None
     title_align: TextAlign = TextAlign.LEFT
+    title_pad: int = 1                 # spaces on each side of the title text within the border
     tag_align: TextAlign = TextAlign.RIGHT
     subtitle: str | None = None
     content: RenderableSpec | None = None
@@ -59,6 +60,7 @@ class BorderSpec(RenderableSpec):
             "left": self.left.to_dict(),
             "title": self.title,
             "title_align": self.title_align.value,
+            "title_pad": self.title_pad,
             "tag_align": self.tag_align.value,
             "subtitle": self.subtitle,
             "content": self.content.to_dict() if self.content else None,
@@ -82,6 +84,7 @@ class BorderSpec(RenderableSpec):
             left=BorderSide.from_dict(d.get("left", {})),
             title=d.get("title"),
             title_align=TextAlign(d.get("title_align", "left")),
+            title_pad=d.get("title_pad", 1),
             tag_align=TextAlign(d.get("tag_align", "right")),
             subtitle=d.get("subtitle"),
             content=content,
