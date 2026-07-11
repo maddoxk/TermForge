@@ -18,6 +18,8 @@ from termforge.tooltip.types import TooltipSpec
 from termforge.toast.types import ToastSpec
 from termforge.search.types import SearchBarSpec
 from termforge.checklist.types import ChecklistSpec, ChecklistItemSpec
+from termforge.combobox.types import ComboboxSpec
+
 
 
 
@@ -62,7 +64,9 @@ __all__ = [
     "SearchBarSpec",
     "ChecklistSpec",
     "ChecklistItemSpec",
+    "ComboboxSpec",
 ]
+
 
 
 
