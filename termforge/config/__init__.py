@@ -11,6 +11,8 @@ from termforge.config.form import FieldType, FormFieldSpec, FormSpec
 from termforge.keyvalue.types import KeyValueItemSpec, KeyValueGridSpec
 from termforge.keylegend.types import KeyLegendSpec
 from termforge.logging.types import LogStreamerSpec
+from termforge.navigation.types import BreadcrumbsSpec
+
 
 
 
@@ -38,6 +40,8 @@ __all__ = [
     "KeyValueGridSpec",
     "KeyLegendSpec",
     "LogStreamerSpec",
+    "BreadcrumbsSpec",
 ]
+
 
 
