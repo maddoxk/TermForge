@@ -1,6 +1,6 @@
 from __future__ import annotations
 from termforge.core.types import Size, Position, ColorDepth, StyleSpec, ColorValue, RenderableSpec
-from termforge.core.theme import ThemeTokens
+from termforge.core.theme import ThemeTokens, resolve_state_token
 from termforge.core import FlexDirection
 from termforge.windows.types import WindowSpec, PaneSpec, ModalSpec
 from termforge.borders.types import BorderSpec, BorderSide, BorderStyle
@@ -104,9 +104,26 @@ def render_window(
     # 3. Render the border
     bordered = render_border(border_spec, scrolled_lines, width=width, theme=theme, unicode_supported=True)
     
-    # 4. Apply highlight styling to border if focused
-    border_color_token = "primary" if spec.focused else "border"
-    style = StyleSpec(fg=ColorValue(0, 0, 0, name=f"colors.{border_color_token}"))
+    # 4. Apply highlight styling to border if focused/stateful
+    state = "disabled" if getattr(spec, "disabled", False) else ("focused" if spec.focused else None)
+
+    border_color = None
+    if theme:
+        try:
+            border_color = resolve_state_token(theme, "colors.border", state=state)
+        except KeyError:
+            pass
+
+    if isinstance(border_color, ColorValue):
+        # Strip name to bypass re-resolution in style_to_ansi
+        border_color = ColorValue(border_color.r, border_color.g, border_color.b, name=None)
+    else:
+        # Fallback to hardcoded names mapping to default colors
+        border_color_token = "primary" if spec.focused else "border"
+        border_color = ColorValue(0, 0, 0, name=f"colors.{border_color_token}")
+
+    style = StyleSpec(fg=border_color)
+
     start_ansi, end_ansi = style_to_ansi(style, theme, depth)
     
     final_lines = []

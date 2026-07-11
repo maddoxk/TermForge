@@ -23,6 +23,7 @@ class ThemeTokens:
     spacing: dict[str, int] = field(default_factory=dict)
     border_glyphs: dict[str, dict[str, str]] = field(default_factory=dict)
     typography: dict[str, bool] = field(default_factory=dict)
+    states: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -32,10 +33,37 @@ class ThemeTokens:
                 name: dict(glyphs) for name, glyphs in self.border_glyphs.items()
             },
             "typography": dict(self.typography),
+            "states": {
+                state: {
+                    "colors": {
+                        k: v.to_dict() if hasattr(v, "to_dict") else v
+                        for k, v in sub.get("colors", {}).items()
+                    },
+                    "spacing": dict(sub.get("spacing", {})),
+                    "border_glyphs": {
+                        name: dict(glyphs) for name, glyphs in sub.get("border_glyphs", {}).items()
+                    },
+                    "typography": dict(sub.get("typography", {})),
+                }
+                for state, sub in self.states.items()
+            },
         }
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> ThemeTokens:
+        parsed_states = {}
+        for state, sub in d.get("states", {}).items():
+            parsed_states[state] = {
+                "colors": {
+                    k: ColorValue.from_dict(v) if isinstance(v, dict) else v
+                    for k, v in sub.get("colors", {}).items()
+                },
+                "spacing": dict(sub.get("spacing", {})),
+                "border_glyphs": {
+                    name: dict(glyphs) for name, glyphs in sub.get("border_glyphs", {}).items()
+                },
+                "typography": dict(sub.get("typography", {})),
+            }
         return cls(
             colors={k: ColorValue.from_dict(v) for k, v in d.get("colors", {}).items()},
             spacing=dict(d.get("spacing", {})),
@@ -44,7 +72,9 @@ class ThemeTokens:
                 for name, glyphs in d.get("border_glyphs", {}).items()
             },
             typography=dict(d.get("typography", {})),
+            states=parsed_states,
         )
+
 
 
 # ---------------------------------------------------------------------------
@@ -80,6 +110,36 @@ def resolve_token(tokens: ThemeTokens, token_path: str) -> Any:
             raise KeyError(f"Cannot traverse into non-dict at {part!r} in {token_path!r}")
 
     return obj
+
+
+def resolve_state_token(tokens: ThemeTokens, token_path: str, state: str | None = None) -> Any:
+    """Look up a token by dot-notation path, with optional state override.
+
+    If a state is provided (e.g. "focused"), we first check if the token path
+    exists under states[state]. If found, we return it. If not found (or state
+    is None), we fall back to the standard token resolution.
+
+    Raises:
+        KeyError: if the path does not resolve in either the state or base theme.
+    """
+    if state and state in tokens.states:
+        sub = tokens.states[state]
+        parts = token_path.split(".")
+        if len(parts) >= 2:
+            category = parts[0]
+            obj = sub.get(category)
+            if isinstance(obj, dict):
+                found = True
+                for part in parts[1:]:
+                    if isinstance(obj, dict) and part in obj:
+                        obj = obj[part]
+                    else:
+                        found = False
+                        break
+                if found:
+                    return obj
+    return resolve_token(tokens, token_path)
+
 
 
 def load_theme_from_dict(d: dict[str, Any]) -> ThemeTokens:
