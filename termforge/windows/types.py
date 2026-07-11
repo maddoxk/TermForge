@@ -5,6 +5,7 @@ from termforge.core.types import RenderableSpec
 from termforge.core import FlexDirection
 from termforge.borders.types import BorderStyle
 from termforge.text.types import TextOverflow, TextAlign
+from termforge.core.hooks import RenderHook
 
 @dataclass
 class WindowSpec(RenderableSpec):
@@ -23,6 +24,7 @@ class WindowSpec(RenderableSpec):
     text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
     title_align: TextAlign = TextAlign.CENTER   # alignment of title in the top border
     title_pad: int = 1                          # spaces to pad on each side of the title text
+    hooks: list[RenderHook] = field(default_factory=list)
     spec_type: str = "window"
 
     def to_dict(self) -> dict[str, Any]:
@@ -43,6 +45,7 @@ class WindowSpec(RenderableSpec):
             "text_overflow": self.text_overflow.value if self.text_overflow else None,
             "title_align": self.title_align.value,
             "title_pad": self.title_pad,
+            "hooks": [h.to_dict() for h in self.hooks],
         }
 
     @classmethod
@@ -66,6 +69,7 @@ class WindowSpec(RenderableSpec):
             text_overflow=TextOverflow(overflow_val) if overflow_val else None,
             title_align=TextAlign(d.get("title_align", "center")),
             title_pad=d.get("title_pad", 1),
+            hooks=[RenderHook.from_dict(h) for h in d.get("hooks", [])],
         )
 
 @dataclass
@@ -75,6 +79,7 @@ class PaneSpec(RenderableSpec):
     ratios: list[float] | None = None
     gap: int = 0
     text_overflow: TextOverflow | None = None  # if set, cascades to child TextSpec.overflow
+    hooks: list[RenderHook] = field(default_factory=list)
     spec_type: str = "pane"
 
     def to_dict(self) -> dict[str, Any]:
@@ -84,7 +89,8 @@ class PaneSpec(RenderableSpec):
             "children": [c.to_dict() for c in self.children],
             "ratios": self.ratios,
             "gap": self.gap,
-            "text_overflow": self.text_overflow.value if self.text_overflow else None
+            "text_overflow": self.text_overflow.value if self.text_overflow else None,
+            "hooks": [h.to_dict() for h in self.hooks],
         }
 
     @classmethod
@@ -95,7 +101,8 @@ class PaneSpec(RenderableSpec):
             children=[RenderableSpec.from_dict(c) for c in d.get("children", [])],
             ratios=d.get("ratios"),
             gap=d.get("gap", 0),
-            text_overflow=TextOverflow(overflow_val) if overflow_val else None
+            text_overflow=TextOverflow(overflow_val) if overflow_val else None,
+            hooks=[RenderHook.from_dict(h) for h in d.get("hooks", [])],
         )
 
 @dataclass

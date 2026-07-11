@@ -77,6 +77,14 @@ from termforge.core.diff import (
     filter_changes,
 )
 
+# --- hooks ---
+from termforge.core.hooks import (
+    HookPhase,
+    RenderHook,
+    invoke_hooks,
+    apply_patches,
+)
+
 __all__ = [
     # types
     "BoxConstraints",
@@ -130,4 +138,9 @@ __all__ = [
     "diff_specs",
     "has_changed",
     "filter_changes",
+    # hooks
+    "HookPhase",
+    "RenderHook",
+    "invoke_hooks",
+    "apply_patches",
 ]
