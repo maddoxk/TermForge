@@ -68,6 +68,15 @@ from termforge.core.scheduler import (
     unregister_animation,
 )
 
+# --- diff ---
+from termforge.core.diff import (
+    ChangeKind,
+    SpecChange,
+    diff_specs,
+    has_changed,
+    filter_changes,
+)
+
 __all__ = [
     # types
     "BoxConstraints",
@@ -115,4 +124,10 @@ __all__ = [
     "register_animation",
     "tick",
     "unregister_animation",
+    # diff
+    "ChangeKind",
+    "SpecChange",
+    "diff_specs",
+    "has_changed",
+    "filter_changes",
 ]

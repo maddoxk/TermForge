@@ -1,0 +1,25 @@
+=== TermForge Spec Diff Demo ===
+
+─── 1. Flat WindowSpec field changes ───
+  [MODIFIED] height: 24 → 30
+  [MODIFIED] padding: 0 → 1
+  [MODIFIED] title: 'Dashboard' → 'Dashboard v2'
+
+─── 2. has_changed() quick check ───
+  spec_a == spec_b? has_changed=False
+  spec_a == spec_c? has_changed=True
+
+─── 3. Nested PaneSpec children diff ───
+  [MODIFIED] children.0.title: 'Left Panel' → 'Left Panel — Updated'
+
+─── 4. filter_changes() by kind ───
+  total changes: 2
+  MODIFIED: ['title']
+  ADDED:    ['height']
+
+─── 5. Portability: SpecChange JSON round-trip ───
+  serialized: 124 bytes
+  restored 2 SpecChange(s)
+    title: 'A' → 'B'
+    width: 60 → 80
+  Portability: OK
