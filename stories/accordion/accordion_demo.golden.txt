@@ -1,0 +1,22 @@
+=== TermForge Accordion Component Demo ===
+
+--- 1. Expanded Item 0 & Focused Cursor (Width = 50, Height = 7) ---
+[38;2;224;175;104mv [0m[38;2;224;175;104mGeneral Configurations[0m                          
+[38;2;187;154;247m    Contains theme selections, font configurations,[0m
+[38;2;187;154;247m    and system locale mappings.[0m                   
+> Advanced System Settings                        
+> Diagnostic Logging API                          
+                                                  
+                                                  
+
+--- 2. Expanded Item 0 & Focused Cursor on Collapsed Item 1 ---
+[38;2;122;162;247mv [0m[38;2;122;162;247mGeneral Configurations[0m                          
+[38;2;187;154;247m    Contains theme selections, font configurations,[0m
+[38;2;187;154;247m    and system locale mappings.[0m                   
+[38;2;224;175;104m> [0m[38;2;224;175;104mAdvanced System Settings[0m                        
+> Diagnostic Logging API                          
+                                                  
+                                                  
+
+JSON serialization length: 690 bytes
+Portability check: OK
