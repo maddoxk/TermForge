@@ -14,6 +14,8 @@
 4. [Theme Token System](#4-theme-token-system)
 5. [Box-Model Layout Engine](#5-box-model-layout-engine)
 6. [Animation Tick Scheduler](#6-animation-tick-scheduler)
+7. [Spec Diff / Change Detection](#7-spec-diff--change-detection)
+8. [Component Event Hooks](#8-component-event-hooks)
 
 ---
 
@@ -559,6 +561,64 @@ function is_animation_complete(state, callback_id, current_time_ms):
     return (current_time_ms - start) >= spec.duration_ms
 ```
 
+
+---
+
+## 7. Spec Diff / Change Detection
+
+A system for recursively detecting differences between two `RenderableSpec` dictionary trees (snapshots) to support incremental rendering, debugging, and precise testing.
+
+### ChangeKind (enum)
+- `ADDED`: Present in the target dict but not the source.
+- `REMOVED`: Present in the source dict but not the target.
+- `MODIFIED`: Present in both dicts but has different values or types.
+
+### SpecChange
+Stores a structural leaf change.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| path  | string | Dot-separated path to the field (e.g. `children.0.title`) |
+| kind  | ChangeKind | The change classification |
+| old   | Any | The old value (or null if ADDED) |
+| new   | Any | The new value (or null if REMOVED) |
+
+### diff_specs(a, b, path="") → list[SpecChange]
+
+Walks the keys of `a` and `b` recursively.
+- If a key exists only in `a`, adds a `REMOVED` change.
+- If a key exists only in `b`, adds an `ADDED` change.
+- If a key exists in both:
+  - If types differ, adds a `MODIFIED` change.
+  - If both are lists, compares index-by-index recursively.
+  - If both are dicts, compares keys recursively.
+  - If they are primitive values and differ, adds a `MODIFIED` change.
+
+---
+
+## 8. Component Event Hooks
+
+Allows passive specs to attach callback identifiers that trigger dynamic modifications at key lifecycle phases (e.g., prior to render or after resizing).
+
+### HookPhase (enum)
+- `PRE_RENDER`: Fires before compiling spec to layout.
+- `POST_RENDER`: Fires after compilation is finished.
+- `ON_RESIZE`: Fires when the terminal size changes.
+- `ON_FOCUS`: Fires when a window gains focus.
+- `ON_BLUR`: Fires when focus is lost.
+
+### RenderHook
+
+| Field | Type | Description |
+|-------|------|-------------|
+| phase | HookPhase | The execution phase |
+| callback_id | string | String identifier for looking up the callback |
+| priority | int | Sorting order (highest executes first) |
+
+### invoke_hooks(hooks, phase, registry, spec, context) → list[dict]
+
+Filters the hooks matching the phase, sorts them by priority descending, resolves the callable from the registry via `callback_id`, and executes the callback with `(spec, context)`. Returns the list of patch dictionaries.
+
 ---
 
 ## Portability Contract
@@ -570,3 +630,5 @@ All types in this module follow these rules:
 3. **No metaclasses or magic:** Plain dataclasses/structs only
 4. **Pure functions:** All business logic is stateless; functions take inputs and return outputs
 5. **Immutable scheduler:** SchedulerState is frozen; every operation returns a new state
+6. **No execution baked into specs:** Callbacks are resolved at runtime via string identifiers to preserve portability
+
