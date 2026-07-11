@@ -1,0 +1,12 @@
+=== TermForge SpinnerBox Component Demo ===
+
+--- 1. Spinner Box with Arrow Carets (Width = 45, Height = 2) ---
+[38;2;187;154;247mBackground Thread Workers Count[0m      [38;2;122;162;247m◀[0m  [38;2;224;175;104m4 [0m  [38;2;122;162;247m▶[0m
+                                             
+
+--- 2. Spinner Box with Button Carets (Width = 45, Height = 2) ---
+[38;2;187;154;247mDiagnostic Logging API Level[0m  [38;2;158;206;106m[ - ][0m  [38;2;224;175;104m8 [0m  [38;2;158;206;106m[ + ][0m
+                                             
+
+JSON serialization length: 305 bytes
+Portability check: OK

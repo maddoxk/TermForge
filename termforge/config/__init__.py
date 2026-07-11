@@ -22,6 +22,8 @@ from termforge.combobox.types import ComboboxSpec
 from termforge.toggle.types import ToggleSwitchSpec
 from termforge.slider.types import SliderSpec
 from termforge.radio.types import RadioButtonSpec, RadioButtonItemSpec
+from termforge.spinnerbox.types import SpinnerBoxSpec
+
 
 
 
@@ -75,7 +77,9 @@ __all__ = [
     "SliderSpec",
     "RadioButtonSpec",
     "RadioButtonItemSpec",
+    "SpinnerBoxSpec",
 ]
+
 
 
 
