@@ -13,6 +13,8 @@ from termforge.keylegend.types import KeyLegendSpec
 from termforge.logging.types import LogStreamerSpec
 from termforge.navigation.types import BreadcrumbsSpec
 from termforge.menu.types import MenuBarSpec, MenuItemSpec
+from termforge.statusbar.types import StatusBarSpec, StatusSectionSpec
+
 
 
 
@@ -45,7 +47,10 @@ __all__ = [
     "BreadcrumbsSpec",
     "MenuBarSpec",
     "MenuItemSpec",
+    "StatusBarSpec",
+    "StatusSectionSpec",
 ]
+
 
 
 
