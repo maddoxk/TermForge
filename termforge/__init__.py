@@ -16,7 +16,7 @@ from termforge.reactive import State, View, stream, animate_val
 
 # Import specs from config/modules
 from termforge.accordion.types import AccordionSpec, AccordionItemSpec
-from termforge.animation.types import SpinnerSpec
+from termforge.animation.types import SpinnerSpec, SpinnerStyle
 from termforge.badge.types import BadgeSpec
 from termforge.borders.types import BorderStyle
 from termforge.buttongroup.types import ButtonGroupSpec
@@ -132,7 +132,7 @@ _RENDERER_MAP = {
     "breadcrumbs": render_breadcrumbs,
     "progress": render_progress,
     "radio": render_radio_button,
-    "searchbar": render_search_bar,
+    "search_bar": render_search_bar,
     "selection": render_selection_list,
     "slider": render_slider,
     "spinnerbox": render_spinner_box,

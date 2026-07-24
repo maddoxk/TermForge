@@ -4,8 +4,9 @@ from termforge.core.theme import ThemeTokens
 from termforge.tree.types import TreeSpec, TreeNodeSpec
 from termforge.text.types import TextSpec
 from termforge.text.render import render_text
+from termforge.core.types import Size, ColorDepth
 
-def render_tree(spec: TreeSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+def render_tree(spec: TreeSpec, max_size: Size, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     lines = []
     
     def traverse(nodes: list[TreeNodeSpec], depth: int, is_last_list: list[bool]) -> None:
@@ -25,7 +26,7 @@ def render_tree(spec: TreeSpec, max_size: Size, theme: ThemeTokens) -> list[str]
                 else:
                     prefix += "├" + "─" * (spec.indent_size - 1)
                     
-            icon = "📂 " if node.children and node.expanded else "📁 " if node.children else "📄 "
+            icon = "v " if node.children and node.expanded else "> " if node.children else "- "
             
             # Simple text rendering
             line = prefix + icon + node.label
