@@ -13,7 +13,11 @@ def render_progress(spec: ProgressSpec, max_size: Size, theme: ThemeTokens, dept
     text = ""
     if spec.show_text:
         percent = int(max(0.0, min(1.0, spec.progress)) * 100)
-        text = spec.text_format.replace("{percent}", str(percent))
+        raw_text = spec.text_format.replace("{percent}", str(percent))
+        if spec.text_width is not None:
+            text = f"{raw_text:>{spec.text_width}}"
+        else:
+            text = raw_text
         
     bar_width = width - len(text) - (1 if text else 0)
     if bar_width < 1:
