@@ -1,6 +1,28 @@
-# TermForge
+# TermForge v2.0.0
 
-A universal terminal UI/UX design system for rendering rich, themed terminal interfaces.
+A universal terminal UI/UX design system for rendering rich, themed terminal interfaces with minimal boilerplate.
+
+## 🚀 What's New in v2.0.0?
+
+TermForge v2.0.0 introduces a developer-first, high-level API designed to make building beautiful terminal components effortless:
+
+- **Single Top-Level Import**: Access all component specs directly via `import termforge as tf`.
+- **`tf.draw()` & `tf.render()`**: Render any component or layout with a single line of code without wiring up individual component renderers manually.
+
+## 💡 Quick Start
+
+```python
+import termforge as tf
+
+# Render a Card component
+print(tf.draw(tf.CardSpec(title="Server Node-01", content="CPU: 42%\nRAM: 8.2 GB")))
+
+# Render a Badge
+print(tf.draw(tf.BadgeSpec(text="ACTIVE", severity="success")))
+
+# Render a Progress Bar
+print(tf.draw(tf.ProgressSpec(progress=0.85, width=30)))
+```
 
 ## Features
 
@@ -9,10 +31,10 @@ A universal terminal UI/UX design system for rendering rich, themed terminal int
 - **Charts** — line, bar, scatter, histogram, heatmap, sparkline, candlestick/OHLC
 - **Borders & windows** — composable panes with swappable glyph sets
 - **Animations** — spinners, transitions, logo reveals
-- **Theming** — data-driven token system (Catppuccin, Dracula, Tokyo Night, high-contrast)
+- **Theming** — data-driven token system (Catppuccin, Dracula, Tokyo Night, Nord, Gruvbox, high-contrast)
 - **Declarative config** — YAML/TOML/JSON specs that map 1:1 to the Python API
 
-## Quick Start
+## Quick CLI Demo
 
 ```bash
 pip install termforge

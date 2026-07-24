@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from termforge.core.types import RenderableSpec
-from termforge.config.input import InputBindingSpec
+
+if TYPE_CHECKING:
+    from termforge.config.input import InputBindingSpec
+
 
 
 @dataclass
@@ -59,6 +62,7 @@ class KeyLegendSpec(RenderableSpec):
         Returns:
             A new :class:`KeyLegendSpec` instance.
         """
+        from termforge.config.input import InputBindingSpec
         return cls(
             bindings=[InputBindingSpec.from_dict(b) for b in d.get("bindings", [])],
             format=d.get("format", "[{key}] {description}"),
