@@ -111,8 +111,8 @@ def run_showcase_demo(duration_sec: float = 10.0, fps: float = 10.0) -> None:
 
             telemetry_grid = tf.KeyValueGridSpec(
                 items=[
-                    tf.KeyValueItemSpec(key="CPU Load", value=f"{cpu_val:.1f}%  {tf.draw(cpu_progress, width=28, height=1).strip()}"),
-                    tf.KeyValueItemSpec(key="Memory Usage", value=f"{ram_val:.1f} GB / 16.0 GB  {tf.draw(ram_progress, width=28, height=1).strip()}"),
+                    tf.KeyValueItemSpec(key="CPU Load", value=f"{cpu_val:5.1f}%  {tf.draw(cpu_progress, width=28, height=1).strip()}"),
+                    tf.KeyValueItemSpec(key="Memory Usage", value=f"{ram_val:4.1f} GB / 16.0 GB  {tf.draw(ram_progress, width=28, height=1).strip()}"),
                     tf.KeyValueItemSpec(key="Net Packets", value=f"{pkt_val} req/s"),
                     tf.KeyValueItemSpec(key="Active Threads", value=f"{random.randint(12, 32)} workers"),
                 ],
