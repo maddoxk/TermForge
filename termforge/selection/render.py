@@ -15,7 +15,9 @@ def _align_text(text: str, width: int, align: TextAlign) -> str:
         return text.ljust(width)
 
 
-def render_selection_list(spec: SelectionListSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+from termforge.core.types import Size, ColorDepth
+
+def render_selection_list(spec: SelectionListSpec, max_size: Size, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     lines = []
     for i, item in enumerate(spec.items):
         is_focused = (i == spec.focused_index)
