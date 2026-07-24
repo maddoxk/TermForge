@@ -4,6 +4,7 @@ from __future__ import annotations
 from termforge.core.types import Size, ColorDepth, StyleSpec, ColorValue
 from termforge.core.theme import ThemeTokens, resolve_token
 from termforge.text.render import style_to_ansi
+from termforge.borders.render import strip_ansi
 from termforge.keyvalue.types import KeyValueGridSpec
 
 
@@ -40,7 +41,8 @@ def render_keyvalue_grid(
         # Pad key to column width
         padded_key = f"{item.key:<{key_col_w}}"
 
-        raw_line_len = len(padded_key) + len(spec.separator) + len(item.value)
+        vis_val_len = len(strip_ansi(item.value))
+        raw_line_len = len(padded_key) + len(spec.separator) + vis_val_len
         
         # Determine if we need to truncate
         val_str = item.value

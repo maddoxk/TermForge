@@ -6,6 +6,7 @@ from termforge.core.theme import ThemeTokens, resolve_token
 from termforge.text.render import style_to_ansi
 from termforge.borders.types import BorderStyle
 from termforge.borders.glyphs import resolve_border_glyphs
+from termforge.borders.render import strip_ansi
 from termforge.card.types import CardSpec
 
 
@@ -96,10 +97,14 @@ def render_card(
     for r in range(inner_h):
         if r < len(content_lines):
             raw_line = content_lines[r]
-            # Truncate or pad
-            if len(raw_line) > inner_w:
+            vis_len = len(strip_ansi(raw_line))
+            # Truncate or pad based on visible character length
+            if vis_len > inner_w:
+                # If unstyled line is too long
                 raw_line = raw_line[:inner_w]
-            padded_line = raw_line.ljust(inner_w)
+                vis_len = inner_w
+            pad_needed = max(0, inner_w - vis_len)
+            padded_line = raw_line + (" " * pad_needed)
             styled_line = _style_part(padded_line, spec.content_style, theme, depth)
             lines.append(f"{s_v}{styled_line}{s_v}")
         else:
