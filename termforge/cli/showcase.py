@@ -263,11 +263,11 @@ def run_super_app_demo(duration_sec: float | None = None, fps: float = 10.0) -> 
         return tf.WindowSpec(
             title="TermForge v2.1 Ultimate 30-Component Single-Page Mega Application",
             content=page_body,
-            width=122,
-            height=32
+            width=118,
+            height=29
         )
 
-    tf.stream(render_frame, fps=fps, duration_sec=duration_sec, on_key=handle_key_input, width=122, height=32)
+    tf.stream(render_frame, fps=fps, duration_sec=duration_sec, on_key=handle_key_input, width=118, height=29)
 
 
 def main() -> None:

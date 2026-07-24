@@ -196,11 +196,11 @@ def stream(
                     new_l = lines[y] if y < len(lines) else ""
                     old_l = previous_buffer[y] if y < len(previous_buffer) else ""
                     if new_l != old_l:
-                        # Move cursor to row y+1, col 1 (\033[{y+1};1H), write line
-                        buf_changes.append(f"\033[{y + 1};1H{new_l}")
+                        # Move cursor to row y+1, col 1 (\033[{y+1};1H), clear line (\033[2K), write line
+                        buf_changes.append(f"\033[{y + 1};1H\033[2K{new_l}")
 
                 if buf_changes:
-                    # Move cursor to bottom of viewport canvas to prevent line wrapping artifacts
+                    # Position cursor below canvas cleanly after updates
                     buf_changes.append(f"\033[{height + 1};1H")
                     sys.stdout.write("".join(buf_changes))
                     sys.stdout.flush()
