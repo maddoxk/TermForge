@@ -9,6 +9,8 @@ __version__ = "2.0.0"
 from termforge.core.types import Size, ColorDepth, RenderableSpec
 from termforge.core.capability import detect_capabilities
 from termforge.core.theme import ThemeTokens, load_theme_from_dict, TOKYO_NIGHT
+from termforge.reactive import State, View, stream, animate_val
+
 
 # Import specs from config/modules
 from termforge.accordion.types import AccordionSpec, AccordionItemSpec
@@ -81,10 +83,17 @@ from termforge.tooltip.render import render_tooltip
 from termforge.tree.render import render_tree
 from termforge.windows.compositor import render_window, compose_panes
 
+def _adapt_text(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    return render_text(spec, theme=theme, depth=depth, available_width=size.width)
+
+def _adapt_spinner(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    res = render_spinner(spec, frame_number=0, theme=theme, depth=depth)
+    return [res]
+
 # Standard registry of specs -> renderers
 _RENDERER_MAP = {
     "accordion": render_accordion,
-    "spinner": render_spinner,
+    "spinner": _adapt_spinner,
     "badge": render_badge,
     "buttongroup": render_buttongroup,
     "card": render_card,
@@ -110,7 +119,7 @@ _RENDERER_MAP = {
     "stepper": render_stepper,
     "table": render_table,
     "tabs": render_tabs,
-    "text": render_text,
+    "text": _adapt_text,
     "toast": render_toast,
     "toggle": render_toggle_switch,
     "tooltip": render_tooltip,
@@ -191,6 +200,10 @@ __all__ = [
     "__version__",
     "render",
     "draw",
+    "State",
+    "View",
+    "stream",
+    "animate_val",
     "Size",
     "ColorDepth",
     "RenderableSpec",
