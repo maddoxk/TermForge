@@ -138,6 +138,7 @@ _RENDERER_MAP = {
     "spinnerbox": render_spinner_box,
     "status_bar": render_status_bar,
     "stepper": render_stepper,
+    "tab": render_tabs,
     "table": render_table,
     "tabs": render_tabs,
     "text": _adapt_text,

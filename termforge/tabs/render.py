@@ -2,14 +2,29 @@ from __future__ import annotations
 from termforge.core.types import Size
 from termforge.core.theme import ThemeTokens
 from termforge.tabs.types import TabSpec
+from termforge.core.types import Size, ColorDepth
 
-def render_tabs(spec: TabSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+def render_tabs(spec: TabSpec, max_size: Size, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     # Render tab headers as:
     # ┌──────┐ ┌──────┐
     # │ Tab1 │ │*Tab2*│
     # └──────┴─┴──────┴───────...
     if not spec.titles:
         return [""] * max_size.height
+
+    if max_size.height == 1:
+        tab_strs = []
+        for i, title in enumerate(spec.titles):
+            if i == spec.active_index:
+                tab_strs.append(f"[{title}]")
+            else:
+                tab_strs.append(f" {title} ")
+        line = "  ".join(tab_strs)
+        if len(line) > max_size.width:
+            line = line[:max_size.width - 1] + "…"
+        else:
+            line = line + " " * (max_size.width - len(line))
+        return [line]
 
     top = ""
     mid = ""
