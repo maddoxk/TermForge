@@ -106,8 +106,8 @@ def run_showcase_demo(duration_sec: float = 10.0, fps: float = 10.0) -> None:
         # Tab Content Switching
         if tab_idx == 0:
             # --- Tab 0: System Telemetry & Log Streamer ---
-            cpu_progress = tf.ProgressSpec(progress=cpu_val / 100.0, width=32)
-            ram_progress = tf.ProgressSpec(progress=ram_val / 16.0, width=32)
+            cpu_progress = tf.ProgressSpec(progress=cpu_val / 100.0, text_width=4, width=32)
+            ram_progress = tf.ProgressSpec(progress=ram_val / 16.0, text_width=4, width=32)
 
             telemetry_grid = tf.KeyValueGridSpec(
                 items=[
