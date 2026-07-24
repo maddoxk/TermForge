@@ -28,6 +28,7 @@ from termforge.card.types import CardSpec
 from termforge.accordion.types import AccordionSpec, AccordionItemSpec
 from termforge.badge.types import BadgeSpec
 from termforge.divider.types import DividerSpec
+from termforge.buttongroup.types import ButtonGroupSpec
 
 
 __all__ = [
@@ -76,4 +77,5 @@ __all__ = [
     "AccordionItemSpec",
     "BadgeSpec",
     "DividerSpec",
+    "ButtonGroupSpec",
 ]
