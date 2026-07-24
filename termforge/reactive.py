@@ -147,6 +147,7 @@ def stream(
     interval = 1.0 / max(1.0, fps)
     start_time = time.time()
     frame_idx = 0
+    previous_buffer: list[str] | None = None
 
     # Hide cursor and enable clear screen
     sys.stdout.write("\033[?25l")
@@ -179,12 +180,32 @@ def stream(
 
             spec = render_callback(frame_idx)
             content = draw(spec, width=width, height=height, theme=theme, depth=depth)
+            lines = content.split("\n")
 
-            # Move cursor home and draw frame
-            sys.stdout.write("\033[H\033[J")
-            sys.stdout.write(content)
-            sys.stdout.write("\n")
-            sys.stdout.flush()
+            if previous_buffer is None:
+                # First frame: clear screen, position cursor home, draw full content
+                sys.stdout.write("\033[H\033[2J")
+                sys.stdout.write(content)
+                sys.stdout.flush()
+                previous_buffer = lines
+            else:
+                # Subsequent frames: diff line-by-line and update only changed lines
+                buf_changes = []
+                max_l = max(len(lines), len(previous_buffer))
+                for y in range(max_l):
+                    new_l = lines[y] if y < len(lines) else ""
+                    old_l = previous_buffer[y] if y < len(previous_buffer) else ""
+                    if new_l != old_l:
+                        # Move cursor to row y+1, col 1 (\033[{y+1};1H), write line
+                        buf_changes.append(f"\033[{y + 1};1H{new_l}")
+
+                if buf_changes:
+                    # Move cursor to bottom of viewport canvas to prevent line wrapping artifacts
+                    buf_changes.append(f"\033[{height + 1};1H")
+                    sys.stdout.write("".join(buf_changes))
+                    sys.stdout.flush()
+
+                previous_buffer = lines
 
             frame_idx += 1
             elapsed = time.time() - frame_start
