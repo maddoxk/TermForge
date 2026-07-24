@@ -25,6 +25,8 @@ from termforge.radio.types import RadioButtonSpec, RadioButtonItemSpec
 from termforge.spinnerbox.types import SpinnerBoxSpec
 from termforge.stepper.types import StepperSpec
 from termforge.card.types import CardSpec
+from termforge.accordion.types import AccordionSpec, AccordionItemSpec
+
 
 
 
@@ -84,7 +86,10 @@ __all__ = [
     "SpinnerBoxSpec",
     "StepperSpec",
     "CardSpec",
+    "AccordionSpec",
+    "AccordionItemSpec",
 ]
+
 
 
 

@@ -56,6 +56,7 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
     from termforge.spinnerbox.types import SpinnerBoxSpec
     from termforge.stepper.types import StepperSpec
     from termforge.card.types import CardSpec
+    from termforge.accordion.types import AccordionSpec
     
     spec_classes = {
         "text": TextSpec,
@@ -87,7 +88,9 @@ def map_component(config: ComponentConfig) -> RenderableSpec:
         "spinner_box": SpinnerBoxSpec,
         "stepper": StepperSpec,
         "card": CardSpec,
+        "accordion": AccordionSpec,
     }
+
 
 
 
