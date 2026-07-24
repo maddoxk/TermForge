@@ -89,7 +89,7 @@ class OHLCSeries:
 class ChartSpec(RenderableSpec):
     chart_type: ChartType = ChartType.LINE
     series: list[Series] = field(default_factory=list)
-    ohlc_series: OHLCSeries | None = None
+    ohlc_series: OHLCSeries | list[OHLCSeries] | None = None
     x_axis: Axis = field(default_factory=Axis)
     y_axis: Axis = field(default_factory=Axis)
     width: int = 80

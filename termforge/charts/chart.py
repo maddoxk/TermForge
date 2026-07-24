@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any
 from termforge.core.types import ColorDepth, StyleSpec, ColorValue
 from termforge.core.theme import ThemeTokens
-from termforge.charts.types import ChartSpec, ChartType
+from termforge.charts.types import ChartSpec, ChartType, OHLCSeries
 from termforge.charts.scale import compute_bounds, generate_ticks
 from termforge.charts.canvas import Canvas, BrailleCanvas, create_canvas, create_braille_canvas, canvas_to_lines, braille_canvas_to_lines
 from termforge.charts.renderers import (
@@ -59,8 +59,9 @@ def render_chart(spec: ChartSpec, theme: ThemeTokens | None = None, depth: Color
     # 4. Add Y-Axis Labels
     # Compute bounds for Y axis labels
     if spec.chart_type == ChartType.CANDLESTICK and spec.ohlc_series:
-        highs = [d["high"] for d in spec.ohlc_series.data]
-        lows = [d["low"] for d in spec.ohlc_series.data]
+        ohlc_data = spec.ohlc_series.data if isinstance(spec.ohlc_series, OHLCSeries) else (spec.ohlc_series[0].data if isinstance(spec.ohlc_series, list) and spec.ohlc_series and hasattr(spec.ohlc_series[0], "data") else spec.ohlc_series)
+        highs = [d["high"] for d in ohlc_data]
+        lows = [d["low"] for d in ohlc_data]
         y_min, y_max = compute_bounds(highs + lows, spec.y_axis)
     else:
         all_y = []
@@ -90,7 +91,8 @@ def render_chart(spec: ChartSpec, theme: ThemeTokens | None = None, depth: Color
     # We display e.g. 5 ticks across plot_w
     max_len = 0
     if spec.chart_type == ChartType.CANDLESTICK and spec.ohlc_series:
-        max_len = len(spec.ohlc_series.data)
+        ohlc_data = spec.ohlc_series.data if isinstance(spec.ohlc_series, OHLCSeries) else (spec.ohlc_series[0].data if isinstance(spec.ohlc_series, list) and spec.ohlc_series and hasattr(spec.ohlc_series[0], "data") else spec.ohlc_series)
+        max_len = len(ohlc_data) if ohlc_data else 0
     elif spec.series:
         max_len = max(len(s.data) for s in spec.series)
         

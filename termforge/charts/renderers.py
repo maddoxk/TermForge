@@ -282,9 +282,11 @@ def render_heatmap(spec: ChartSpec, canvas: Canvas) -> None:
                     set_cell(canvas, x, y, "█", style)
 
 def render_candlestick(spec: ChartSpec, canvas: Canvas) -> None:
-    if not spec.ohlc_series or not spec.ohlc_series.data:
+    if not spec.ohlc_series:
         return
-    ohlc = spec.ohlc_series.data
+    ohlc = spec.ohlc_series.data if isinstance(spec.ohlc_series, OHLCSeries) else (spec.ohlc_series[0].data if isinstance(spec.ohlc_series, list) and spec.ohlc_series and hasattr(spec.ohlc_series[0], "data") else spec.ohlc_series)
+    if not ohlc:
+        return
     
     # Calculate bounds over all highs and lows
     highs = [d["high"] for d in ohlc]

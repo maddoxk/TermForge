@@ -1,11 +1,16 @@
 from __future__ import annotations
-from termforge.core.types import LayoutResult, Size, StyleSpec
+from termforge.core.types import LayoutResult, Size, StyleSpec, ColorDepth
 from termforge.core.theme import ThemeTokens
 from termforge.tables.types import TableSpec, ColumnSpec
 from termforge.text.types import TextSpec, TextAlign
 from termforge.text.render import render_text
 
-def render_table(spec: TableSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+def render_table(
+    spec: TableSpec,
+    max_size: Size,
+    theme: ThemeTokens | None = None,
+    depth: ColorDepth = ColorDepth.TRUECOLOR
+) -> list[str]:
     # 1. Calculate column widths and inner content widths
     col_widths = []
     col_inner_widths = []
