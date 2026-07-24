@@ -97,6 +97,20 @@ def _adapt_window(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
     content_lines = content_str.split("\n") if content_str else []
     return render_window(spec, content_lines=content_lines, theme=theme, depth=depth)
 
+def _adapt_chart(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    # Update spec width/height from size if not explicitly set
+    if spec.width is None:
+        spec.width = size.width
+    if spec.height is None:
+        spec.height = size.height
+    return render_chart(spec, theme=theme, depth=depth)
+
+def _adapt_image(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    return render_image(spec, theme=theme, depth=depth, available_width=size.width, available_height=size.height)
+
+def _adapt_logo(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    return render_logo(spec, theme=theme, depth=depth)
+
 # Standard registry of specs -> renderers
 _RENDERER_MAP = {
     "accordion": render_accordion,
@@ -104,16 +118,16 @@ _RENDERER_MAP = {
     "badge": render_badge,
     "buttongroup": render_buttongroup,
     "card": render_card,
-    "chart": render_chart,
+    "chart": _adapt_chart,
     "checklist": render_checklist,
     "combobox": render_combobox,
     "dialog": render_dialog,
     "divider": render_divider,
-    "image": render_image,
+    "image": _adapt_image,
     "key_legend": render_key_legend,
     "keyvalue_grid": render_keyvalue_grid,
     "log_streamer": render_log_streamer,
-    "logo": render_logo,
+    "logo": _adapt_logo,
     "menu_bar": render_menu_bar,
     "breadcrumbs": render_breadcrumbs,
     "progress": render_progress,
