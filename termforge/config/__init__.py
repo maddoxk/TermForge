@@ -26,22 +26,7 @@ from termforge.spinnerbox.types import SpinnerBoxSpec
 from termforge.stepper.types import StepperSpec
 from termforge.card.types import CardSpec
 from termforge.accordion.types import AccordionSpec, AccordionItemSpec
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+from termforge.badge.types import BadgeSpec
 
 
 __all__ = [
@@ -88,21 +73,5 @@ __all__ = [
     "CardSpec",
     "AccordionSpec",
     "AccordionItemSpec",
+    "BadgeSpec",
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
