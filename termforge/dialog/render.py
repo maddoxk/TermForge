@@ -3,9 +3,10 @@ from termforge.core.types import Size
 from termforge.core.theme import ThemeTokens
 from termforge.borders.types import BorderSpec
 from termforge.borders.render import render_border
+from termforge.core.types import Size, ColorDepth
 from termforge.dialog.types import DialogSpec
 
-def render_dialog(spec: DialogSpec, max_size: Size, theme: ThemeTokens) -> list[str]:
+def render_dialog(spec: DialogSpec, max_size: Size, theme: ThemeTokens | None = None, depth: ColorDepth = ColorDepth.TRUECOLOR) -> list[str]:
     # Construct inner body lines
     content = [spec.body]
     
