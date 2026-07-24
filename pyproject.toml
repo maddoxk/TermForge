@@ -41,6 +41,7 @@ dev = [
 
 [project.scripts]
 termforge-demo = "termforge.cli.demo:main"
+termforge-showcase = "termforge.cli.showcase:main"
 termforge-story = "termforge.cli.story:main"
 termforge-layout = "termforge.cli.layout:main"
 termforge-validate = "termforge.cli.validate:main"

@@ -9,7 +9,9 @@ __version__ = "2.0.0"
 from termforge.core.types import Size, ColorDepth, RenderableSpec
 from termforge.core.capability import detect_capabilities
 from termforge.core.theme import ThemeTokens, load_theme_from_dict, TOKYO_NIGHT
+from termforge.config.input import InputBindingSpec, InputRouter
 from termforge.reactive import State, View, stream, animate_val
+
 
 
 # Import specs from config/modules
@@ -90,6 +92,11 @@ def _adapt_spinner(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
     res = render_spinner(spec, frame_number=0, theme=theme, depth=depth)
     return [res]
 
+def _adapt_window(spec: Any, size: Size, theme: Any, depth: Any) -> list[str]:
+    content_str = spec.content if isinstance(spec.content, str) else ""
+    content_lines = content_str.split("\n") if content_str else []
+    return render_window(spec, content_lines=content_lines, theme=theme, depth=depth)
+
 # Standard registry of specs -> renderers
 _RENDERER_MAP = {
     "accordion": render_accordion,
@@ -104,10 +111,10 @@ _RENDERER_MAP = {
     "divider": render_divider,
     "image": render_image,
     "key_legend": render_key_legend,
-    "keyvalue": render_keyvalue_grid,
-    "logstreamer": render_log_streamer,
+    "keyvalue_grid": render_keyvalue_grid,
+    "log_streamer": render_log_streamer,
     "logo": render_logo,
-    "menubar": render_menu_bar,
+    "menu_bar": render_menu_bar,
     "breadcrumbs": render_breadcrumbs,
     "progress": render_progress,
     "radio": render_radio_button,
@@ -115,7 +122,7 @@ _RENDERER_MAP = {
     "selection": render_selection_list,
     "slider": render_slider,
     "spinnerbox": render_spinner_box,
-    "statusbar": render_status_bar,
+    "status_bar": render_status_bar,
     "stepper": render_stepper,
     "table": render_table,
     "tabs": render_tabs,
@@ -124,7 +131,7 @@ _RENDERER_MAP = {
     "toggle": render_toggle_switch,
     "tooltip": render_tooltip,
     "tree": render_tree,
-    "window": render_window,
+    "window": _adapt_window,
 }
 
 
@@ -204,6 +211,8 @@ __all__ = [
     "View",
     "stream",
     "animate_val",
+    "InputBindingSpec",
+    "InputRouter",
     "Size",
     "ColorDepth",
     "RenderableSpec",
