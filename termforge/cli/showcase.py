@@ -166,7 +166,7 @@ def run_super_app_demo(duration_sec: float | None = None, fps: float = 10.0) -> 
 
         col_a_lines = (
             tf.draw(card_metrics, width=57, height=5) + "\n" +
-            tf.draw(card_controls, width=57, height=8) + "\n" +
+            tf.draw(card_controls, width=57, height=7) + "\n" +
             tf.draw(card_inputs, width=57, height=4) + "\n" +
             tf.draw(card_widgets, width=57, height=5)
         ).split("\n")
@@ -222,8 +222,8 @@ def run_super_app_demo(duration_sec: float | None = None, fps: float = 10.0) -> 
             tf.draw(card_chart, width=57, height=6) + "\n" +
             tf.draw(card_logs, width=57, height=4) + "\n" +
             tf.draw(card_table, width=57, height=4) + "\n" +
-            tf.draw(card_misc, width=57, height=4) + "\n" +
-            tf.draw(card_visuals, width=57, height=4)
+            tf.draw(card_misc, width=57, height=3) + "\n" +
+            tf.draw(card_visuals, width=57, height=3)
         ).split("\n")
 
         # Combine Col A & Col B side-by-side
@@ -248,8 +248,8 @@ def run_super_app_demo(duration_sec: float | None = None, fps: float = 10.0) -> 
             ],
             spacing=2
         )
-        ftr1 = tf.draw(status_bar, width=118, height=1)
-        ftr2 = tf.draw(legend, width=118, height=1)
+        ftr1 = tf.draw(status_bar, width=116, height=1)
+        ftr2 = tf.draw(legend, width=116, height=1)
 
         page_body = (
             hdr1 + "\n" +
@@ -264,10 +264,10 @@ def run_super_app_demo(duration_sec: float | None = None, fps: float = 10.0) -> 
             title="TermForge v2.1 Ultimate 30-Component Single-Page Mega Application",
             content=page_body,
             width=118,
-            height=29
+            height=26
         )
 
-    tf.stream(render_frame, fps=fps, duration_sec=duration_sec, on_key=handle_key_input, width=118, height=29)
+    tf.stream(render_frame, fps=fps, duration_sec=duration_sec, on_key=handle_key_input, width=118, height=26)
 
 
 def main() -> None:
