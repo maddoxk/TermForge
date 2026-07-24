@@ -68,6 +68,58 @@ class View:
         return draw(spec, width=width, height=height, theme=theme, depth=depth)
 
 
+def _read_key_nonblocking() -> str | None:
+    """Read a key press from stdin in a non-blocking cross-platform manner."""
+    try:
+        import select
+        if sys.platform != "win32":
+            if select.select([sys.stdin], [], [], 0)[0]:
+                ch = sys.stdin.read(1)
+                if ch == "\x1b":
+                    # Check if escape sequence follows
+                    if select.select([sys.stdin], [], [], 0.05)[0]:
+                        seq = sys.stdin.read(2)
+                        if seq == "[A":
+                            return "up"
+                        elif seq == "[B":
+                            return "down"
+                        elif seq == "[C":
+                            return "right"
+                        elif seq == "[D":
+                            return "left"
+                        elif seq == "[1" or seq == "OP":
+                            return "f1"
+                        elif seq == "[2" or seq == "OQ":
+                            return "f2"
+                        elif seq == "[3" or seq == "OR":
+                            return "f3"
+                        return f"esc{seq}"
+                    return "esc"
+                elif ch == "\t":
+                    return "tab"
+                elif ch == "\r" or ch == "\n":
+                    return "enter"
+                elif ch == "\x03":
+                    return "ctrl+c"
+                elif ch == " ":
+                    return "space"
+                return ch.lower()
+        else:
+            import msvcrt
+            if msvcrt.kbhit():
+                ch = msvcrt.getch().decode("utf-8", errors="ignore")
+                if ch == "\t":
+                    return "tab"
+                elif ch == "\r" or ch == "\n":
+                    return "enter"
+                elif ch == " ":
+                    return "space"
+                return ch.lower()
+    except Exception:
+        pass
+    return None
+
+
 def stream(
     render_callback: Callable[[int], RenderableSpec],
     fps: float = 10.0,
@@ -76,6 +128,7 @@ def stream(
     height: int = 24,
     theme: ThemeTokens | None = None,
     depth: ColorDepth | None = None,
+    on_key: Callable[[str], None] | None = None,
 ) -> None:
     """Run an automatic terminal live stream loop rendering components at a target FPS.
 
@@ -87,6 +140,7 @@ def stream(
         height: Terminal viewport height.
         theme: Theme tokens.
         depth: Color depth tier.
+        on_key: Optional callback function receiving keypress event strings (e.g. 'tab', 'up', 'down', 'f1', 'a').
     """
     from termforge import draw
 
@@ -98,11 +152,30 @@ def stream(
     sys.stdout.write("\033[?25l")
     sys.stdout.flush()
 
+    # Enter raw mode if terminal supports termios
+    old_settings = None
+    if sys.platform != "win32" and sys.stdin.isatty():
+        try:
+            import termios
+            import tty
+            old_settings = termios.tcgetattr(sys.stdin)
+            tty.setcbreak(sys.stdin.fileno())
+        except Exception:
+            old_settings = None
+
     try:
         while True:
             frame_start = time.time()
             if duration_sec is not None and (frame_start - start_time) >= duration_sec:
                 break
+
+            # Poll for keypress events
+            if on_key:
+                key = _read_key_nonblocking()
+                if key:
+                    if key == "ctrl+c":
+                        break
+                    on_key(key)
 
             spec = render_callback(frame_idx)
             content = draw(spec, width=width, height=height, theme=theme, depth=depth)
@@ -122,6 +195,14 @@ def stream(
     except KeyboardInterrupt:
         pass
     finally:
+        # Restore terminal raw settings if modified
+        if old_settings is not None:
+            try:
+                import termios
+                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+            except Exception:
+                pass
+
         # Restore cursor
         sys.stdout.write("\033[?25h\n")
         sys.stdout.flush()
