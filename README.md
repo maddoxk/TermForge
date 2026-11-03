@@ -1,5 +1,7 @@
 # TermForge v2.0.0
 
+[![CI](https://github.com/maddoxk/TermForge/actions/workflows/ci.yml/badge.svg)](https://github.com/maddoxk/TermForge/actions/workflows/ci.yml)
+
 A universal terminal UI/UX design system for rendering rich, themed terminal interfaces with minimal boilerplate.
 
 ## 🚀 What's New in v2.0.0?
@@ -36,9 +38,17 @@ print(tf.draw(tf.ProgressSpec(progress=0.85, width=30)))
 
 ## Quick CLI Demo
 
+> **Not on PyPI yet.** A PyPI release is pending; until then install straight from GitHub:
+
 ```bash
-pip install termforge
+pip install git+https://github.com/maddoxk/TermForge
 termforge-demo
+```
+
+After the first PyPI release this will also work:
+
+```bash
+pip install termforge   # NOT AVAILABLE YET - only after the PyPI release
 ```
 
 ## Architecture
@@ -49,4 +59,4 @@ See `SPEC.md` files per module for language-agnostic algorithms.
 
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).
