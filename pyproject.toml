@@ -4,24 +4,26 @@ build-backend = "hatchling.build"
 
 [project]
 name = "termforge"
-version = "2.0.0"
+dynamic = ["version"]
 description = "A universal terminal UI/UX design system"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [
-    { name = "TermForge Contributors" },
+    { name = "Maddox Krape" },
 ]
 keywords = ["terminal", "tui", "ui", "charts", "ascii-art", "theming"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Terminals",
 ]
@@ -29,12 +31,21 @@ dependencies = [
     "rich>=13.0",
     "Pillow>=10.0",
     "pyyaml>=6.0",
+    "tomli>=2.0; python_version < '3.11'",
 ]
+
+[project.urls]
+Homepage = "https://github.com/maddoxk/TermForge"
+Repository = "https://github.com/maddoxk/TermForge"
+Issues = "https://github.com/maddoxk/TermForge/issues"
+Changelog = "https://github.com/maddoxk/TermForge/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    "build>=1.0",
+    "twine>=5.0",
     "ruff>=0.5",
     "mypy>=1.10",
 ]
@@ -56,6 +67,25 @@ termforge-benchmark = "termforge.cli.benchmark:main"
 termforge-play = "termforge.cli.play:main"
 termforge-watch = "termforge.cli.watch:main"
 
+
+# Single-source the version: hatch reads __version__ from termforge/__init__.py.
+[tool.hatch.version]
+path = "termforge/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["termforge"]
+
+# Keep the sdist to what a downstream packager needs. Without this, hatch ships
+# every tracked file, including AI-agent tooling dirs (.agent, .gsd, ...).
+[tool.hatch.build.targets.sdist]
+include = [
+    "/termforge",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+    "/CHANGELOG.md",
+    "/SPEC.md",
+]
 
 [tool.ruff]
 target-version = "py310"

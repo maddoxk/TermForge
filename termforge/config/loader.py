@@ -5,12 +5,15 @@ from typing import Any
 from termforge.core.types import RenderableSpec
 from termforge.config.types import LayoutConfig, ComponentConfig
 
-# Try importing tomllib (Python 3.11+)
+# tomllib is stdlib on Python 3.11+; older versions use the `tomli` backport
+# (a declared dependency for python_version < "3.11").
 try:
     import tomllib  # type: ignore
 except ImportError:
-    # simple fallback mapping if tomllib not present
-    tomllib = None
+    try:
+        import tomli as tomllib  # type: ignore
+    except ImportError:
+        tomllib = None
 
 def load_config_yaml(path: str) -> LayoutConfig:
     with open(path, "r", encoding="utf-8") as f:
@@ -28,7 +31,7 @@ def load_config_toml(path: str) -> LayoutConfig:
             data = tomllib.load(f)
         else:
             # Fallback raise
-            raise ImportError("TOML support requires Python 3.11+ (tomllib)")
+            raise ImportError("TOML support requires Python 3.11+ or the tomli package")
     return LayoutConfig.from_dict(data)
 
 def map_component(config: ComponentConfig) -> RenderableSpec:
