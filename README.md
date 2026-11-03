@@ -45,7 +45,7 @@ pip install git+https://github.com/maddoxk/TermForge
 termforge-demo
 ```
 
-After the first PyPI release this will also work:
+After the first PyPI release (see [RELEASING.md](RELEASING.md)) this will also work:
 
 ```bash
 pip install termforge   # NOT AVAILABLE YET - only after the PyPI release
