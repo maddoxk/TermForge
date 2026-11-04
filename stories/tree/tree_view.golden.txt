@@ -1,5 +1,5 @@
-📂 Project
-  ├─📂 src
-  │ ├─📄 main.py
-  │ └─📄 utils.py
-  └─📄 README.md
+v Project
+  ├─v src
+  │ ├─- main.py
+  │ └─- utils.py
+  └─- README.md
