@@ -1,6 +1,9 @@
 """TermForge v2.0.0 — A Universal Terminal UI/UX Design System.
 
 Top-level developer-friendly API: render components, layouts, themes, and interactive displays effortlessly.
+
+Default theme: Tokyo Night is applied automatically when no theme is passed to tf.draw() or tf.render().
+Use tf.default_theme() to get the theme tokens, or import from termforge.theme.builtin for other themes.
 """
 from __future__ import annotations
 
@@ -222,10 +225,25 @@ def draw(
     return "\n".join(lines)
 
 
+def default_theme() -> ThemeTokens:
+    """Return the default Tokyo Night theme tokens.
+
+    Use this when you want to apply the same default theme that tf.draw()
+    and tf.render() use internally.
+
+    Example:
+        >>> import termforge as tf
+        >>> theme = tf.default_theme()
+        >>> lines = tf.render(tf.CardSpec(title="Hi", content="Hello"), theme=theme)
+    """
+    return load_theme_from_dict(TOKYO_NIGHT)
+
+
 __all__ = [
     "__version__",
     "render",
     "draw",
+    "default_theme",
     "State",
     "View",
     "stream",
@@ -236,10 +254,15 @@ __all__ = [
     "ColorDepth",
     "RenderableSpec",
     "ThemeTokens",
+    # Theme utilities
+    "detect_capabilities",
+    "load_theme_from_dict",
+    "TOKYO_NIGHT",
     # Specs
     "AccordionSpec",
     "AccordionItemSpec",
     "SpinnerSpec",
+    "SpinnerStyle",
     "BadgeSpec",
     "BorderStyle",
     "ButtonGroupSpec",
