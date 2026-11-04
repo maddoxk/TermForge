@@ -25,6 +25,22 @@ def _style_part(text: str, token: str | None, theme: ThemeTokens | None, depth: 
     return text
 
 
+def _wrap_run(text: str, token: str | None, theme: ThemeTokens | None, depth: ColorDepth) -> str:
+    """Wrap an entire string in a single ANSI styled span."""
+    if not token or not theme or depth == ColorDepth.MONOCHROME:
+        return text
+    token_path = token if token.startswith("colors.") else f"colors.{token}"
+    try:
+        res = resolve_token(theme, token_path)
+        if isinstance(res, ColorValue):
+            style = StyleSpec(fg=ColorValue(res.r, res.g, res.b, name=None))
+            start, end = style_to_ansi(style, theme, depth)
+            return f"{start}{text}{end}"
+    except KeyError:
+        pass
+    return text
+
+
 def render_card(
     spec: CardSpec,
     max_size: Size,
@@ -54,7 +70,6 @@ def render_card(
     s_tr = _style_part(glyphs.tr, border_token, theme, depth)
     s_bl = _style_part(glyphs.bl, border_token, theme, depth)
     s_br = _style_part(glyphs.br, border_token, theme, depth)
-    s_h = _style_part(glyphs.h, border_token, theme, depth)
     s_v = _style_part(glyphs.v, border_token, theme, depth)
 
 
@@ -86,9 +101,12 @@ def render_card(
         if right_h_len < 0:
             right_h_len = 0
             
-        line0 = f"{s_tl}{s_h * left_h_len}{styled_lbl}{s_h * right_h_len}{s_tr}"
+        h_left = _wrap_run(glyphs.h * left_h_len, border_token, theme, depth)
+        h_right = _wrap_run(glyphs.h * right_h_len, border_token, theme, depth)
+        line0 = f"{s_tl}{h_left}{styled_lbl}{h_right}{s_tr}"
     else:
-        line0 = f"{s_tl}{s_h * inner_w}{s_tr}"
+        h_top = _wrap_run(glyphs.h * inner_w, border_token, theme, depth)
+        line0 = f"{s_tl}{h_top}{s_tr}"
 
     lines = [line0]
 
@@ -113,7 +131,8 @@ def render_card(
             lines.append(f"{s_v}{styled_line}{s_v}")
 
     # 4. Form bottom line
-    line_last = f"{s_bl}{s_h * inner_w}{s_br}"
+    h_bottom = _wrap_run(glyphs.h * inner_w, border_token, theme, depth)
+    line_last = f"{s_bl}{h_bottom}{s_br}"
     lines.append(line_last)
 
     return lines[:max_size.height]
