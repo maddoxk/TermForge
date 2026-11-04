@@ -49,6 +49,10 @@ dev = [
     "ruff>=0.5",
     "mypy>=1.10",
 ]
+docs = [
+    "mkdocs-material>=9.0",
+    "mkdocs-autorefs>=0.5",
+]
 
 [project.scripts]
 termforge-demo = "termforge.cli.demo:main"
