@@ -71,3 +71,68 @@ import termforge as tf
 
 print(tf.draw(tf.TabSpec(titles=["Overview", "Metrics", "Logs"], active_index=1), width=48))
 ```
+
+## Previews
+
+### Windows Preview
+
+<div class="terminal-preview">
+<pre style="background:#1e1e2e;padding:16px;border-radius:8px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:13px;line-height:1.4;white-space:pre;">--- Window Layout Composited Screen ---
+<span style="color: #000000">┌──── Sidebar ─────┐</span><span style="color: #000000">┌──────────── Content Pane ────────────┐</span>
+<span style="color: #000000">│</span>* Home            <span style="color: #000000">│</span><span style="color: #000000">│</span>Welcome to TermForge!                 <span style="color: #000000">│</span>
+<span style="color: #000000">│</span><span style="color: #000000">┌───── Modal Alert ─────┐</span>   a split screen layout demo.   <span style="color: #000000">│</span>
+<span style="color: #000000">│</span><span style="color: #000000">│</span> Are you sure you      <span style="color: #000000">│</span><span style="color: #505050"></span><span style="font-weight: lighter; color: #505050">██</span>ht window has focus.           <span style="color: #000000">│</span>
+<span style="color: #000000">│</span><span style="color: #000000">│</span> want to proceed?      <span style="color: #000000">│</span><span style="color: #505050"></span><span style="font-weight: lighter; color: #505050">██</span>math distributed sizes auto:   <span style="color: #000000">│</span>
+<span style="color: #000000">│</span><span style="color: #000000">│</span>  [ OK ]  [ Cancel ]   <span style="color: #000000">│</span><span style="color: #505050"></span><span style="font-weight: lighter; color: #505050">██</span>                               <span style="color: #000000">│</span>
+<span style="color: #000000">│</span><span style="color: #000000">└───────────────────────┘</span><span style="color: #505050"></span><span style="font-weight: lighter; color: #505050">██</span>                               <span style="color: #000000">│</span>
+<span style="color: #000000">│</span>  <span style="color: #505050"></span><span style="font-weight: lighter; color: #505050">█████████████████████████</span>                               <span style="color: #000000">│</span>
+<span style="color: #000000">│</span>                  <span style="color: #000000">│</span><span style="color: #000000">│</span>                                      <span style="color: #000000">│</span>
+<span style="color: #000000">└──────────────────┘</span><span style="color: #000000">└──────────────────────────────────────┘</span>
+</pre>
+</div>
+
+### Dialog Preview
+
+<div class="terminal-preview">
+<pre style="background:#1e1e2e;padding:16px;border-radius:8px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:13px;line-height:1.4;white-space:pre;">┌─ Exit Confirmation ──────────────────────────┐
+│Are you sure you want to exit the application?│
+│                                              │
+│[Yes]  &lt;No&gt;                                   │
+└──────────────────────────────────────────────┘
+                                                
+</pre>
+</div>
+
+### Accordion Preview
+
+<div class="terminal-preview">
+<pre style="background:#1e1e2e;padding:16px;border-radius:8px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:13px;line-height:1.4;white-space:pre;">=== TermForge Accordion Component Demo ===
+
+--- 1. Expanded Item 0 &amp; Focused Cursor (Width = 50, Height = 7) ---
+<span style="color: #E0AF68">v </span><span style="color: #E0AF68">General Configurations</span>                          
+<span style="color: #BB9AF7">    Contains theme selections, font configurations,</span>
+<span style="color: #BB9AF7">    and system locale mappings.</span>                   
+&gt; Advanced System Settings                        
+&gt; Diagnostic Logging API                          
+                                                  
+                                                  
+
+--- 2. Expanded Item 0 &amp; Focused Cursor on Collapsed Item 1 ---
+<span style="color: #7AA2F7">v </span><span style="color: #7AA2F7">General Configurations</span>                          
+<span style="color: #BB9AF7">    Contains theme selections, font configurations,</span>
+<span style="color: #BB9AF7">    and system locale mappings.</span>                   
+<span style="color: #E0AF68">&gt; </span><span style="color: #E0AF68">Advanced System Settings</span>                        
+&gt; Diagnostic Logging API                          
+                                                  </pre>
+</div>
+
+### Tabs Preview
+
+<div class="terminal-preview">
+<pre style="background:#1e1e2e;padding:16px;border-radius:8px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:13px;line-height:1.4;white-space:pre;">┌──────────┐ ┌──────┐ ┌──────────┐      
+│*Overview*│ │ Logs │ │ Settings │      
+└──────────┘ └──────┘ └──────────┘      
+                                        
+                                        
+</pre>
+</div>
