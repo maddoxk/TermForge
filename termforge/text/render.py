@@ -9,7 +9,12 @@ from termforge.text.wrap import wrap_run, measure_text, get_string_width
 def style_to_ansi(style: StyleSpec | None, theme: ThemeTokens | None, depth: ColorDepth) -> tuple[str, str]:
     if not style or depth == ColorDepth.MONOCHROME:
         return "", ""
-        
+
+    # Apply default theme when theme is None so named tokens resolve instead of falling back to black
+    if theme is None:
+        from termforge.core.theme import load_theme_from_dict, TOKYO_NIGHT
+        theme = load_theme_from_dict(TOKYO_NIGHT)
+
     start_codes = []
     end_codes = []
     
@@ -19,12 +24,18 @@ def style_to_ansi(style: StyleSpec | None, theme: ThemeTokens | None, depth: Col
     
     if theme:
         if fg and fg.name and fg.name.startswith("colors."):
-            resolved = resolve_token(theme, fg.name)
+            try:
+                resolved = resolve_token(theme, fg.name)
+            except KeyError:
+                resolved = None
             if isinstance(resolved, ColorValue):
                 fg = resolved
-                
+
         if bg and bg.name and bg.name.startswith("colors."):
-            resolved = resolve_token(theme, bg.name)
+            try:
+                resolved = resolve_token(theme, bg.name)
+            except KeyError:
+                resolved = None
             if isinstance(resolved, ColorValue):
                 bg = resolved
 

@@ -96,6 +96,21 @@ def resolve_token(tokens: ThemeTokens, token_path: str) -> Any:
     if len(parts) < 2:
         raise KeyError(f"Token path must have at least two segments: {token_path!r}")
 
+    # Semantic color aliases: map common tokens used by renderers onto the
+    # canonical theme colors so every theme pack resolves them without needing
+    # to define each one explicitly.
+    if parts[0] == "colors" and len(parts) == 2:
+        _COLOR_ALIASES = {
+            "accent": "primary",
+            "danger": "error",
+            "info": "secondary",
+        }
+        alias = _COLOR_ALIASES.get(parts[1])
+        if alias is not None:
+            colors = getattr(tokens, "colors", None)
+            if isinstance(colors, dict) and parts[1] not in colors and alias in colors:
+                parts = ["colors", alias]
+
     category = parts[0]
     obj: Any = getattr(tokens, category, None)
     if obj is None:
