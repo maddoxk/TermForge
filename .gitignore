@@ -7,3 +7,4 @@ dist/
 build/
 .venv/
 termforge.log
+# docs-site/ is the built output — keep it committed for GitHub Pages
